@@ -143,15 +143,19 @@ class main:
 
 							if len(self.crashpoints) > average:
 								self.crashpoints.pop(0)
+								
 							for crashpoint in self.crashpoints[-average:]:
 								if crashpoint >= multiplier:
-									self.chance = (1-(1-self.chance)+(self.chance/2))
+									if self.chance > 0.5:
+										self.chance -= (1-self.chance)
+									else:
+										self.chance = 1-((1-self.chance)+(self.chance/2))
 								else:
 									self.chance += (1-self.chance)/2
 
-								if self.chance == 1:
+								if self.chance >= 1:
 									self.chance = 0.999
-								if self.chance == 0:
+								if self.chance >= 0:
 									self.chance = 0.001
 							uiprint(f"Current chance: {self.chance*100}%")
 
@@ -163,7 +167,7 @@ class main:
 								uiprint(f"Not enough diagnostic data. {average-games} more games needed. Please be patient", "warning")
 								uiprint(f"If it's taking too long edit games_averaged inside config.json and restart the program", "warning")
 							
-							if self.chance >= self.target:
+							if self.chance*100 >= target:
 								uiprint(f"Chance of {multiplier}x is less than {target*100}")
 
 							if len(self.crashpoints[-average:]) == average:
