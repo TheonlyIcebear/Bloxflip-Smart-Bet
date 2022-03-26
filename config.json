@@ -1,7 +1,7 @@
 {
 	"multiplier": 2,
 	"chance": 70,
-	"games_averaged": 60,
+	"games_averaged": 40,
 	"bet_amount": 1,
 	"authorization": ""
 }
