@@ -134,8 +134,6 @@ class main:
 						except:
 						  continue
 
-						print(response)
-
 						if response == 3:
 							continue
 						if isinstance(response, list) and response[0] == "game-end":
@@ -176,6 +174,10 @@ class main:
 							if len(self.crashpoints[-average:]) == average:
 							  avg = sum(self.crashpoints[-average:])/len(self.crashpoints[-average:])
 							  uiprint(f"Average: {avg}")
+						elif isinstance(response, list) and response[0] == "notify-error":
+							if response['notify-error'] == 'You are not logged in!':
+								uiprint("Invalid Authorization!", "error")
+								exit()
 						else:
 							await websocket.send('''2''')
 					continue
