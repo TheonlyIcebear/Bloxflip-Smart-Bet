@@ -17,7 +17,7 @@ Once you have done these two things either run installer.bat or open cmd CD to t
 ```
 pip install -r requirements.txt
 ```
-Or you could always just upload the files to replit and run it there. If you run into any problems do for every package inside requirements
+Or you could always just upload the files to replit (https://replit.com/) and run it there. If you run into any problems do for every package inside requirements
 ```
 pip install "NameOfPackage"
 ```
