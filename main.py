@@ -2,6 +2,7 @@
 
 import websockets, threading, asyncio, base64, json, time, os
 from termcolor import cprint
+
 class main:
 	def __init__(self):
 		self.crashPoints = None
@@ -145,7 +146,7 @@ class main:
 								self.crashpoints.pop(0)
 
 							for crashpoint in self.crashpoints[-average:]:
-								if crashpoint >= multiplier:
+								if crashpoint <= multiplier:
 									self.chance *= self.chance
 								else:
 									if self.chance > 0.5:
@@ -171,7 +172,7 @@ class main:
 
 							if len(self.crashpoints[-average:]) == average:
 							  avg = sum(self.crashpoints[-average:])/len(self.crashpoints[-average:])
-							  uiprint(avg)
+							  uiprint(f"Average: {avg}")
 						else:
 							await websocket.send('''2''')
 					continue
