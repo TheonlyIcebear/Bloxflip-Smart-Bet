@@ -136,6 +136,7 @@ class main:
 
 						if response == 3:
 							continue
+						print(response)
 						if isinstance(response, list) and response[0] == "game-end":
 							uiprint("Game starting!")
 							crashpoint = response[1]["crashPoint"]
@@ -161,8 +162,9 @@ class main:
 
 							games = len(self.crashpoints[-average:])
 							if games >= average and self.chance >= target:
+								time.sleep(4)
 								uiprint(f"Placing bet for {multiplier}x with a {self.chance*100}% chance")
-								await websocket.send(f'42/crash,["join-game",{{"autoCashoutPoint": {multiplier*100},"betAmount": {betamount}}}]')
+								await websocket.send(f'42/crash,["join-game",{{"autoCashoutPoint": {multiplier*100}, "betAmount": {betamount}}}]')
 
 							if not games >= average:
 								uiprint(f"Not enough diagnostic data. {average-games} more games needed. Please be patient", "warning")
