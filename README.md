@@ -12,4 +12,8 @@ localStorage.getItem('_DO_NOT_SHARE_BLOXFLIP_TOKEN')
  This will print your auth token to the console. Copy it without the quotes then put it into the config.json file
 # Usage
 To run the program make sure you have python installed and also pip. If you don't install python here https://www.python.org/downloads/.  
-Pip should be preinstalled if it isn't go to  https://pip.pypa.io/en/stable/installation/
+Pip should be preinstalled if it isn't go to  https://pip.pypa.io/en/stable/installation/ 
+Once you have done these two things either run installer.bat or open cmd CD to the directory and type the following command
+```
+pip install -r requirements.txt
+```
