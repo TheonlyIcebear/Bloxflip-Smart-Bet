@@ -111,7 +111,7 @@ class main:
 			try:
 				async with websockets.connect("wss://sio-bf.blox.land/socket.io/?EIO=3&transport=websocket", extra_headers=headers) as websocket:
 					await websocket.send('''40/crash''')
-					await websocket.send(f'''42/crash, ["auth", "{self.auth}"]''')
+					await websocket.send(f'''42/crash,["auth", "{self.auth}"]''')
 					uiprint("Connected")
 					try:
 						self.crashpoints
