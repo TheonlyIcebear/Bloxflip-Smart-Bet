@@ -151,10 +151,8 @@ class main:
 									self.chance += (1-self.chance)/2
 
 								if self.chance == 1:
-									print("2cap")
 									self.chance = 0.999
 								if self.chance == 0:
-									print("3cap")
 									self.chance = 0.001
 							uiprint(f"Current chance: {self.chance*100}%")
 
@@ -178,8 +176,6 @@ class main:
 			except websockets.exceptions.InvalidStatusCode:
 				continue
 			except websockets.exceptions.ConnectionClosedError:
-				continue
-			except websockets.exceptions.CancelledError:
 				continue
 			except KeyboardInterrupt:
 				uiprint("Exiting program.")
