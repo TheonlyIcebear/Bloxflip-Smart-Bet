@@ -143,7 +143,6 @@ class main:
 
 							if len(self.crashpoints) > average:
 								self.crashpoints.pop(0)
-							print(crashpoint, multiplier, self.chance*self.chance*100)
 							for crashpoint in self.crashpoints[-average:]:
 								if crashpoint >= multiplier:
 									self.chance = (1-(1-self.chance)+(self.chance/2))
