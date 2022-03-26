@@ -2,7 +2,6 @@
 
 import websockets, threading, asyncio, base64, json, time, os
 from termcolor import cprint
-
 class main:
 	def __init__(self):
 		self.crashPoints = None
@@ -144,18 +143,18 @@ class main:
 
 							if len(self.crashpoints) > average:
 								self.crashpoints.pop(0)
-
+							print(crashpoint, multiplier, self.chance*self.chance*100)
 							for crashpoint in self.crashpoints[-average:]:
-								if crashpoint <= multiplier:
-									self.chance *= self.chance
+								if crashpoint >= multiplier:
+									self.chance = (1-(1-self.chance)+(self.chance/2))
 								else:
-									if self.chance > 0.5:
-									  self.chance -= (1-self.chance)
-									else:
-									  self.chance -= self.chance/2
+									self.chance += (1-self.chance)/2
+
 								if self.chance == 1:
+									print("2cap")
 									self.chance = 0.999
 								if self.chance == 0:
+									print("3cap")
 									self.chance = 0.001
 							uiprint(f"Current chance: {self.chance*100}%")
 
