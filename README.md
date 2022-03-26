@@ -1,6 +1,7 @@
 # Bloxflip Smart Bet
 A program that uses real statistics to choose the best times to bet on BloxFlip's crash gamemode. https://bloxflip.com/crash. 
-THIS DOES NOT 100% PREDICT WHEN ITS GOING TO CRASH, THATS IMPOSSIBLE. Instead it just compares many games to see what the chances are of reaching a certain multiplier and if the chances are high enough it places the bet.
+
+THIS DOES NOT PREDICT WHEN ITS GOING TO CRASH, THATS IMPOSSIBLE. Instead it just compares many games to see what the chances are of reaching a certain multiplier and if the chances are high enough it places the bet.
 # Configuration and set up
 To edit the configuration simply go into the config.json file. 
 - The multiplier is the point at which the program will auto bet at 
