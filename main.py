@@ -176,7 +176,11 @@ class main:
 							await websocket.send('''2''')
 					continue
 			except websockets.exceptions.InvalidStatusCode:
-				break
+				continue
+			except websockets.exceptions.ConnectionClosedError:
+				continue
+			except websockets.exceptions.CancelledError:
+				continue
 			except KeyboardInterrupt:
 				uiprint("Exiting program.")
 				exit()
