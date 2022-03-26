@@ -65,7 +65,7 @@ class main:
 				uiprint("Invalid multipler inside JSON file. Must be valid number", "error")
 				exit()
 			try:
-				self.target = float(config["chance"]/100)
+				self.target = float(config["preferred_chance"]/100)
 			except:
 				uiprint("Invalid chance inside JSON file. Must be valid number", "error")
 				exit()
@@ -163,7 +163,7 @@ class main:
 							if games >= average and self.chance >= target:
 								uiprint(f"Placing bet for {multiplier}x with a {self.chance*100}% chance")
 								await websocket.send(f'42/crash,["join-game",{{"autoCashoutPoint": {multiplier*100},"betAmount": {betamount} }}]')
-								
+
 							if not games >= average:
 								uiprint(f"Not enough diagnostic data. {average-games} more games needed. Please be patient", "warning")
 								uiprint(f"If it's taking too long edit games_averaged inside config.json and restart the program", "warning")
