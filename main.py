@@ -143,7 +143,7 @@ class main:
 
 							if len(self.crashpoints) > average:
 								self.crashpoints.pop(0)
-								
+
 							for crashpoint in self.crashpoints[-average:]:
 								if crashpoint >= multiplier:
 									if self.chance > 0.5:
@@ -155,7 +155,7 @@ class main:
 
 								if self.chance >= 1:
 									self.chance = 0.999
-								if self.chance >= 0:
+								if self.chance <= 0:
 									self.chance = 0.001
 							uiprint(f"Current chance: {self.chance*100}%")
 
