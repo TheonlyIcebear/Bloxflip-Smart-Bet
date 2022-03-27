@@ -136,7 +136,6 @@ class main:
 
 						if response == 3:
 							continue
-						print(response)
 						if isinstance(response, list) and response[0] == "game-end":
 							uiprint("Game starting!")
 							crashpoint = response[1]["crashPoint"]
