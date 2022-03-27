@@ -71,7 +71,7 @@ class main:
 				exit()
 
 			try:
-				uiprint("Too little or too many games averaged will make the guesses innaccurate. The more the longer it'll take", "warning")
+				uiprint("Too little games will make it innacurate but the more the longer it'll take", "warning")
 				self.average = int(config["games_averaged"])
 			except:
 				uiprint("Invalid amount of games to be averaged inside JSON file. Must be valid number", "error")
