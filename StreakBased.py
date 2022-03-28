@@ -34,12 +34,12 @@ class main:
 			print(" ] ", end="")
 			if message:
 			  cprint(message, "yellow")
-		elif option == "winning":
+		elif option == "good":
 			cprint("AUTOBET", "green", end="")
 			print(" ] ", end="")
 			if message:
 			  cprint(message, "green")
-		elif option == "losing":
+		elif option == "bad":
 			cprint("AUTOBET", "red", end="")
 			print(" ] ", end="")
 			if message:
@@ -119,7 +119,7 @@ class main:
 				async with websockets.connect("wss://sio-bf.blox.land/socket.io/?EIO=3&transport=websocket", extra_headers=headers) as websocket:
 					await websocket.send('''40/crash''')
 					await websocket.send(f'''42/crash,["auth", "{self.auth}"]''')
-					uiprint("Connected")
+					uiprint("Connected", "good")
 					try:
 						self.crashpoints
 					except:
@@ -134,7 +134,7 @@ class main:
 						try:
 						  response = await websocket.recv()
 						except:
-						  uiprint("Disconnected")
+						  uiprint("Disconnected", "bad")
 						  break
 
 						try:
@@ -162,11 +162,11 @@ class main:
 
 							if avg >= self.multiplier and len(self.crashpoints) > average:
 								time.sleep(4)
-								uiprint(f"Winning streak detected.", "winning")
+								uiprint(f"Winning streak detected.", "good")
 								uiprint(f"Placing bet for {multiplier}x")
 								await websocket.send(f'42/crash,["join-game",{{"autoCashoutPoint": {multiplier*100}, "betAmount": {betamount}}}]')
 							else:
-								uiprint(f"Losing streak detected.", "losing")
+								uiprint(f"Losing streak detected.", "bad")
 
 						elif isinstance(response, list) and response[0] == "notify-error":
 							if response[1] == 'You are not logged in!':
