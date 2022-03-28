@@ -7,7 +7,6 @@ class main:
 		self.crashPoints = None
 		self.target = None
 		self.multiplier = 0
-		self.chance = 0
 		os.system("")
 		self.getConfig()
 		try:
@@ -69,8 +68,6 @@ class main:
 			config = json.load(data)
 			try:
 				self.multiplier = float(config["multiplier"])
-				self.chance = 100/self.multiplier/100
-				uiprint(f"Chance for this multiplier (Per game)%: {self.chance*100}")
 			except:
 				uiprint("Invalid multipler inside JSON file. Must be valid number", "error")
 				exit()
