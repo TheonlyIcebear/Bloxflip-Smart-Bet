@@ -160,11 +160,12 @@ class main:
 							avg = sum(games)/len(games)
 							uiprint(f"Average Crashpoint: {avg}")
 
-							if avg >= self.multiplier and len(self.crashpoints) > average:
-								time.sleep(4)
+							if avg >= self.multiplier:
 								uiprint(f"Winning streak detected.", "good")
-								uiprint(f"Placing bet for {multiplier}x")
-								await websocket.send(f'42/crash,["join-game",{{"autoCashoutPoint": {multiplier*100}, "betAmount": {betamount}}}]')
+								if len(self.crashpoints) > average:
+									time.sleep(4)
+									uiprint(f"Placing bet for {multiplier}x")
+									await websocket.send(f'42/crash,["join-game",{{"autoCashoutPoint": {multiplier*100}, "betAmount": {betamount}}}]')
 							elif avg < self.multiplier:
 								uiprint(f"Losing streak detected.", "bad")
 
