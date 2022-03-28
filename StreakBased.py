@@ -153,7 +153,7 @@ class main:
 							if len(self.crashpoints) > average:
 								self.crashpoints.pop(0)
 							else:
-								uiprint(f"Not enough diagnostic data. {average-self.crashpoints} more games needed. Please be patient", "warning")
+								uiprint(f"Not enough diagnostic data. {average-len(self.crashpoints)} more games needed. Please be patient", "warning")
 								uiprint(f"If it's taking too long edit games_averaged inside config.json and restart the program", "warning")
 
 							games = self.crashpoints
