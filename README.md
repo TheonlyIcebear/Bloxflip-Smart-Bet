@@ -1,6 +1,6 @@
 # Bloxflip Smart Bet
 A program that uses real statistics to choose the best times to bet on BloxFlip's crash gamemode. https://bloxflip.com/crash. 
-THIS DOES NOT PREDICT WHEN ITS GOING TO CRASH, THATS IMPOSSIBLE. Instead it just compares many games to see what the chances are of reaching a certain multiplier and if the chances are high enough it places the bet.
+THIS DOES NOT PREDICT WHEN ITS GOING TO CRASH. Instead it just compares many games to see what the chances are of reaching a certain multiplier and if the chances are high enough it places the bet.
 # Configuration and set up
 To edit the configuration simply go into the config.json file. 
 - The multiplier is the point at which the program will auto bet at 
@@ -22,3 +22,6 @@ Or you could always just upload the files to replit (https://replit.com/) and ru
 ```
 pip install "NameOfPackage"
 ```
+# Probability vs Streak based
+Probability based means that it checks it compares the probability of it being a certain multipler but streak based means it ignores the probabilities and just sees if a certain amount of the recent games have gone over a certain amount and if they have it places the bet. <br>
+Based on what I've seen it's recommended you use StreakBased.py
