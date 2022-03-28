@@ -165,7 +165,7 @@ class main:
 								uiprint(f"Winning streak detected.", "good")
 								uiprint(f"Placing bet for {multiplier}x")
 								await websocket.send(f'42/crash,["join-game",{{"autoCashoutPoint": {multiplier*100}, "betAmount": {betamount}}}]')
-							else:
+							elif avg < self.multiplier:
 								uiprint(f"Losing streak detected.", "bad")
 
 						elif isinstance(response, list) and response[0] == "notify-error":
