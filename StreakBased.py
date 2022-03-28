@@ -163,7 +163,7 @@ class main:
 							avg = sum(games)/len(games)
 							uiprint(f"Average Crashpoint: {avg}")
 
-							if avg >= self.multiplier
+							if avg >= self.multiplier:
 								time.sleep(4)
 								uiprint(f"Winning streak detected.", "winning")
 								uiprint(f"Placing bet for {multiplier}x")
