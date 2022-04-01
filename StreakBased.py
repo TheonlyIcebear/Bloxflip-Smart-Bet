@@ -177,7 +177,9 @@ class main:
 							await websocket.send('''2''')
 					continue
 			except websockets.exceptions.InvalidStatusCode:
-				continue
+				uiprint("Bloxflip has blocked the program from connecting", "bad")
+				time.sleep(1.5)
+				exit()
 			except websockets.exceptions.ConnectionClosedError:
 				continue
 			except KeyboardInterrupt:
