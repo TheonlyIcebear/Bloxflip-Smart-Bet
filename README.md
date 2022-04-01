@@ -2,7 +2,7 @@
 A program that uses real statistics to choose the best times to bet on BloxFlip's crash gamemode. https://bloxflip.com/crash. <br>
 THIS DOES NOT PREDICT WHEN ITS GOING TO CRASH. Instead it just compares many games to see what the chances are of reaching a certain multiplier and if the chances are high enough it places the bet. <br>
 
-**NOTICE** <br>
+# IMPORTANT
 Sadly bloxflip has made the decision to block people from connecting to their websockets unless their on the website. I am not sure how I can work around this and if you know feel free to dm me on discord: Ice Bear#0167. <br>
 
 But for now sadly this program does not work
