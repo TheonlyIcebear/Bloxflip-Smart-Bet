@@ -72,6 +72,7 @@ class main:
 			test["games_averaged"]
 		except:
 			uiprint("Invalid data inside JSON file. Redownload from github", "error")
+			time.sleep(1.6)
 			exit()
 
 
