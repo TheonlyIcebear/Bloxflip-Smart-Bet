@@ -1,7 +1,12 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning
 
-import websockets, threading, asyncio, base64, json, time, os
+import seleniumrequests, websockets, threading, requests, asyncio, zipfile, hashlib, codecs, base64, json, time, os
+from selenium.webdriver.common.keys import Keys
+from selenium import webdriver
 from termcolor import cprint
+from zipfile import *
+
+
 class main:
 	def __init__(self):
 		self.crashPoints = None
@@ -10,12 +15,11 @@ class main:
 		os.system("")
 		self.getConfig()
 		try:
-		  asyncio.get_event_loop().run_until_complete(self.sendBets())
-		except DeprecationWarning:
-		  pass
+		  self.sendBets()
 		except KeyboardInterrupt:
-				self.print("Exiting program.")
-				exit()
+			self.print("Exiting program.")
+			exit()
+
 
 	def print(self, message="", option=None): # print the ui's text with
 		print("[ ", end="")
@@ -45,11 +49,13 @@ class main:
 			if message:
 			  cprint(message, "red")
 
+
 	def clear(self): # Clear the console
 		if os.name == 'nt':
 		  os.system("cls")
 		else:
 		  os.system("clear")
+
 
 	def getConfig(self): # Get configuration from config.json file
 		uiprint = self.print
@@ -59,132 +65,182 @@ class main:
 		print(base64.b64decode(b'IE1hZGUgYnkgSWNlIEJlYXIjMDE2Nw==').decode('utf-8'))
 		time.sleep(3)
 		self.clear()
+
 		try:
-			json.load(open("config.json", "r+"))
-		except json.decoder.JSONDecodeError:
+			test = json.load(open("config.json", "r+"))
+			test["multiplier"]
+			test["authorization"]
+			test["games_averaged"]
+			test["preferred_chance"]
+		except:
 			uiprint("Invalid data inside JSON file. Redownload from github", "error")
 			exit()
+
+
 		with open("config.json", "r+") as data:
 			config = json.load(data)
 			try:
 				self.multiplier = float(config["multiplier"])
 			except:
 				uiprint("Invalid multipler inside JSON file. Must be valid number", "error")
+				time.sleep(1.6)
 				exit()
+
+
 			try:
 				self.target = float(config["preferred_chance"]/100)
 			except:
 				uiprint("Invalid chance inside JSON file. Must be valid number", "error")
+				time.sleep(1.6)
 				exit()
+
 
 			try:
 				uiprint("Too little games will make it innacurate but the more the longer it'll take", "warning")
 				self.average = int(config["games_averaged"])
+				if self.average > 35:
+					uiprint("Too many games averaged. Must be 35 or less games", "error")
+					time.sleep(1.6)
+					exit()
 			except:
 				uiprint("Invalid amount of games to be averaged inside JSON file. Must be valid number", "error")
+				time.sleep(1.6)
 				exit()
+
 
 			try:
 				self.auth = config["authorization"]
 			except:
 				uiprint("Invalid authorization inside JSON file. Enter your new authorization from BloxFlip", "error")
+				time.sleep(1.6)
 				exit()
+
 
 			try:
 				self.betamount = float(config["bet_amount"])
 			except:
 				uiprint("Invalid bet amount inside JSON file. Must be valid number", "error")
+				time.sleep(1.6)
 				exit()
 
-	async def sendBets(self): # Actually compare the user's chances of winning and place the bets
-		headers = {
-				"Accept-Encoding": "gzip, deflate, br",
-				"Accept-Language": "en-US,en;q=0.9",
-				"Cache-Control": "no-cache",
-				"Connection": "Upgrade",
-				"Host": "sio-bf.blox.land",
-				"Origin": "https://bloxflip.com",
-				"Pragma": "no-cache",
-				"Sec-WebSocket-Extensions": "permessage-deflate; client_max_window_bits",
-				"Sec-WebSocket-Key": "C6BOGNpZQXsVOiOX50Znog==",
-				"Sec-WebSocket-Version": "13",
-				"Upgrade": "websocket",
-				"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.74 Safari/537.36"
-			}
+
+			latest_version = requests.get("https://chromedriver.storage.googleapis.com/LATEST_RELEASE_100").text
+			download = requests.get(f"https://chromedriver.storage.googleapis.com/{latest_version}/chromedriver_win32.zip")
+
+
+			self.browser = webdriver.Chrome("chromedriver.exe")
+			browser = self.browser
+			if not os.path.exists("chromedriver.exe"):
+				uiprint("Chromedriver not insatlled", "bad")
+				uiprint("Installing chrome driver...", "warning")
+
+
+				with open("chromedriver.zip", "wb") as zip:
+					zip.write(download.content)
+
+
+				with ZipFile("chromedriver.zip", "r") as zip:
+					zip.extract("chromedriver.exe")
+				os.remove("chromedriver.zip")
+
+			browser.get("https://bloxflip.com/crash") # Open bloxflip
+			browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
+			browser.execute_script(f'''window.location = window.location''')
+			browser.implicitly_wait(10)
+			if "DDoS" in browser.page_source:
+				browser.implicitly_wait(15)
+
+
+			elemnts = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
+			
+			elemnts[0].send_keys(f"{Keys.BACKSPACE}")
+			elemnts[0].send_keys(f"{self.betamount}")
+
+
+			elemnts[1].send_keys(f"{Keys.BACKSPACE}")
+			elemnts[1].send_keys(f"{self.multiplier}")
+
+
+	def ChrashPoints(self):
+		options = webdriver.ChromeOptions()
+		options.add_argument('headless')
+		options.add_argument('window-size=1920x1080')
+		options.add_argument("disable-gpu")
+		
+		browser = webdriver.Chrome('chromedriver.exe', chrome_options=options)
+
+		average = self.average
+		history = None
+		sent = False
+		
+		while True:
+			browser.get("https://rest-bf.blox.land/games/crash")
+			data = browser.page_source.replace('<html><head></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">', "").replace("</pre></body></html>", "")
+			games = json.loads(data)
+			if games["current"]["status"] == 2 and not sent:
+				sent = True
+				previd = games["current"]["_id"]
+				yield ["game_start", games["history"][0]["crashPoint"]]
+			elif games["current"]["status"] == 4:
+				sent = False
+			if not history == games["history"]:
+				history = games["history"]
+				yield ["history", [float(crashpoint["crashPoint"]) for crashpoint in history[:average] ]]
+			time.sleep(1)
+
+			
+	def sendBets(self): # Actually compare the user's chances of winning and place the bets
 		uiprint = self.print
 		uiprint("If the program doesn't say anything after this point the authorization token is invalid", "warning")
 		uiprint("Press Ctrl + C to exit")
-		while True:
+
+		try:
+
 			try:
-				async with websockets.connect("wss://sio-bf.blox.land/socket.io/?EIO=3&transport=websocket", extra_headers=headers) as websocket:
-					await websocket.send('''40/crash''')
-					await websocket.send(f'''42/crash,["auth", "{self.auth}"]''')
-					uiprint("Connected", "good")
-					try:
-						self.crashpoints
-					except:
-						self.crashpoints = []
+				self.crashpoints
+			except:
+				self.crashpoints = []
 
-					multiplier = self.multiplier
-					betamount = self.betamount
-					average = self.average
-					target = self.target
+			multiplier = self.multiplier
+			betamount = self.betamount
+			browser = self.browser
+			average = self.average
+			target = self.target
+			winning = 0
+			losing = 0
 
-					while True:
-						try:
-						  response = await websocket.recv()
-						except:
-						  uiprint("Disconnected", "bad")
-						  break
+			for game in self.ChrashPoints():
+				print(game[0])
+				if game[0] == "history":
+					self.crashpoints = game[1]
+					games = self.crashpoints
+					avg = sum(games)/len(games)
+					uiprint(f"Average Crashpoint: {avg}")
 
-						try:
-						  response = eval(response.replace('42/crash,', ''))
-						except:
-						  continue
+				for crashpoint in games:
+					if crashpoint >= multiplier:
+						winning += 1
+					else:
+						losing += 1
 
-						if response == 3:
-							continue
+				percent = winning/(winning+losing)*100
+				uiprint(f"{percent}% of Games Above {multiplier}")
+				uiprint(f"{(1/(multiplier-1))/(1/(multiplier-1)+1)*100}% needed to make profit")
 
-						if isinstance(response, list) and response[0] == "game-end":
-							uiprint("Game starting!")
-							crashpoint = response[1]["crashPoint"]
-							self.crashpoints.append(crashpoint)
+				if game[0] == "game_start":
+					uiprint("Game Starting...")
+					if percent >= (1/(multiplier-1))/(1/(multiplier-1)+1)*100:
+						uiprint(f"Winning streak detected.", "good")
+						time.sleep(3)
+						uiprint(f"Placing bet for {multiplier}x")
+						browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss144.MuiButton-containedPrimary").click()
+					else:
+						uiprint(f"Losing streak detected.", "bad")
 
-							if len(self.crashpoints) > average:
-								self.crashpoints.pop(0)
-							else:
-								uiprint(f"Not enough diagnostic data. {average-len(self.crashpoints)} more games needed. Please be patient", "warning")
-								uiprint(f"If it's taking too long edit games_averaged inside config.json and restart the program", "warning")
 
-							games = self.crashpoints
-							avg = sum(games)/len(games)
-							uiprint(f"Average Crashpoint: {avg}")
-
-							if avg >= self.multiplier:
-								uiprint(f"Winning streak detected.", "good")
-								if len(self.crashpoints) > average:
-									time.sleep(4)
-									uiprint(f"Placing bet for {multiplier}x")
-									await websocket.send(f'42/crash,["join-game",{{"autoCashoutPoint": {multiplier*100}, "betAmount": {betamount}}}]')
-							elif avg < self.multiplier:
-								uiprint(f"Losing streak detected.", "bad")
-
-						elif isinstance(response, list) and response[0] == "notify-error":
-							if response[1] == 'You are not logged in!':
-								uiprint("Invalid Authorization!", "error")
-								exit()
-						else:
-							await websocket.send('''2''')
-					continue
-			except websockets.exceptions.InvalidStatusCode:
-				uiprint("Bloxflip has blocked the program from connecting", "bad")
-				time.sleep(1.5)
-				exit()
-			except websockets.exceptions.ConnectionClosedError:
-				continue
-			except KeyboardInterrupt:
-				uiprint("Exiting program.")
-				exit()
+		except KeyboardInterrupt:
+			uiprint("Exiting program.")
+			exit()
 
 if __name__ == "__main__":
 	main()
