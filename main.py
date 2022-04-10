@@ -217,17 +217,17 @@ class main:
 					avg = sum(games)/len(games)
 					uiprint(f"Average Crashpoint: {avg}")
 
-				for crashpoint in games:
-					if crashpoint >= multiplier:
-						winning += 1
-					else:
-						losing += 1
+					for crashpoint in games:
+						if crashpoint >= multiplier:
+							winning += 1
+						else:
+							losing += 1
 
-				percent = winning/(winning+losing)*100
-				uiprint(f"{percent}% of Games Above {multiplier}")
-				uiprint(f"{(1/(multiplier-1))/(1/(multiplier-1)+1)*100}% needed to make profit")
+					percent = winning/(winning+losing)*100
+					uiprint(f"{percent}% of Games Above {multiplier}")
+					uiprint(f"{(1/(multiplier-1))/(1/(multiplier-1)+1)*100}% needed to make profit")
 
-				if game[0] == "game_start":
+				elif game[0] == "game_start":
 					uiprint("Game Starting...")
 					if percent >= (1/(multiplier-1))/(1/(multiplier-1)+1)*100:
 						uiprint(f"Winning streak detected.", "good")
