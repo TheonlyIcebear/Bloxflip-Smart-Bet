@@ -10,7 +10,6 @@ from zipfile import *
 class main:
 	def __init__(self):
 		self.crashPoints = None
-		self.target = None
 		self.multiplier = 0
 		os.system("")
 		self.getConfig()
@@ -71,7 +70,6 @@ class main:
 			test["multiplier"]
 			test["authorization"]
 			test["games_averaged"]
-			test["preferred_chance"]
 		except:
 			uiprint("Invalid data inside JSON file. Redownload from github", "error")
 			exit()
@@ -85,15 +83,6 @@ class main:
 				uiprint("Invalid multipler inside JSON file. Must be valid number", "error")
 				time.sleep(1.6)
 				exit()
-
-
-			try:
-				self.target = float(config["preferred_chance"]/100)
-			except:
-				uiprint("Invalid chance inside JSON file. Must be valid number", "error")
-				time.sleep(1.6)
-				exit()
-
 
 			try:
 				uiprint("Too little games will make it innacurate but the more the longer it'll take", "warning")
@@ -205,7 +194,6 @@ class main:
 			betamount = self.betamount
 			browser = self.browser
 			average = self.average
-			target = self.target
 			winning = 0
 			losing = 0
 
