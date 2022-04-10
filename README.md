@@ -2,14 +2,6 @@
 A program that uses real statistics to choose the best times to bet on BloxFlip's crash gamemode. https://bloxflip.com/crash. <br>
 THIS DOES NOT PREDICT WHEN ITS GOING TO CRASH. Instead it just compares many games to see what the chances are of reaching a certain multiplier and if the chances are high enough it places the bet. <br>
 
-# IMPORTANT
-Sadly bloxflip has made the decision to block people from connecting to their websockets unless their on the website. I am not sure how I can work around this and if you know feel free to dm me on discord: Ice Bear#0167. <br>
-
-But for now sadly this program does not work
-# Probability vs Streak based
-Probability based means that it checks it compares the probability of it being a certain multipler but streak based means it ignores the probabilities and just sees if a certain amount of the recent games have gone over a certain amount and if they have it places the bet. <br>
-Based on some tests I've done Streak Based is better in the long term but Probability based is better in the short term because of it's ability to recognize and take each game's crash point into account unlike the streak based on that just looks at all the recent games together
-
 # Configuration and set up
 To edit the configuration simply go into the config.json file. 
 - The multiplier is the point at which the program will auto bet at 
