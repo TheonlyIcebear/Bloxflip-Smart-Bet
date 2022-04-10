@@ -117,9 +117,6 @@ class main:
 			latest_version = requests.get("https://chromedriver.storage.googleapis.com/LATEST_RELEASE_100").text
 			download = requests.get(f"https://chromedriver.storage.googleapis.com/{latest_version}/chromedriver_win32.zip")
 
-
-			self.browser = webdriver.Chrome("chromedriver.exe")
-			browser = self.browser
 			if not os.path.exists("chromedriver.exe"):
 				uiprint("Chromedriver not insatlled", "bad")
 				uiprint("Installing chrome driver...", "warning")
@@ -133,6 +130,10 @@ class main:
 					zip.extract("chromedriver.exe")
 				os.remove("chromedriver.zip")
 
+			options = webdriver.ChromeOptions()
+			options.add_experimental_option('excludeSwitches', ['enable-logging'])
+			self.browser = webdriver.Chrome("chromedriver.exe", chrome_options=options)
+			browser = self.browser
 			browser.get("https://bloxflip.com/crash") # Open bloxflip
 			browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
 			browser.execute_script(f'''window.location = window.location''')
@@ -199,7 +200,6 @@ class main:
 			losing = 0
 
 			for game in self.ChrashPoints():
-				print(game[0])
 				if game[0] == "history":
 					self.crashpoints = game[1]
 					games = self.crashpoints
@@ -214,11 +214,15 @@ class main:
 
 					percent = winning/(winning+losing)*100
 					uiprint(f"{percent}% of Games Above {multiplier}")
-					uiprint(f"{(1/(multiplier-1))/(1/(multiplier-1)+1)*100}% needed to make profit")
+					uiprint(f"{round((1/(multiplier-1)))/round((1/(multiplier-1)+1))*100}% needed to make profit")
 
 				elif game[0] == "game_start":
 					uiprint("Game Starting...")
-					if percent >= (1/(multiplier-1))/(1/(multiplier-1)+1)*100:
+					try:
+						percent
+					except:
+						continue
+					if percent >= round((1/(multiplier-1)))/round((1/(multiplier-1)+1))*100:
 						uiprint(f"Winning streak detected.", "good")
 						time.sleep(3)
 						uiprint(f"Placing bet for {multiplier}x")
