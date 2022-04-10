@@ -1,6 +1,6 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning
 
-import seleniumrequests, websockets, threading, requests, asyncio, zipfile, hashlib, codecs, base64, json, time, os
+import seleniumrequests, websockets, threading, requests, asyncio, zipfile, base64, json, time, os
 from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 from termcolor import cprint
