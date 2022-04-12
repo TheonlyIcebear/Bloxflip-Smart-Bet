@@ -232,7 +232,6 @@ class main:
 
 		except KeyboardInterrupt:
 			uiprint("Exiting program.")
-			time.sleep(0)
 			exit()
 
 if __name__ == "__main__":
