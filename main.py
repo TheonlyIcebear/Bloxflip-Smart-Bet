@@ -158,13 +158,14 @@ class main:
 		options.add_argument("disable-gpu")
 		
 		browser = webdriver.Chrome('chromedriver.exe', chrome_options=options)
+		browser.get("https://rest-bf.blox.land/games/crash")
 
 		average = self.average
 		history = None
 		sent = False
 		
 		while True:
-			browser.get("https://rest-bf.blox.land/games/crash")
+			webdriver.refresh()
 			data = browser.page_source.replace('<html><head></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">', "").replace("</pre></body></html>", "")
 			games = json.loads(data)
 			if games["current"]["status"] == 2 and not sent:
