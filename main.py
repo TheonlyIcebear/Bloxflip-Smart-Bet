@@ -1,6 +1,6 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning
 
-import websockets, threading, requests, asyncio, base64, json, time, os
+import seleniumrequests, websockets, threading, requests, asyncio, base64, json, time, os
 from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 from termcolor import cprint
@@ -86,7 +86,6 @@ class main:
 				exit()
 
 			try:
-				uiprint("Too little games will make it innacurate but the more the longer it'll take", "warning")
 				self.average = int(config["games_averaged"])
 				if self.average > 35:
 					uiprint("Too many games averaged. Must be 35 or less games", "error")
@@ -214,7 +213,7 @@ class main:
 
 					percent = winning/(winning+losing)*100
 					uiprint(f"{percent}% of Games Above {multiplier}")
-					uiprint(f"{round((1/(multiplier-1)))/round((1/(multiplier-1)+1))*100}% needed to make profit")
+					uiprint(f"{(1/(multiplier-1))/(1/(multiplier-1)+1)*100}% needed to make profit")
 
 				elif game[0] == "game_start":
 					uiprint("Game Starting...")
@@ -222,9 +221,9 @@ class main:
 						percent
 					except:
 						continue
-					if percent >= round((1/(multiplier-1)))/round((1/(multiplier-1)+1))*100:
+					if percent >= (1/(multiplier-1))/(1/(multiplier-1)+1)*100:
 						uiprint(f"Winning streak detected.", "good")
-						time.sleep(3)
+						time.sleep(1.5)
 						uiprint(f"Placing bet for {multiplier}x")
 						browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss144.MuiButton-containedPrimary").click()
 					else:
@@ -233,6 +232,7 @@ class main:
 
 		except KeyboardInterrupt:
 			uiprint("Exiting program.")
+			time.sleep(0)
 			exit()
 
 if __name__ == "__main__":
