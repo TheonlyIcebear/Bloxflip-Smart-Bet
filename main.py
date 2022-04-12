@@ -165,7 +165,7 @@ class main:
 		sent = False
 		
 		while True:
-			webdriver.refresh()
+			browser.refresh()
 			data = browser.page_source.replace('<html><head></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">', "").replace("</pre></body></html>", "")
 			games = json.loads(data)
 			if games["current"]["status"] == 2 and not sent:
