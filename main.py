@@ -162,12 +162,18 @@ class main:
 
 		average = self.average
 		history = None
+		uiprint = self.print
 		sent = False
 		
 		while True:
 			browser.refresh()
 			data = browser.page_source.replace('<html><head></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">', "").replace("</pre></body></html>", "")
-			games = json.loads(data)
+			try:
+				games = json.loads(data)
+			except json.decoder.JSONDecodeError:
+				uiprint("Blocked by ddos protection. If there's a captcha solve it.", "error")
+				time.sleep(20)
+				exit()
 			if games["current"]["status"] == 2 and not sent:
 				sent = True
 				previd = games["current"]["_id"]
