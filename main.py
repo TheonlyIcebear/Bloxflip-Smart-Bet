@@ -151,13 +151,8 @@ class main:
 			elemnts[1].send_keys(f"{self.multiplier}")
 
 
-	def ChrashPoints(self):
-		options = webdriver.ChromeOptions()
-		options.add_argument('headless')
-		options.add_argument('window-size=1920x1080')
-		options.add_argument("disable-gpu")
-		
-		browser = webdriver.Chrome('chromedriver.exe', chrome_options=options)
+	def ChrashPoints(self):		
+		browser = webdriver.Chrome('chromedriver.exe')
 		browser.get("https://rest-bf.blox.land/games/crash")
 
 		average = self.average
@@ -169,6 +164,7 @@ class main:
 			browser.refresh()
 			data = browser.page_source.replace('<html><head></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">', "").replace("</pre></body></html>", "")
 			try:
+				print(data)
 				games = json.loads(data)
 			except json.decoder.JSONDecodeError:
 				uiprint("Blocked by ddos protection. If there's a captcha solve it.", "error")
