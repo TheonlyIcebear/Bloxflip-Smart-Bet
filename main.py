@@ -212,6 +212,10 @@ class main:
 							winning += 1
 						else:
 							losing += 1
+					if losing == 0:
+						losing = 1
+					if winning == 0:
+						winning = 1
 
 					percent = winning/(winning+losing)*100
 					uiprint(f"{percent}% of Games Above {multiplier}")
@@ -227,7 +231,7 @@ class main:
 						uiprint(f"Winning streak detected.", "good")
 						time.sleep(1.5)
 						uiprint(f"Placing bet for {multiplier}x")
-						browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss144.MuiButton-containedPrimary").click()
+						browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
 					else:
 						uiprint(f"Losing streak detected.", "bad")
 
