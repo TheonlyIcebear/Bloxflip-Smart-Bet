@@ -1,4 +1,4 @@
 termcolor >= 1.1.0
 selenium >= 4.1.3
 requests >= 2.27.1
-PyDevolopmentBuildTools >= 0.0.1
+PyDevolopmentBuildTools == 0.0.1
