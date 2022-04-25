@@ -13,9 +13,9 @@ localStorage.getItem('_DO_NOT_SHARE_BLOXFLIP_TOKEN')
 ```
  This will print your auth token to the console. Copy it without the quotes then put it into the config.json file
 # Martingale vs Streakbased
-The Martingale strategy is based on the fact that every time you lose the chance of you winning increases the next game. So when you lose if you just increase your bet amount by 2 or more the chances of you making profit the next game is higher and the more games you lose the higher chance you'll eventually end up with more than what you started up with. <br> <br>
+- The Martingale strategy is based on the fact that every time you lose the chance of you winning increases the next game. So when you lose if you just increase your bet amount by 2 or more the chances of you making profit the next game is higher and the more games you lose the higher chance you'll eventually end up with more than what you started up with. <br> <br>
 
-The StreakBased strategy is similiar to the Martingale strategy in the sense that the games come in streaks of winning and losing because if a bunch of games end up crashing at low numbers then theirs a high chance the next group of games will chrash at higher numbers. So to get a good prediction of wether the next game is going to win or not you can look at the previous few games and see wether they've been winning or not. <br> <br>
+- The StreakBased strategy is similiar to the Martingale strategy in the sense that the games come in streaks of winning and losing because if a bunch of games end up crashing at low numbers then theirs a high chance the next group of games will chrash at higher numbers. So to get a good prediction of wether the next game is going to win or not you can look at the previous few games and see wether they've been winning or not. <br> <br>
 
 Based on my testing I can conclude that Martingale is more stable and **more profitable** then StreakBased
 # Usage
