@@ -219,7 +219,7 @@ class main:
 						balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text)
 					uiprint(f"Your balance is {balance}")
 					if balance < betamount:
-						uirpint("You don't have enough robux to continue betting.", "error")
+						uiprint("You don't have enough robux to continue betting.", "error")
 						if not balance < self.betamount:
 							input(f"Press enter to restart betting with {self.betamount} robux")
 							betamount = self.betamount
