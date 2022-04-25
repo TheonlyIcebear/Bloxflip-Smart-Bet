@@ -65,17 +65,6 @@ class main:
 		time.sleep(3)
 		self.clear()
 
-		try:
-			test = json.load(open("config.json", "r+"))
-			test["multiplier"]
-			test["authorization"]
-			test["games_averaged"]
-		except:
-			uiprint("Invalid data inside JSON file. Redownload from github", "error")
-			time.sleep(1.6)
-			exit()
-
-
 		with open("config.json", "r+") as data:
 			config = json.load(data)
 			try:
@@ -201,6 +190,19 @@ class main:
 			losing = 0
 
 			for game in self.ChrashPoints():
+				try:
+					balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss227.jss44").text)
+				except:
+					balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text)
+				uiprint(f"Your balance is {balance}")
+				if balance < betamount:
+					uirpint("You don't have enough robux to continue betting.", "error")
+					if not balance < self.betamount:
+						input(f"Press enter to restart betting with {self.betamount} robux")
+						betamount = self.betamount
+					else:
+						input("Press enter to exit")
+						exit()
 				if game[0] == "history":
 					self.crashpoints = game[1]
 					games = self.crashpoints
