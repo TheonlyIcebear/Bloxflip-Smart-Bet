@@ -162,7 +162,6 @@ class main:
 				uiprint("Blocked by ddos protection. If there's a captcha solve it.", "error")
 				time.sleep(20)
 				exit()
-			print(games["current"]["status"])
 			if games["current"]["status"] == 4 and not sent:
 				sent = True
 				previd = games["current"]["_id"]
