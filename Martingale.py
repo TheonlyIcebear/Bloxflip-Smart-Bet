@@ -182,7 +182,7 @@ class main:
 
 	def sendBets(self): # Actually compare the user's chances of winning and place the bets
 		uiprint = self.print
-		uiprint("Press Ctrl + C to exit")
+		uiprint("Betting started. Press Ctrl + C to exit")
 
 		try:
 
