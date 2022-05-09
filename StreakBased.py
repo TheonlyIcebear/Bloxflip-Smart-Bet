@@ -125,19 +125,19 @@ class main:
 			browser.get("https://bloxflip.com/crash") # Open bloxflip
 			browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
 			browser.execute_script(f'''window.location = window.location''')
-			browser.implicitly_wait(10)
-			if "DDoS" in browser.page_source:
-				browser.implicitly_wait(15)
 
 
-			elemnts = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
-			
-			elemnts[0].send_keys(f"{Keys.BACKSPACE}")
-			elemnts[0].send_keys(f"{self.betamount}")
+			elements = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
+			if not elements:
+				uiprint("Blocked by DDoS protection. Solve the captcha on the chrome window to continue.")
+			while not elements:
+				elements = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
+			elements[0].send_keys(f"{Keys.BACKSPACE}")
+			elements[0].send_keys(f"{self.betamount}")
 
 
-			elemnts[1].send_keys(f"{Keys.BACKSPACE}")
-			elemnts[1].send_keys(f"{self.multiplier}")
+			elements[1].send_keys(f"{Keys.BACKSPACE}")
+			elements[1].send_keys(f"{self.multiplier}")
 
 
 	def ChrashPoints(self):		
