@@ -1,6 +1,6 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning
 
-import requests, base64, json, time, os
+import requests, logging, base64, json, time, os
 from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 from termcolor import cprint
@@ -156,11 +156,12 @@ class main:
 		
 		while True:
 			browser.refresh()
-			data = browser.page_source.replace('<html><head></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">', "").replace("</pre></body></html>", "")
+			data = browser.page_source.replace('<html><head><meta name="color-scheme" content="light dark"></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">', "").replace("</pre></body></html>", "")
 			try:
+				print(data)
 				games = json.loads(data)
 			except json.decoder.JSONDecodeError:
-				uiprint("Blocked by ddos protection. If there's a captcha solve it.", "error")
+				uiprint("Blocked by ddos protection. Solve the captcha to continue.", "error")
 				time.sleep(20)
 				exit()
 			if games["current"]["status"] == 4 and not sent:
@@ -184,9 +185,8 @@ class main:
 	def sendBets(self): # Actually compare the user's chances of winning and place the bets
 		uiprint = self.print
 		uiprint("Betting started. Press Ctrl + C to exit")
-
 		try:
-
+			logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
 			multiplier = self.multiplier
 			betamount = self.betamount
 			browser = self.browser
@@ -232,9 +232,12 @@ class main:
 						lastgame = games[0]
 					browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
 
-
-		except KeyboardInterrupt:
-			uiprint("Exiting program.")
+		except Exception as e:
+			now = time.localtime()
+			logging.exception(f'A error has occured at {time.strftime("%H:%M:%S %I", now)}')
+			uiprint("An error has occured check logs.txt for more info", "error")
+			time.sleep(2)
+			raise
 			exit()
 
 if __name__ == "__main__":
