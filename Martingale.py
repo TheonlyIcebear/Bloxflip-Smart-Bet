@@ -226,7 +226,7 @@ class main:
 						else:
 							betamount = self.betamount
 							self.updateBetAmount(betamount)
-							uiprint(f"Won game. Lowering bet amount to {betamount}")
+							uiprint(f"Won game. Lowering bet amount to {betamount}", "good")
 					else:
 						lastgame = games[0]
 					browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
