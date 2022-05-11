@@ -1,6 +1,6 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning
 
-import requests, base64, json, time, os
+import requests, logging, base64, json, time, os
 from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 from termcolor import cprint
@@ -70,8 +70,12 @@ class main:
 			config = json.load(data)
 			try:
 				self.multiplier = float(config["multiplier"])
-			except:
-				uiprint("Invalid multipler inside JSON file. Must be valid number", "error")
+				if self.multiplier < 2:
+					uiprint("Multiplier must be above 2 to make profit.", "error")
+					time.sleep(1.6)
+					exit()
+			except ValueError:
+				uiprint("Invalid multiplier inside JSON file. Must be valid number", "error")
 				time.sleep(1.6)
 				exit()
 
@@ -126,19 +130,19 @@ class main:
 			browser.get("https://bloxflip.com/crash") # Open bloxflip
 			browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
 			browser.execute_script(f'''window.location = window.location''')
-			browser.implicitly_wait(10)
-			if "DDoS" in browser.page_source:
-				browser.implicitly_wait(15)
 
 
-			elemnts = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
-			
-			elemnts[0].send_keys(f"{Keys.BACKSPACE}")
-			elemnts[0].send_keys(f"{self.betamount}")
+			elements = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
+			if not elements:
+				uiprint("Blocked by DDoS protection. Solve the captcha on the chrome window to continue.")
+			while not elements:
+				elements = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
+			elements[0].send_keys(f"{Keys.BACKSPACE}")
+			elements[0].send_keys(f"{self.betamount}")
 
 
-			elemnts[1].send_keys(f"{Keys.BACKSPACE}")
-			elemnts[1].send_keys(f"{self.multiplier}")
+			elements[1].send_keys(f"{Keys.BACKSPACE}")
+			elements[1].send_keys(f"{self.multiplier}")
 
 
 	def ChrashPoints(self):		
@@ -152,88 +156,81 @@ class main:
 		
 		while True:
 			browser.refresh()
-			data = browser.page_source.replace('<html><head></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">', "").replace("</pre></body></html>", "")
+			data = browser.page_source.replace('<html><head><meta name="color-scheme" content="light dark"></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">', "").replace("</pre></body></html>", "")
 			try:
+				print(data)
 				games = json.loads(data)
 			except json.decoder.JSONDecodeError:
-				uiprint("Blocked by ddos protection. If there's a captcha solve it.", "error")
+				uiprint("Blocked by ddos protection. Solve the captcha to continue.", "error")
 				time.sleep(20)
 				exit()
-			if games["current"]["status"] == 2 and not sent:
+			if games["current"]["status"] == 4 and not sent:
 				sent = True
 				previd = games["current"]["_id"]
 				yield ["game_start", games["history"][0]["crashPoint"]]
-			elif games["current"]["status"] == 4:
+			elif games["current"]["status"] == 3:
 				sent = False
 			if not history == games["history"]:
 				history = games["history"]
 				yield ["history", [float(crashpoint["crashPoint"]) for crashpoint in history[:average] ]]
 			time.sleep(1)
 
-			
+	def updateBetAmount(self, amount):
+		browser = self.browser
+		elemnts = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
+		for _ in range(10):
+			elemnts[0].send_keys(f"{Keys.BACKSPACE}")
+		elemnts[0].send_keys(f"{amount}")
+
 	def sendBets(self): # Actually compare the user's chances of winning and place the bets
 		uiprint = self.print
 		uiprint("Betting started. Press Ctrl + C to exit")
-
 		try:
-
-			try:
-				self.crashpoints
-			except:
-				self.crashpoints = []
-
 			logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
 			multiplier = self.multiplier
 			betamount = self.betamount
 			browser = self.browser
 			average = self.average
+			lastgame = None
 			winning = 0
 			losing = 0
 
+
 			for game in self.ChrashPoints():
-				try:
-					balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss227.jss44").text)
-				except:
-					balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text)
-				uiprint(f"Your balance is {balance}")
-				if balance < betamount:
-					uirpint("You don't have enough robux to continue betting.", "error")
-					input("Press enter to exit >> ")
-					exit()
 				if game[0] == "history":
-					self.crashpoints = game[1]
-					games = self.crashpoints
+					games = game[1]
 					avg = sum(games)/len(games)
 					uiprint(f"Average Crashpoint: {avg}")
 
-					for crashpoint in games:
-						if crashpoint >= multiplier:
-							winning += 1
-						else:
-							losing += 1
-					if losing == 0:
-						losing = 1
-					if winning == 0:
-						winning = 1
-
-					percent = winning/(winning+losing)*100
-					uiprint(f"{percent}% of Games Above {multiplier}")
-					uiprint(f"{(1/(multiplier-1))/(1/(multiplier-1)+1)*100}% needed to make profit")
-
-				elif game[0] == "game_start":
+				if game[0] == "game_start":
 					uiprint("Game Starting...")
 					try:
-						percent
+						balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss227.jss44").text)
 					except:
-						continue
-					if percent >= (1/(multiplier-1))/(1/(multiplier-1)+1)*100:
-						uiprint(f"Winning streak detected.", "good")
-						time.sleep(1.5)
-						uiprint(f"Placing bet for {multiplier}x")
-						browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
+						balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text)
+					uiprint(f"Your balance is {balance}")
+					if balance < betamount:
+						uiprint("You don't have enough robux to continue betting.", "error")
+						if not balance < self.betamount:
+							input(f"Press enter to restart betting with {self.betamount} robux")
+							betamount = self.betamount
+						else:
+							input("Press enter to exit >> ")
+							exit()
+					uiprint(f"Placing bet with {betamount} Robux on {multiplier}x multiplier")
+					if lastgame:
+						lastgame = game[1]
+						if lastgame < multiplier:
+							betamount = betamount*2
+							self.updateBetAmount(betamount)
+							uiprint(f"Lost game. Increasing bet amount to {betamount}", "bad")
+						else:
+							betamount = self.betamount
+							self.updateBetAmount(betamount)
+							uiprint(f"Won game. Lowering bet amount to {betamount}")
 					else:
-						uiprint(f"Losing streak detected.", "bad")
-
+						lastgame = games[0]
+					browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
 
 		except Exception as e:
 			now = time.localtime()
