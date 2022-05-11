@@ -207,6 +207,10 @@ class main:
 						balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss227.jss44").text)
 					except:
 						balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text)
+					try:
+						games[0]
+					except:
+						continue
 					uiprint(f"Your balance is {balance}")
 					if balance < betamount:
 						uiprint("You don't have enough robux to continue betting.", "error")
