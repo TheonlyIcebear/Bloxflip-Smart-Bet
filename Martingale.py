@@ -158,7 +158,6 @@ class main:
 			browser.refresh()
 			data = browser.page_source.replace('<html><head><meta name="color-scheme" content="light dark"></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">', "").replace("</pre></body></html>", "")
 			try:
-				print(data)
 				games = json.loads(data)
 			except json.decoder.JSONDecodeError:
 				uiprint("Blocked by ddos protection. Solve the captcha to continue.", "error")
