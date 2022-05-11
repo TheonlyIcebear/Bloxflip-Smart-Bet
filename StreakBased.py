@@ -236,6 +236,7 @@ class main:
 
 
 		except Exception as e:
+			open("errors.txt", "w+").close()
 			now = time.localtime()
 			logging.exception(f'A error has occured at {time.strftime("%H:%M:%S %I", now)}')
 			uiprint("An error has occured check logs.txt for more info", "error")
