@@ -26,6 +26,8 @@ Once you have done these two things either run installer.bat or open cmd CD to t
 pip install -r requirements.txt
 ```
 # Errors
-If the program randomly closes with no message check for errors.txt inside the same folder as the python file. Then create a issue on this github by going to (https://github.com/TheonlyIcebear/Bloxflip-Smart-Bet/issues/new) then simply title the issue and put the text inside errors.txt
+If the program randomly closes with no message check for errors.txt inside the same folder as the python file. <br>
+Then create a issue on this github by going to (https://github.com/TheonlyIcebear/Bloxflip-Smart-Bet/issues/new) <br>
+Simply title the issue and put the text inside errors.txt
 # Supporting me
 Consider donating please as I make all my tools free https://www.roblox.com/game-pass/20395764/Donate#!/sales <br>
