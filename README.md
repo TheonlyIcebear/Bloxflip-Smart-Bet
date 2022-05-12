@@ -25,9 +25,7 @@ Once you have done these two things either run installer.bat or open cmd CD to t
 ```
 pip install -r requirements.txt
 ```
-Or you could always just upload the files to replit (https://replit.com/) and run it there. If you run into any problems for every package inside requirements.txt do:
-```
-pip install "NameOfPackage"
-```
+# Errors
+If the program randomly closes with no message check for errors.txt inside the same folder as the python file. Then create a issue on this github by going to (https://github.com/TheonlyIcebear/Bloxflip-Smart-Bet/issues/new) then simply title the issue and put the text inside errors.txt
 # Supporting me
 Consider donating please as I make all my tools free https://www.roblox.com/game-pass/20395764/Donate#!/sales <br>
