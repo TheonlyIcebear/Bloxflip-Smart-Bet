@@ -192,9 +192,9 @@ class main:
 
 			for game in self.ChrashPoints():
 				try:
-					balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss227.jss44").text)
+					balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss227.jss44").text.replace(',', ''))
 				except:
-					balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text)
+					balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text.replace(',', ''))
 				uiprint(f"Your balance is {balance}")
 				if balance < betamount:
 					uirpint("You don't have enough robux to continue betting.", "error")
