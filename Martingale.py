@@ -204,9 +204,9 @@ class main:
 				if game[0] == "game_start":
 					uiprint("Game Starting...")
 					try:
-						balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss227.jss44").text)
+						balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss227.jss44").text.replace(',', ''))
 					except:
-						balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text)
+						balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text.replace(',', ''))
 					try:
 						games[0]
 					except:
