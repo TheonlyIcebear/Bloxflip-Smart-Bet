@@ -123,6 +123,17 @@ class main:
 			options.add_experimental_option('excludeSwitches', ['enable-logging'])
 			self.browser = webdriver.Chrome("chromedriver.exe", chrome_options=options)
 			browser = self.browser
+
+			try:
+				balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss227.jss44").text.replace(',', ''))
+			except selenium.common.exceptions.NoSuchElementException:
+				try:
+					balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text.replace(',', ''))
+				except selenium.common.exceptions.NoSuchElementException:
+					uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
+					time.sleep(1.7)
+					exit()
+
 			browser.get("https://bloxflip.com/crash") # Open bloxflip
 			browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
 			browser.execute_script(f'''window.location = window.location''')
@@ -193,8 +204,13 @@ class main:
 			for game in self.ChrashPoints():
 				try:
 					balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss227.jss44").text.replace(',', ''))
-				except:
-					balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text.replace(',', ''))
+				except selenium.common.exceptions.NoSuchElementException:
+					try:
+						balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text.replace(',', ''))
+					except selenium.common.exceptions.NoSuchElementException:
+						uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
+						time.sleep(1.7)
+						exit()
 				uiprint(f"Your balance is {balance}")
 				if balance < betamount:
 					uirpint("You don't have enough robux to continue betting.", "error")
