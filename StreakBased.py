@@ -1,6 +1,6 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning
 
-import requests, logging, base64, json, time, os
+import selenium, requests, logging, base64, json, time, os
 from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 from termcolor import cprint
