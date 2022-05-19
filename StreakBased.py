@@ -70,8 +70,12 @@ class main:
 			config = json.load(data)
 			try:
 				self.multiplier = float(config["multiplier"])
-			except:
-				uiprint("Invalid multipler inside JSON file. Must be valid number", "error")
+				if self.multiplier < 2:
+					uiprint("Multiplier must be above 2 to make profit.", "error")
+					time.sleep(1.6)
+					exit()
+			except ValueError:
+				uiprint("Invalid multiplier inside JSON file. Must be valid number", "error")
 				time.sleep(1.6)
 				exit()
 
@@ -123,6 +127,9 @@ class main:
 			options.add_experimental_option('excludeSwitches', ['enable-logging'])
 			self.browser = webdriver.Chrome("chromedriver.exe", chrome_options=options)
 			browser = self.browser
+			browser.get("https://bloxflip.com/crash") # Open bloxflip
+			browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
+			browser.execute_script(f'''window.location = window.location''')
 
 			try:
 				balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss227.jss44").text.replace(',', ''))
@@ -134,22 +141,17 @@ class main:
 					time.sleep(1.7)
 					exit()
 
-			browser.get("https://bloxflip.com/crash") # Open bloxflip
-			browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
-			browser.execute_script(f'''window.location = window.location''')
-			browser.implicitly_wait(10)
-			if "DDoS" in browser.page_source:
-				browser.implicitly_wait(15)
+			elements = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
+			if not elements:
+				uiprint("Blocked by DDoS protection. Solve the captcha on the chrome window to continue.")
+			while not elements:
+				elements = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
+			elements[0].send_keys(f"{Keys.BACKSPACE}")
+			elements[0].send_keys(f"{self.betamount}")
 
 
-			elemnts = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
-			
-			elemnts[0].send_keys(f"{Keys.BACKSPACE}")
-			elemnts[0].send_keys(f"{self.betamount}")
-
-
-			elemnts[1].send_keys(f"{Keys.BACKSPACE}")
-			elemnts[1].send_keys(f"{self.multiplier}")
+			elements[1].send_keys(f"{Keys.BACKSPACE}")
+			elements[1].send_keys(f"{self.multiplier}")
 
 
 	def ChrashPoints(self):		
@@ -213,7 +215,7 @@ class main:
 						exit()
 				uiprint(f"Your balance is {balance}")
 				if balance < betamount:
-					uirpint("You don't have enough robux to continue betting.", "error")
+					uiprint("You don't have enough robux to continue betting.", "error")
 					input("Press enter to exit >> ")
 					exit()
 				if game[0] == "history":
