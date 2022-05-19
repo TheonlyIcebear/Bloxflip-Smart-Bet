@@ -1,6 +1,6 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning
 
-import requests, logging, base64, json, time, os
+import selenium, requests, logging, base64, json, time, os
 from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 from termcolor import cprint
@@ -131,6 +131,14 @@ class main:
 			browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
 			browser.execute_script(f'''window.location = window.location''')
 
+			try:
+				balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss227.jss44").text.replace(',', ''))
+			except selenium.common.exceptions.NoSuchElementException:
+				uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
+				time.sleep(1.7)
+				exit()
+			except:
+				balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text.replace(',', ''))
 
 			elements = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
 			if not elements:
@@ -205,8 +213,13 @@ class main:
 					uiprint("Game Starting...")
 					try:
 						balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss227.jss44").text.replace(',', ''))
+					except selenium.common.exceptions.NoSuchElementException:
+						uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
+						time.sleep(1.7)
+						exit()
 					except:
 						balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text.replace(',', ''))
+
 					try:
 						games[0]
 					except:
