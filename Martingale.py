@@ -134,11 +134,15 @@ class main:
 			try:
 				balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss227.jss44").text.replace(',', ''))
 			except selenium.common.exceptions.NoSuchElementException:
-				uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
-				time.sleep(1.7)
-				exit()
-			except:
-				balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text.replace(',', ''))
+				try:
+					balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text.replace(',', ''))
+				except selenium.common.exceptions.NoSuchElementException:
+					try:
+						balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss102.jss44").text.replace(',', ''))
+					except selenium.common.exceptions.NoSuchElementException:
+						uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
+						time.sleep(1.7)
+						exit()
 
 			elements = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
 			if not elements:
@@ -214,11 +218,13 @@ class main:
 					try:
 						balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss227.jss44").text.replace(',', ''))
 					except selenium.common.exceptions.NoSuchElementException:
-						uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
-						time.sleep(1.7)
-						exit()
-					except:
-						balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text.replace(',', ''))
+						try:
+							balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text.replace(',', ''))
+						except selenium.common.exceptions.NoSuchElementException:
+							uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
+							time.sleep(1.7)
+							exit()
+
 
 					try:
 						games[0]
