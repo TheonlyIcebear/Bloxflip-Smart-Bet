@@ -185,7 +185,7 @@ class main:
 			if not history == games["history"]:
 				history = games["history"]
 				yield ["history", [float(crashpoint["crashPoint"]) for crashpoint in history[:average] ]]
-			time.sleep(0.5)
+			time.sleep(0.05)
 
 	def updateBetAmount(self, amount):
 		browser = self.browser
@@ -256,7 +256,7 @@ class main:
 							uiprint(f"Won game. Lowering bet amount to {betamount}", "good")
 					else:
 						lastgame = games[0]
-					time.sleep(1.5)
+					time.sleep(2)
 					browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
 
 		except Exception as e:
