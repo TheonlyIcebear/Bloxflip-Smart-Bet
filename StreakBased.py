@@ -190,7 +190,7 @@ class main:
 			if not history == games["history"]:
 				history = games["history"]
 				yield ["history", [float(crashpoint["crashPoint"]) for crashpoint in history[:average] ]]
-			time.sleep(0.05)
+			time.sleep(0.15)
 
 			
 	def sendBets(self): # Actually compare the user's chances of winning and place the bets
