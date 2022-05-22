@@ -178,7 +178,7 @@ class main:
 			try:
 				games = json.loads(data)
 			except json.decoder.JSONDecodeError:
-				uiprint("Blocked by ddos protection. Solve the captcha to continue.", "error")
+				uiprint("Blocked by ddos protection. If there's a captcha solve it.", "error")
 				time.sleep(20)
 				exit()
 			if games["current"]["status"] == 4 and not sent:
@@ -192,77 +192,78 @@ class main:
 				yield ["history", [float(crashpoint["crashPoint"]) for crashpoint in history[:average] ]]
 			time.sleep(0.05)
 
-	def updateBetAmount(self, amount):
-		browser = self.browser
-		elemnts = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
-		for _ in range(10):
-			elemnts[0].send_keys(f"{Keys.BACKSPACE}")
-		elemnts[0].send_keys(f"{amount}")
-
+			
 	def sendBets(self): # Actually compare the user's chances of winning and place the bets
 		uiprint = self.print
 		uiprint("Betting started. Press Ctrl + C to exit")
+
 		try:
+
+			try:
+				self.crashpoints
+			except:
+				self.crashpoints = []
+
 			logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
 			multiplier = self.multiplier
 			betamount = self.betamount
 			browser = self.browser
 			average = self.average
-			lastgame = None
 			winning = 0
 			losing = 0
 
-
 			for game in self.ChrashPoints():
+				try:
+					balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss227.jss44").text.replace(',', ''))
+				except selenium.common.exceptions.NoSuchElementException:
+					try:
+						balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text.replace(',', ''))
+					except selenium.common.exceptions.NoSuchElementException:
+						try:
+							balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss102.jss44").text.replace(',', ''))
+						except selenium.common.exceptions.NoSuchElementException:
+							uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
+							time.sleep(1.7)
+						exit()
+				uiprint(f"Your balance is {balance}")
+				if balance < betamount:
+					uiprint("You don't have enough robux to continue betting.", "error")
+					input("Press enter to exit >> ")
+					exit()
 				if game[0] == "history":
-					games = game[1]
+					self.crashpoints = game[1]
+					games = self.crashpoints
 					avg = sum(games)/len(games)
 					uiprint(f"Average Crashpoint: {avg}")
 
-				if game[0] == "game_start":
+					for crashpoint in games:
+						if crashpoint >= multiplier:
+							winning += 1
+						else:
+							losing += 1
+					if losing == 0:
+						losing = 1
+					if winning == 0:
+						winning = 1
+
+					percent = winning/(winning+losing)*100
+					uiprint(f"{percent}% of Games Above {multiplier}")
+					uiprint(f"{(1/(multiplier-1))/(1/(multiplier-1)+1)*100}% needed to make profit")
+
+				elif game[0] == "game_start":
 					uiprint("Game Starting...")
 					try:
-						balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss227.jss44").text.replace(',', ''))
-					except selenium.common.exceptions.NoSuchElementException:
-						try:
-							balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text.replace(',', ''))
-						except selenium.common.exceptions.NoSuchElementException:
-							try:
-								balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss102.jss44").text.replace(',', ''))
-							except selenium.common.exceptions.NoSuchElementException:
-								uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
-								time.sleep(1.7)
-								exit()
-
-
-					try:
-						games[0]
+						percent
 					except:
 						continue
-					uiprint(f"Your balance is {balance}")
-					if balance < betamount:
-						uiprint("You don't have enough robux to continue betting.", "error")
-						if not balance < self.betamount:
-							input(f"Press enter to restart betting with {self.betamount} robux")
-							betamount = self.betamount
-						else:
-							input("Press enter to exit >> ")
-							exit()
-					uiprint(f"Placing bet with {betamount} Robux on {multiplier}x multiplier")
-					if lastgame:
-						lastgame = game[1]
-						if lastgame < multiplier:
-							betamount = betamount*2
-							self.updateBetAmount(betamount)
-							uiprint(f"Lost game. Increasing bet amount to {betamount}", "bad")
-						else:
-							betamount = self.betamount
-							self.updateBetAmount(betamount)
-							uiprint(f"Won game. Lowering bet amount to {betamount}", "good")
+					if percent >= (1/(multiplier-1))/(1/(multiplier-1)+1)*100:
+						uiprint(f"Winning streak detected.", "good")
+						time.sleep(1.5)
+						uiprint(f"Placing bet for {multiplier}x")
+						browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
 					else:
-						lastgame = games[0]
-					time.sleep(2)
-					browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
+						uiprint(f"Losing streak detected.", "bad")
+
 
 		except Exception as e:
 			open("errors.txt", "w+").close()
