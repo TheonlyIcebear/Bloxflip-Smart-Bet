@@ -66,9 +66,14 @@ class main:
 		time.sleep(3)
 		self.clear()
 
+		try:
+			open("config.json", "r").close()
+		except:
+			uiprint("Config.json file is missing. Make sure you downloaded all the files and they're all in the same folder", "error")
+
 		with open("config.json", "r+") as data:
-			config = json.load(data)
 			try:
+				config = json.load(data)
 				self.multiplier = float(config["multiplier"])
 				if self.multiplier < 2:
 					uiprint("Multiplier must be above 2 to make profit.", "error")
@@ -185,7 +190,7 @@ class main:
 			if not history == games["history"]:
 				history = games["history"]
 				yield ["history", [float(crashpoint["crashPoint"]) for crashpoint in history[:average] ]]
-			time.sleep(0.05)
+			time.sleep(0.15)
 
 	def updateBetAmount(self, amount):
 		browser = self.browser
