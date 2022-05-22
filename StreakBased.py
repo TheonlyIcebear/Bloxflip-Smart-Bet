@@ -176,16 +176,16 @@ class main:
 				uiprint("Blocked by ddos protection. If there's a captcha solve it.", "error")
 				time.sleep(20)
 				exit()
-			if games["current"]["status"] == 2 and not sent:
+			if games["current"]["status"] == 4 and not sent:
 				sent = True
 				previd = games["current"]["_id"]
 				yield ["game_start", games["history"][0]["crashPoint"]]
-			elif games["current"]["status"] == 4:
+			elif games["current"]["status"] == 3:
 				sent = False
 			if not history == games["history"]:
 				history = games["history"]
 				yield ["history", [float(crashpoint["crashPoint"]) for crashpoint in history[:average] ]]
-			time.sleep(1)
+			time.sleep(0.05)
 
 			
 	def sendBets(self): # Actually compare the user's chances of winning and place the bets
