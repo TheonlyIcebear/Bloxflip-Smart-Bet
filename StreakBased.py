@@ -16,7 +16,7 @@ class main:
 		os.system("")
 		try:
 			self.getConfig()
-		  	self.sendBets()
+			self.sendBets()
 		except KeyboardInterrupt:
 			self.print("Exiting program.")
 			exit()
