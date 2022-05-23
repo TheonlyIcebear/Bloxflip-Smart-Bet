@@ -24,7 +24,7 @@ class main:
 			open("errors.txt", "w+").close()
 			now = time.localtime()
 			logging.exception(f'A error has occured at {time.strftime("%H:%M:%S %I", now)}')
-			uiprint("An error has occured check logs.txt for more info", "error")
+			self.print("An error has occured check logs.txt for more info", "error")
 			time.sleep(2)
 			raise
 			exit()
@@ -120,6 +120,22 @@ class main:
 				exit()
 
 
+			try:
+				self.stop =  float(config["auto_stop"])
+			except:
+				uiprint("Invalid auto stop amount inside JSON file. Must be a valid number", "error")
+				time.sleep(1.6)
+				exit()
+
+
+			try:
+				self.restart =  bool(config["auto_restart"])
+			except:
+				uiprint("Invalid restart boolean inside JSON file. Must be True or False", "error")
+				time.sleep(1.6)
+				exit()
+
+
 			latest_version = requests.get("https://chromedriver.storage.googleapis.com/LATEST_RELEASE_100").text
 			download = requests.get(f"https://chromedriver.storage.googleapis.com/{latest_version}/chromedriver_win32.zip")
 
@@ -164,6 +180,7 @@ class main:
 					except selenium.common.exceptions.NoSuchElementException:
 						uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
 						time.sleep(1.7)
+						browser.close()
 						exit()
 
 
@@ -192,6 +209,7 @@ class main:
 			except json.decoder.JSONDecodeError:
 				uiprint("Blocked by ddos protection. Solve the captcha to continue.", "error")
 				time.sleep(20)
+				browser.close()
 				exit()
 			if games["current"]["status"] == 2 and not sent:
 				sent = True
@@ -220,6 +238,8 @@ class main:
 		betamount = self.betamount
 		browser = self.browser
 		average = self.average
+		restart = self.restart
+		stop = self.stop
 		lastgame = None
 		winning = 0
 		losing = 0
@@ -244,6 +264,7 @@ class main:
 						except selenium.common.exceptions.NoSuchElementException:
 							uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
 							time.sleep(1.7)
+							browser.close()
 							exit()
 
 
@@ -254,12 +275,21 @@ class main:
 				uiprint(f"Your balance is {balance}")
 				if balance < betamount:
 					uiprint("You don't have enough robux to continue betting.", "error")
-					if not balance < self.betamount:
+					if not balance < self.betamount and not restart:
 						input(f"Press enter to restart betting with {self.betamount} robux")
 						betamount = self.betamount
+					elif not balance < self.betamount and restart:
+						uiprint("Overwritten: Auto Restart is enabled", "warining")
 					else:
 						input("Press enter to exit >> ")
+						browser.close()
 						exit()
+				elif balance > stop:
+					uiprint("Auto Stop goal reached. Betting has stopped.", "good")
+					input("Press enter to exit >> ")
+					browser.close()
+					exit()
+
 				uiprint(f"Placing bet with {betamount} Robux on {multiplier}x multiplier")
 				if lastgame:
 					lastgame = game[1]
