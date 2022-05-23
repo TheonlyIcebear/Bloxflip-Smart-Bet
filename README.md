@@ -6,7 +6,9 @@ THIS DOES NOT PREDICT WHEN ITS GOING TO CRASH. Instead it just compares many gam
 To edit the configuration simply go into the config.json file. 
 - The multiplier is the point at which the program will auto bet at 
 - The bet amount is the amount of robux to bet each time
-- Games averaged is the amount of games the program will check
+- Games averaged is the amount of games the program will check (Streakbased only)
+- Auto stop is the amount of Robux at which the program will stop betting.
+- Auto restart means the program won't ask you to restart betting with your origanal amount when the new increased bet amount is more than your account's balance (Streakbased only)
 - Your authorization is the token used on bloxflip to place bets. To get your own auth go onto bloxflip press inspect element and go into the console. Then paste the following code
 ```
 localStorage.getItem('_DO_NOT_SHARE_BLOXFLIP_TOKEN')
