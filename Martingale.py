@@ -16,7 +16,7 @@ class main:
 		os.system("")
 		try:
 			self.getConfig()
-		  	self.sendBets()
+			self.sendBets()
 		except KeyboardInterrupt:
 			self.print("Exiting program.")
 			exit()
@@ -215,7 +215,7 @@ class main:
 		uiprint = self.print
 		uiprint("Betting started. Press Ctrl + C to exit")
 
-		
+
 		multiplier = self.multiplier
 		betamount = self.betamount
 		browser = self.browser
