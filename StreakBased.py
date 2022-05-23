@@ -10,14 +10,23 @@ from sys import exit
 
 class main:
 	def __init__(self):
+		logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
 		self.crashPoints = None
 		self.multiplier = 0
 		os.system("")
-		self.getConfig()
 		try:
-		  self.sendBets()
+			self.getConfig()
+		  	self.sendBets()
 		except KeyboardInterrupt:
 			self.print("Exiting program.")
+			exit()
+		except Exception as e:
+			open("errors.txt", "w+").close()
+			now = time.localtime()
+			logging.exception(f'A error has occured at {time.strftime("%H:%M:%S %I", now)}')
+			uiprint("An error has occured check logs.txt for more info", "error")
+			time.sleep(2)
+			raise
 			exit()
 
 
@@ -200,82 +209,71 @@ class main:
 		uiprint = self.print
 		uiprint("Betting started. Press Ctrl + C to exit")
 
+
 		try:
+			self.crashpoints
+		except:
+			self.crashpoints = []
 
+
+		multiplier = self.multiplier
+		betamount = self.betamount
+		browser = self.browser
+		average = self.average
+		winning = 0
+		losing = 0
+
+		for game in self.ChrashPoints():
 			try:
-				self.crashpoints
-			except:
-				self.crashpoints = []
-
-			logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
-			multiplier = self.multiplier
-			betamount = self.betamount
-			browser = self.browser
-			average = self.average
-			winning = 0
-			losing = 0
-
-			for game in self.ChrashPoints():
+				balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss227.jss44").text.replace(',', ''))
+			except selenium.common.exceptions.NoSuchElementException:
 				try:
-					balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss227.jss44").text.replace(',', ''))
+					balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text.replace(',', ''))
 				except selenium.common.exceptions.NoSuchElementException:
 					try:
-						balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text.replace(',', ''))
+						balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss102.jss44").text.replace(',', ''))
 					except selenium.common.exceptions.NoSuchElementException:
-						try:
-							balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss102.jss44").text.replace(',', ''))
-						except selenium.common.exceptions.NoSuchElementException:
-							uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
-							time.sleep(1.7)
-						exit()
-				uiprint(f"Your balance is {balance}")
-				if balance < betamount:
-					uiprint("You don't have enough robux to continue betting.", "error")
-					input("Press enter to exit >> ")
+						uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
+						time.sleep(1.7)
 					exit()
-				if game[0] == "history":
-					self.crashpoints = game[1]
-					games = self.crashpoints
-					avg = sum(games)/len(games)
-					uiprint(f"Average Crashpoint: {avg}")
+			uiprint(f"Your balance is {balance}")
+			if balance < betamount:
+				uiprint("You don't have enough robux to continue betting.", "error")
+				input("Press enter to exit >> ")
+				exit()
+			if game[0] == "history":
+				self.crashpoints = game[1]
+				games = self.crashpoints
+				avg = sum(games)/len(games)
+				uiprint(f"Average Crashpoint: {avg}")
 
-					for crashpoint in games:
-						if crashpoint >= multiplier:
-							winning += 1
-						else:
-							losing += 1
-					if losing == 0:
-						losing = 1
-					if winning == 0:
-						winning = 1
-
-					percent = winning/(winning+losing)*100
-					uiprint(f"{percent}% of Games Above {multiplier}")
-					uiprint(f"{(1/(multiplier-1))/(1/(multiplier-1)+1)*100}% needed to make profit")
-
-				elif game[0] == "game_start":
-					uiprint("Game Starting...")
-					try:
-						percent
-					except:
-						continue
-					if percent >= (1/(multiplier-1))/(1/(multiplier-1)+1)*100:
-						uiprint(f"Winning streak detected.", "good")
-						uiprint(f"Placing bet for {multiplier}x")
-						time.sleep(2)
-						browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
+				for crashpoint in games:
+					if crashpoint >= multiplier:
+						winning += 1
 					else:
-						uiprint(f"Losing streak detected.", "bad")
+						losing += 1
+				if losing == 0:
+					losing = 1
+				if winning == 0:
+					winning = 1
 
+				percent = winning/(winning+losing)*100
+				uiprint(f"{percent}% of Games Above {multiplier}")
+				uiprint(f"{(1/(multiplier-1))/(1/(multiplier-1)+1)*100}% needed to make profit")
 
-		except Exception as e:
-			open("errors.txt", "w+").close()
-			now = time.localtime()
-			logging.exception(f'A error has occured at {time.strftime("%H:%M:%S %I", now)}')
-			uiprint("An error has occured check logs.txt for more info", "error")
-			time.sleep(2)
-			raise
-			exit()
+			elif game[0] == "game_start":
+				uiprint("Game Starting...")
+				try:
+					percent
+				except:
+					continue
+				if percent >= (1/(multiplier-1))/(1/(multiplier-1)+1)*100:
+					uiprint(f"Winning streak detected.", "good")
+					uiprint(f"Placing bet for {multiplier}x")
+					time.sleep(2)
+					browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
+				else:
+					uiprint(f"Losing streak detected.", "bad")
 
 if __name__ == "__main__":
 	main()
