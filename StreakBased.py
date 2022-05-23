@@ -135,7 +135,14 @@ class main:
 			browser.get("https://bloxflip.com/crash") # Open bloxflip
 			browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
 			browser.execute_script(f'''window.location = window.location''')
-			time.sleep(1.5)
+
+
+			elements = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
+			if not elements:
+				uiprint("Blocked by DDoS protection. Solve the captcha on the chrome window to continue.")
+			while not elements:
+				elements = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
+
 
 			try:
 				balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss227.jss44").text.replace(',', ''))
@@ -150,11 +157,7 @@ class main:
 						time.sleep(1.7)
 						exit()
 
-			elements = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
-			if not elements:
-				uiprint("Blocked by DDoS protection. Solve the captcha on the chrome window to continue.")
-			while not elements:
-				elements = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
+
 			elements[0].send_keys(f"{Keys.BACKSPACE}")
 			elements[0].send_keys(f"{self.betamount}")
 
@@ -181,7 +184,7 @@ class main:
 				uiprint("Blocked by ddos protection. If there's a captcha solve it.", "error")
 				time.sleep(20)
 				exit()
-			if games["current"]["status"] == 4 and not sent:
+			if games["current"]["status"] == 2 and not sent:
 				sent = True
 				previd = games["current"]["_id"]
 				yield ["game_start", games["history"][0]["crashPoint"]]
@@ -190,7 +193,7 @@ class main:
 			if not history == games["history"]:
 				history = games["history"]
 				yield ["history", [float(crashpoint["crashPoint"]) for crashpoint in history[:average] ]]
-			time.sleep(0.15)
+			time.sleep(0.25)
 
 			
 	def sendBets(self): # Actually compare the user's chances of winning and place the bets
@@ -258,8 +261,8 @@ class main:
 						continue
 					if percent >= (1/(multiplier-1))/(1/(multiplier-1)+1)*100:
 						uiprint(f"Winning streak detected.", "good")
-						time.sleep(1.5)
 						uiprint(f"Placing bet for {multiplier}x")
+						time.sleep(2)
 						browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
 					else:
 						uiprint(f"Losing streak detected.", "bad")
