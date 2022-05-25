@@ -19,6 +19,7 @@ class main:
 			self.sendBets()
 		except KeyboardInterrupt:
 			self.print("Exiting program.")
+			self.browser.close()
 			exit()
 		except Exception as e:
 			open("errors.txt", "w+").close()
@@ -27,6 +28,7 @@ class main:
 			self.print("An error has occured check logs.txt for more info", "error")
 			time.sleep(2)
 			raise
+			self.browser.close()
 			exit()
 
 	def print(self, message="", option=None): # print the ui's text with
@@ -129,9 +131,14 @@ class main:
 
 
 			try:
-				self.restart =  bool(config["auto_restart"])
+				self.restart = config["auto_restart"]
 			except:
-				uiprint("Invalid restart boolean inside JSON file. Must be True or False", "error")
+				uiprint("Invalid auto_restart boolean inside JSON file. Must be True or False", "error")
+				time.sleep(1.6)
+				exit()
+
+			if not type(self.restart) == bool:
+				uiprint("Invalid auto_restart boolean inside JSON file. Must be true or false 1", "error")
 				time.sleep(1.6)
 				exit()
 
