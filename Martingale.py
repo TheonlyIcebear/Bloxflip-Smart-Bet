@@ -292,10 +292,14 @@ class main:
 						browser.close()
 						exit()
 				elif balance > stop:
-					uiprint("Auto Stop goal reached. Betting has stopped.", "good")
-					input("Press enter to exit >> ")
-					browser.close()
-					exit()
+					uiprint("Auto Stop goal reached.", "good")
+					input("Press enter to resume betting >> ")
+					while True:
+						try:
+							stop = float(input("Enter new goal: "))
+							break
+						except:
+							uiprint("Ivalid number.", "error")
 
 				uiprint(f"Placing bet with {betamount} Robux on {multiplier}x multiplier")
 				if lastgame:
