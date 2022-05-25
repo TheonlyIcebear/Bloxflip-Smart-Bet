@@ -286,7 +286,7 @@ class main:
 						input(f"Press enter to restart betting with {self.betamount} robux")
 						betamount = self.betamount
 					elif not balance < self.betamount and restart:
-						uiprint("Overwritten: Auto Restart is enabled", "warining")
+						uiprint("Overwritten: Auto Restart is enabled", "warning")
 					else:
 						input("Press enter to exit >> ")
 						browser.close()
