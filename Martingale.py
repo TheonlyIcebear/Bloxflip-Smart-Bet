@@ -287,6 +287,7 @@ class main:
 						betamount = self.betamount
 					elif not balance < self.betamount and restart:
 						uiprint("Overwritten: Auto Restart is enabled", "warning")
+						betamount = self.betamount
 					else:
 						input("Press enter to exit >> ")
 						browser.close()
