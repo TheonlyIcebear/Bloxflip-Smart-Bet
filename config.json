@@ -3,6 +3,6 @@
 	"games_averaged": 3,
 	"bet_amount": 1,
 	"auto_stop": 100,
-	"auto_restart": "True",
+	"auto_restart": true,
 	"authorization": ""
 }
