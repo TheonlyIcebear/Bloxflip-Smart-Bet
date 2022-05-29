@@ -34,5 +34,5 @@ Simply title the issue and put the text inside errors.txt
 # Supporting me
 Consider donating please as I make all my tools free 
 Roblox Gamepass: https://www.roblox.com/game-pass/20395764/Donate#!/sales <br>
-Btc Adress: bc1qq8k7h002dlkwxxy35xpw8z2amjpk9nquajvtqw <br>
+Btc Address: bc1qq8k7h002dlkwxxy35xpw8z2amjpk9nquajvtqw <br>
 Monero Adress: 452ogMtEPc9T2sLQHVy3NcARkmTADVbLiY1hyoBp6xhfASdR2R7MPuRjZD4XSe8kHiKjZ1ozVGQqPEVqjjFt2mLcDmGfwXu <br>
