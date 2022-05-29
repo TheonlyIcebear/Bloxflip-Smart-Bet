@@ -241,7 +241,7 @@ class main:
 			if not history == games["history"]:
 				history = games["history"]
 				yield ["history", [float(crashpoint["crashPoint"]) for crashpoint in history[:average] ]]
-			time.sleep(0.20)
+			time.sleep(0.01)
 
 	def updateBetAmount(self, amount):
 		browser = self.browser
