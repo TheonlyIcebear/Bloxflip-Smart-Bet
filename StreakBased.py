@@ -144,6 +144,19 @@ class main:
 				with ZipFile("chromedriver.zip", "r") as zip:
 					zip.extract("chromedriver.exe")
 				os.remove("chromedriver.zip")
+			else:
+				uiprint("Installing newest chrome driver...", "warning")
+				os.chmod('chromedriver.exe', 0o777)
+				os.remove("chromedriver.exe")
+
+				with open("chromedriver.zip", "wb") as zip:
+					zip.write(download.content)
+
+
+				with ZipFile("chromedriver.zip", "r") as zip:
+					zip.extract("chromedriver.exe")
+				os.remove("chromedriver.zip")
+				uiprint("Chrome driver installed.", "good")
 
 			options = webdriver.ChromeOptions()
 			options.add_experimental_option('excludeSwitches', ['enable-logging'])
