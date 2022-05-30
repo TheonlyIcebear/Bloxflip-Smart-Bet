@@ -324,7 +324,7 @@ class main:
 							break
 						except:
 							uiprint("Ivalid number.", "error")
-				elif balance-betamound < stoploss
+				elif balance-betamount < stoploss:
 					uiprint(f"Resetting bet amount to {self.betamount}. If game is lost balance will be under stop loss", "warning")
 					betamount = self.betamount
 				elif balance < stoploss:
