@@ -19,7 +19,7 @@ localStorage.getItem('_DO_NOT_SHARE_BLOXFLIP_TOKEN')
  This will print your auth token to the console. Copy it without the quotes then put it into the config.json file
 
 Setup tutorial by SteelyXs#1316:
-<iframe width="560" height="315" src="https://www.youtube.com/embed/9o7_NDLlyfE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+[![Video](http://img.youtube.com/vi/9o7_NDLlyfE/0.jpg)](http://www.youtube.com/watch?v=9o7_NDLlyfE "Video Title")
 # Martingale vs StreakBased
 - The Martingale strategy is based on the fact that every time you lose the chance of you winning increases the next game. So when you lose if you just increase your bet amount by 2 or more the chances of you making profit the next game is higher and the more games you lose the higher chance you'll eventually end up with more than what you started up with. <br> <br>
 
