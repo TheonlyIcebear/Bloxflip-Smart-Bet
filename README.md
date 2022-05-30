@@ -19,7 +19,7 @@ localStorage.getItem('_DO_NOT_SHARE_BLOXFLIP_TOKEN')
  This will print your auth token to the console. Copy it without the quotes then put it into the config.json file
 
 Setup tutorial by SteelyXs#1316: <br>
-https://cdn-112.anonfiles.com/Nd96rcl1y5/30be396b-1653884480/yt5s.com-_%20TUTORIAL%20_%20How%20to%20install%20Martingale%20(Bloxflip%20Smart%20Bet)-(1080p60).mp4
+[![Video](http://img.youtube.com/vi/9o7_NDLlyfE/0.jpg)](http://www.youtube.com/watch?v=9o7_NDLlyfE "| TUTORIAL | How to install Martingale (Bloxflip Smart Bet)")
 # Martingale vs StreakBased
 - The Martingale strategy is based on the fact that every time you lose the chance of you winning increases the next game. So when you lose if you just increase your bet amount by 2 or more the chances of you making profit the next game is higher and the more games you lose the higher chance you'll eventually end up with more than what you started up with. <br> <br>
 
