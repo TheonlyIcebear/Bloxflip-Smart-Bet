@@ -270,6 +270,11 @@ class main:
 				input("Press enter to exit >> ")
 				browser.close()
 				exit()
+			elif balance < stoploss:
+				uiprint(f"Balance is below stop loss. All betting has stopped.", "bad")
+				input("Press enter to exit >> ")
+				browser.close()
+				exit()
 			if game[0] == "history":
 				self.crashpoints = game[1]
 				games = self.crashpoints
