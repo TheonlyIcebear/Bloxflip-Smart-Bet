@@ -97,7 +97,7 @@ class main:
 			try:
 				self.average = int(config["games_averaged"])
 				if self.average > 35:
-					uiprint("Too many games averaged. Must be 35 or less games", "error")
+					uiprint("Too many games_averaged. Must be 35 or less games", "error")
 					time.sleep(1.6)
 					exit()
 			except:
@@ -117,7 +117,7 @@ class main:
 			try:
 				self.betamount = float(config["bet_amount"])
 			except:
-				uiprint("Invalid bet amount inside JSON file. Must be valid number", "error")
+				uiprint("Invalid bet_amount inside JSON file. Must be valid number", "error")
 				time.sleep(1.6)
 				exit()
 
@@ -125,7 +125,15 @@ class main:
 			try:
 				self.stop =  float(config["auto_stop"])
 			except:
-				uiprint("Invalid auto stop amount inside JSON file. Must be a valid number", "error")
+				uiprint("Invalid auto_stop amount inside JSON file. Must be a valid number", "error")
+				time.sleep(1.6)
+				exit()
+
+
+			try:
+				self.stoploss =  float(config["stop_loss"])
+			except:
+				uiprint("Invalid auto stop_loss inside JSON file. Must be a valid number", "error")
 				time.sleep(1.6)
 				exit()
 
@@ -257,6 +265,7 @@ class main:
 
 		multiplier = self.multiplier
 		betamount = self.betamount
+		stoploss = self.stoploss
 		browser = self.browser
 		average = self.average
 		restart = self.restart
@@ -315,6 +324,14 @@ class main:
 							break
 						except:
 							uiprint("Ivalid number.", "error")
+				elif balance-betamound < stoploss
+					uiprint(f"Resetting bet amount to {self.betamount}. If game is lost balance will be under stop loss", "warning")
+					betamount = self.betamount
+				elif balance < stoploss:
+					uiprint(f"Balance is below stop loss. All betting has stopped.", "bad")
+					input("Press enter to exit >> ")
+					browser.close()
+					exit()
 
 				uiprint(f"Placing bet with {betamount} Robux on {multiplier}x multiplier")
 				if lastgame:
