@@ -19,6 +19,7 @@ class main:
 			self.sendBets()
 		except KeyboardInterrupt:
 			self.print("Exiting program.")
+			self.browser.close()
 			exit()
 		except Exception as e:
 			open("errors.txt", "w+").close()
@@ -27,8 +28,8 @@ class main:
 			self.print("An error has occured check logs.txt for more info", "error")
 			time.sleep(2)
 			raise
+			self.browser.close()
 			exit()
-
 
 	def print(self, message="", option=None): # print the ui's text with
 		print("[ ", end="")
@@ -96,7 +97,7 @@ class main:
 			try:
 				self.average = int(config["games_averaged"])
 				if self.average > 35:
-					uiprint("Too many games averaged. Must be 35 or less games", "error")
+					uiprint("Too many games_averaged. Must be 35 or less games", "error")
 					time.sleep(1.6)
 					exit()
 			except:
@@ -116,7 +117,7 @@ class main:
 			try:
 				self.betamount = float(config["bet_amount"])
 			except:
-				uiprint("Invalid bet amount inside JSON file. Must be valid number", "error")
+				uiprint("Invalid bet_amount inside JSON file. Must be valid number", "error")
 				time.sleep(1.6)
 				exit()
 
@@ -124,12 +125,33 @@ class main:
 			try:
 				self.stop =  float(config["auto_stop"])
 			except:
-				uiprint("Invalid auto stop amount inside JSON file. Must be a valid number", "error")
+				uiprint("Invalid auto_stop amount inside JSON file. Must be a valid number", "error")
 				time.sleep(1.6)
 				exit()
 
 
-			latest_version = requests.get("https://chromedriver.storage.googleapis.com/LATEST_RELEASE_100").text
+			try:
+				self.stoploss =  float(config["stop_loss"])
+			except:
+				uiprint("Invalid auto stop_loss inside JSON file. Must be a valid number", "error")
+				time.sleep(1.6)
+				exit()
+
+
+			try:
+				self.restart = config["auto_restart"]
+			except:
+				uiprint("Invalid auto_restart boolean inside JSON file. Must be True or False", "error")
+				time.sleep(1.6)
+				exit()
+
+			if not type(self.restart) == bool:
+				uiprint("Invalid auto_restart boolean inside JSON file. Must be true or false 1", "error")
+				time.sleep(1.6)
+				exit()
+
+
+			latest_version = requests.get("https://chromedriver.storage.googleapis.com/LATEST_RELEASE").text
 			download = requests.get(f"https://chromedriver.storage.googleapis.com/{latest_version}/chromedriver_win32.zip")
 
 			if not os.path.exists("chromedriver.exe"):
@@ -158,6 +180,7 @@ class main:
 				os.remove("chromedriver.zip")
 				uiprint("Chrome driver installed.", "good")
 
+
 			options = webdriver.ChromeOptions()
 			options.add_experimental_option('excludeSwitches', ['enable-logging'])
 			self.browser = webdriver.Chrome("chromedriver.exe", chrome_options=options)
@@ -165,6 +188,7 @@ class main:
 			browser.get("https://bloxflip.com/crash") # Open bloxflip
 			browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
 			browser.execute_script(f'''window.location = window.location''')
+			time.sleep(1.5)
 
 
 			elements = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
@@ -212,7 +236,7 @@ class main:
 			try:
 				games = json.loads(data)
 			except json.decoder.JSONDecodeError:
-				uiprint("Blocked by ddos protection. If there's a captcha solve it.", "error")
+				uiprint("Blocked by ddos protection. Solve the captcha to continue.", "error")
 				time.sleep(20)
 				browser.close()
 				exit()
@@ -227,87 +251,102 @@ class main:
 				yield ["history", [float(crashpoint["crashPoint"]) for crashpoint in history[:average] ]]
 			time.sleep(0.01)
 
-			
+	def updateBetAmount(self, amount):
+		browser = self.browser
+		elemnts = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
+		for _ in range(10):
+			elemnts[0].send_keys(f"{Keys.BACKSPACE}")
+		elemnts[0].send_keys(f"{amount}")
+
 	def sendBets(self): # Actually compare the user's chances of winning and place the bets
 		uiprint = self.print
 		uiprint("Betting started. Press Ctrl + C to exit")
 
 
-		try:
-			self.crashpoints
-		except:
-			self.crashpoints = []
-
-
 		multiplier = self.multiplier
 		betamount = self.betamount
+		stoploss = self.stoploss
 		browser = self.browser
 		average = self.average
+		restart = self.restart
 		stop = self.stop
+		lastgame = None
 		winning = 0
 		losing = 0
 
+
 		for game in self.ChrashPoints():
-			try:
-				balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss227.jss44").text.replace(',', ''))
-			except selenium.common.exceptions.NoSuchElementException:
-				try:
-					balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text.replace(',', ''))
-				except selenium.common.exceptions.NoSuchElementException:
-					try:
-						balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss102.jss44").text.replace(',', ''))
-					except selenium.common.exceptions.NoSuchElementException:
-						uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
-						time.sleep(1.7)
-						browser.close()
-						exit()
-			uiprint(f"Your balance is {balance}")
-			if balance < betamount:
-				uiprint("You don't have enough robux to continue betting.", "error")
-				exit()
-			elif balance > stop:
-				uiprint("Auto Stop goal reached. Betting has stopped.", "good")
-				input("Press enter to exit >> ")
-				browser.close()
-				exit()
-			elif balance < stoploss:
-				uiprint(f"Balance is below stop loss. All betting has stopped.", "bad")
-				input("Press enter to exit >> ")
-				browser.close()
-				exit()
 			if game[0] == "history":
-				self.crashpoints = game[1]
-				games = self.crashpoints
+				games = game[1]
 				avg = sum(games)/len(games)
 				uiprint(f"Average Crashpoint: {avg}")
 
-				for crashpoint in games:
-					if crashpoint >= multiplier:
-						winning += 1
-					else:
-						losing += 1
-				if losing == 0:
-					losing = 1
-				if winning == 0:
-					winning = 1
-
-				percent = winning/(winning+losing)*100
-				uiprint(f"{percent}% of Games Above {multiplier}")
-				uiprint(f"{(1/(multiplier-1))/(1/(multiplier-1)+1)*100}% needed to make profit")
-
-			elif game[0] == "game_start":
+			if game[0] == "game_start":
 				uiprint("Game Starting...")
 				try:
-					percent
+					balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss227.jss44").text.replace(',', ''))
+				except selenium.common.exceptions.NoSuchElementException:
+					try:
+						balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text.replace(',', ''))
+					except selenium.common.exceptions.NoSuchElementException:
+						try:
+							balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss102.jss44").text.replace(',', ''))
+						except selenium.common.exceptions.NoSuchElementException:
+							uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
+							time.sleep(1.7)
+							browser.close()
+							exit()
+
+
+				try:
+					games[0]
 				except:
 					continue
-				if percent >= (1/(multiplier-1))/(1/(multiplier-1)+1)*100:
-					uiprint(f"Winning streak detected.", "good")
-					uiprint(f"Placing bet for {multiplier}x")
-					time.sleep(2)
-					browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
-				else:
-					uiprint(f"Losing streak detected.", "bad")
+				uiprint(f"Your balance is {balance}")
+				if balance < betamount:
+					uiprint("You don't have enough robux to continue betting.", "error")
+					if not balance < self.betamount and not restart:
+						input(f"Press enter to restart betting with {self.betamount} robux")
+						betamount = self.betamount
+					elif not balance < self.betamount and restart:
+						uiprint("Overwritten: Auto Restart is enabled", "warning")
+						betamount = self.betamount
+					else:
+						input("Press enter to exit >> ")
+						browser.close()
+						exit()
+				elif balance > stop:
+					uiprint("Auto Stop goal reached.", "good")
+					input("Press enter to resume betting >> ")
+					while True:
+						try:
+							stop = float(input("Enter new goal: "))
+							break
+						except:
+							uiprint("Ivalid number.", "error")
+				elif balance-betamound < stoploss:
+					uiprint(f"Resetting bet amount to {self.betamount}. If game is lost balance will be under stop loss", "warning")
+					betamount = self.betamount
+				elif balance < stoploss:
+					uiprint(f"Balance is below stop loss. All betting has stopped.", "bad")
+					input("Press enter to exit >> ")
+					browser.close()
+					exit()
 
+				uiprint(f"Placing bet with {betamount} Robux on {multiplier}x multiplier")
+				if lastgame:
+					lastgame = game[1]
+					if lastgame < multiplier:
+						betamount = betamount*2
+						self.updateBetAmount(betamount)
+						uiprint(f"Lost game. Increasing bet amount to {betamount}", "bad")
+					else:
+						betamount = self.betamount
+						self.updateBetAmount(betamount)
+						uiprint(f"Won game. Lowering bet amount to {betamount}", "good")
+				else:
+					lastgame = games[0]
+				time.sleep(2)
+				browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
 if __name__ == "__main__":
 	main()
