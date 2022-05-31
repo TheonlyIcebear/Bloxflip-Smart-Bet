@@ -1,6 +1,6 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning
 
-import selenium, requests, logging, base64, json, time, os
+import subprocess, selenium, requests, logging, base64, json, time, os
 from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 from termcolor import cprint
@@ -154,31 +154,21 @@ class main:
 			latest_version = requests.get("https://chromedriver.storage.googleapis.com/LATEST_RELEASE").text
 			download = requests.get(f"https://chromedriver.storage.googleapis.com/{latest_version}/chromedriver_win32.zip")
 
-			if not os.path.exists("chromedriver.exe"):
-				uiprint("Chromedriver not insatlled", "bad")
-				uiprint("Installing chrome driver...", "warning")
+
+			uiprint("Installing newest chrome driver...", "warning")
+			subprocess.call('taskkill /im "chromedriver.exe" /f')
+			os.chmod('chromedriver.exe', 0o777)
+			os.remove("chromedriver.exe")
 
 
-				with open("chromedriver.zip", "wb") as zip:
-					zip.write(download.content)
+			with open("chromedriver.zip", "wb") as zip:
+				zip.write(download.content)
 
 
-				with ZipFile("chromedriver.zip", "r") as zip:
-					zip.extract("chromedriver.exe")
-				os.remove("chromedriver.zip")
-			else:
-				uiprint("Installing newest chrome driver...", "warning")
-				os.chmod('chromedriver.exe', 0o777)
-				os.remove("chromedriver.exe")
-
-				with open("chromedriver.zip", "wb") as zip:
-					zip.write(download.content)
-
-
-				with ZipFile("chromedriver.zip", "r") as zip:
-					zip.extract("chromedriver.exe")
-				os.remove("chromedriver.zip")
-				uiprint("Chrome driver installed.", "good")
+			with ZipFile("chromedriver.zip", "r") as zip:
+				zip.extract("chromedriver.exe")
+			os.remove("chromedriver.zip")
+			uiprint("Chrome driver installed.", "good")
 
 
 			options = webdriver.ChromeOptions()
