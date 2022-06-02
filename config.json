@@ -1,0 +1,9 @@
+{
+	"multiplier": 2.3,
+	"games_averaged": 3,
+	"bet_amount": 1,
+	"auto_stop": 100,
+	"stop_loss": 10,
+	"auto_restart": true,
+	"authorization": ""
+}
