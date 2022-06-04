@@ -80,7 +80,7 @@ class main:
 		except:
 			uiprint("data.json file is missing. Make sure you downloaded all the files and they're all in the same folder", "error")
 
-		with open("data.json", "r+") as config:
+		with open("data.json", "r+") as data:
 			try:
 				config = json.load(data)
 				self.multiplier = float(config["multiplier"])
