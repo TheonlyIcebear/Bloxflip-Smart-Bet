@@ -66,7 +66,7 @@ class main:
 		  os.system("clear")
 
 
-	def getConfig(self): # Get configuration from config.json file
+	def getConfig(self): # Get configuration from data.json file
 		uiprint = self.print
 		print("[", end="")
 		cprint(base64.b64decode(b'IENSRURJVFMg').decode('utf-8'), "cyan", end="")
@@ -76,11 +76,11 @@ class main:
 		self.clear()
 
 		try:
-			open("config.json", "r").close()
+			open("data.json", "r").close()
 		except:
-			uiprint("Config.json file is missing. Make sure you downloaded all the files and they're all in the same folder", "error")
+			uiprint("data.json file is missing. Make sure you downloaded all the files and they're all in the same folder", "error")
 
-		with open("config.json", "r+") as data:
+		with open("data.json", "r+") as data:
 			try:
 				config = json.load(data)
 				self.multiplier = float(config["multiplier"])
