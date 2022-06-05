@@ -157,7 +157,7 @@ class main:
 				self.browser = webdriver.Chrome("chromedriver.exe", chrome_options=options)
 			except selenium.common.exceptions.SessionNotCreatedException:
 				uiprint("Chromedriver version not compatible with current chrome version installed. Update your chrome to continue.", "error")
-				uiptiny("If your not sure how to update just uninstall then reinstall chrome", "yellow")
+				uiprint("If your not sure how to update just uninstall then reinstall chrome", "yellow")
 				time.sleep(5)
 				exit()
 
