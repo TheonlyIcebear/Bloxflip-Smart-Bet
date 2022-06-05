@@ -151,7 +151,7 @@ class main:
 				exit()
 
 
-			latest_version = requests.get("https://chromedriver.storage.googleapis.com/LATEST_RELEASE_100").text
+			latest_version = requests.get("https://chromedriver.storage.googleapis.com/LATEST_RELEASE").text
 			download = requests.get(f"https://chromedriver.storage.googleapis.com/{latest_version}/chromedriver_win32.zip")
 
 
