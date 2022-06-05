@@ -157,6 +157,10 @@ class main:
 				self.browser = webdriver.Chrome("chromedriver.exe", chrome_options=options)
 			except selenium.common.exceptions.SessionNotCreatedException:
 				uiprint("Chromedriver version not compatible with current chrome version installed. Update your chrome to continue.", "error")
+				uiptiny("If your not sure how to update just uninstall then reinstall chrome", "yellow")
+				time.sleep(5)
+				exit()
+
 			browser = self.browser
 			browser.get("https://bloxflip.com/crash") # Open bloxflip
 			browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
@@ -263,6 +267,8 @@ class main:
 				exit()
 			elif balance > stop:
 				uiprint("Auto Stop goal reached. Betting has stopped.", "good")
+				uiprint("If the program is reaching the goal instantly that likely means your balance is already above the auto_stop amount.", "warning")
+				uiprint("To fix this simply increase the number to a number higher than your current balance.", "warning")
 				input("Press enter to exit >> ")
 				browser.close()
 				exit()
