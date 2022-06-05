@@ -176,7 +176,11 @@ class main:
 
 			options = webdriver.ChromeOptions()
 			options.add_experimental_option('excludeSwitches', ['enable-logging'])
-			self.browser = webdriver.Chrome("chromedriver.exe", chrome_options=options)
+			try:
+				self.browser = webdriver.Chrome("chromedriver.exe", chrome_options=options)
+			except selenium.common.exceptions.SessionNotCreatedException:
+				uiprint("Chromedriver version not compatible with current chrome version installed. Update your chrome to continue.", "error")
+
 			browser = self.browser
 			browser.get("https://bloxflip.com/crash") # Open bloxflip
 			browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
