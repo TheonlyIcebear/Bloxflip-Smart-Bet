@@ -180,6 +180,7 @@ class main:
 				self.browser = webdriver.Chrome("chromedriver.exe", chrome_options=options)
 			except selenium.common.exceptions.SessionNotCreatedException:
 				uiprint("Chromedriver version not compatible with current chrome version installed. Update your chrome to continue.", "error")
+				uiptiny("If your not sure how to update just uninstall then reinstall chrome", "yellow")
 
 			browser = self.browser
 			browser.get("https://bloxflip.com/crash") # Open bloxflip
