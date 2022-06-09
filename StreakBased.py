@@ -66,6 +66,36 @@ class main:
 		  os.system("clear")
 
 
+	def installDriver(self, version=None):
+		uiprint = self.print
+		if not version:
+			uiprint("Installing newest chrome driver...", "warning")
+			latest_version = requests.get("https://chromedriver.storage.googleapis.com/LATEST_RELEASE").text
+		else:
+			uiprint(f"Installing version {version} chrome driver...", "warning")
+			latest_version = requests.get(f"https://chromedriver.storage.googleapis.com/LATEST_RELEASE_{version}").text
+		download = requests.get(f"https://chromedriver.storage.googleapis.com/{latest_version}/chromedriver_win32.zip")
+
+
+		
+		subprocess.call('taskkill /im "chromedriver.exe" /f')
+		try:
+			os.chmod('chromedriver.exe', 0o777)
+			os.remove("chromedriver.exe")
+		except:
+			pass
+
+
+		with open("chromedriver.zip", "wb") as zip:
+			zip.write(download.content)
+
+
+		with ZipFile("chromedriver.zip", "r") as zip:
+			zip.extract("chromedriver.exe")
+		os.remove("chromedriver.zip")
+		uiprint("Chrome driver installed.", "good")
+
+
 	def getConfig(self): # Get configuration from data.json file
 		uiprint = self.print
 		print("[", end="")
@@ -129,27 +159,19 @@ class main:
 				exit()
 
 
-			latest_version = requests.get("https://chromedriver.storage.googleapis.com/LATEST_RELEASE_100").text
-			download = requests.get(f"https://chromedriver.storage.googleapis.com/{latest_version}/chromedriver_win32.zip")
-
-
-			uiprint("Installing newest chrome driver...", "warning")
-			subprocess.call('taskkill /im "chromedriver.exe" /f')
+			self.installDriver()
+			options = webdriver.ChromeOptions()
+			options.add_experimental_option('excludeSwitches', ['enable-logging'])
 			try:
-				os.chmod('chromedriver.exe', 0o777)
-				os.remove("chromedriver.exe")
-			except:
-				pass
-
-
-			with open("chromedriver.zip", "wb") as zip:
-				zip.write(download.content)
-
-
-			with ZipFile("chromedriver.zip", "r") as zip:
-				zip.extract("chromedriver.exe")
-			os.remove("chromedriver.zip")
-			uiprint("Chrome driver installed.", "good")
+				self.browser = webdriver.Chrome("chromedriver.exe", chrome_options=options)
+			except selenium.common.exceptions.SessionNotCreatedException:
+				try:
+					self.installDrier(100)
+				except:
+					uiprint("Chromedriver version not compatible with current chrome version installed. Update your chrome to continue.", "error")
+					uiprint("If your not sure how to update just uninstall then reinstall chrome", "yellow")
+					time.sleep(5)
+					exit()
 
 			options = webdriver.ChromeOptions()
 			options.add_experimental_option('excludeSwitches', ['enable-logging'])
