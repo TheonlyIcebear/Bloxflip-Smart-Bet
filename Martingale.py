@@ -68,6 +68,7 @@ class main:
 
 
 	def installDriver(self, version=None):
+		uiprint = self.print
 		if not version:
 			uiprint("Installing newest chrome driver...", "warning")
 			latest_version = requests.get("https://chromedriver.storage.googleapis.com/LATEST_RELEASE").text
