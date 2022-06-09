@@ -339,14 +339,15 @@ class main:
 							break
 						except:
 							uiprint("Ivalid number.", "error")
-				elif balance-betamount < stoploss:
-					uiprint(f"Resetting bet amount to {self.betamount}. If game is lost balance will be under stop loss", "warning")
-					betamount = self.betamount
 				elif balance < stoploss:
 					uiprint(f"Balance is below stop loss. All betting has stopped.", "bad")
 					input("Press enter to exit >> ")
 					browser.close()
 					exit()
+				elif balance-betamount < stoploss:
+					uiprint(f"Resetting bet amount to {self.betamount}. If game is lost balance will be under stop loss", "warning")
+					betamount = self.betamount
+				
 
 				uiprint(f"Placing bet with {betamount} Robux on {multiplier}x multiplier")
 				if lastgame:
