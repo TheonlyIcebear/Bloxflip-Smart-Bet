@@ -263,6 +263,7 @@ class main:
 
 		multiplier = self.multiplier
 		betamount = self.betamount
+		stoploss = self.stoploss
 		browser = self.browser
 		average = self.average
 		stop = self.stop
