@@ -311,10 +311,16 @@ class main:
 						try:
 							balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss102.jss44").text.replace(',', ''))
 						except selenium.common.exceptions.NoSuchElementException:
-							uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
-							time.sleep(1.7)
-							browser.close()
-							exit()
+							try:
+								balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss226.jss44").text.replace(',', ''))
+							except:
+								try:
+									balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss221.jss44").text.replace(',', ''))
+								except:
+									uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
+									time.sleep(1.7)
+									browser.close()
+									exit()
 
 
 				try:

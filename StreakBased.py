@@ -159,6 +159,14 @@ class main:
 				exit()
 
 
+			try:
+				self.stoploss =  float(config["stop_loss"])
+			except:
+				uiprint("Invalid auto stop_loss inside JSON file. Must be a valid number", "error")
+				time.sleep(1.6)
+				exit()
+
+
 			self.installDriver()
 			options = webdriver.ChromeOptions()
 			options.add_experimental_option('excludeSwitches', ['enable-logging'])
@@ -197,18 +205,24 @@ class main:
 
 
 			try:
-				balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss227.jss44").text.replace(',', ''))
-			except selenium.common.exceptions.NoSuchElementException:
-				try:
-					balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text.replace(',', ''))
+					balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss227.jss44").text.replace(',', ''))
 				except selenium.common.exceptions.NoSuchElementException:
 					try:
-						balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss102.jss44").text.replace(',', ''))
+						balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text.replace(',', ''))
 					except selenium.common.exceptions.NoSuchElementException:
-						uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
-						time.sleep(1.7)
-						browser.close()
-						exit()
+						try:
+							balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss102.jss44").text.replace(',', ''))
+						except selenium.common.exceptions.NoSuchElementException:
+							try:
+								balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss226.jss44").text.replace(',', ''))
+							except:
+								try:
+									balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss221.jss44").text.replace(',', ''))
+								except:
+									uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
+									time.sleep(1.7)
+									browser.close()
+									exit()
 
 
 			elements[0].send_keys(f"{Keys.BACKSPACE}")
@@ -272,18 +286,24 @@ class main:
 
 		for game in self.ChrashPoints():
 			try:
-				balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss227.jss44").text.replace(',', ''))
-			except selenium.common.exceptions.NoSuchElementException:
-				try:
-					balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text.replace(',', ''))
+					balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss227.jss44").text.replace(',', ''))
 				except selenium.common.exceptions.NoSuchElementException:
 					try:
-						balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss102.jss44").text.replace(',', ''))
+						balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text.replace(',', ''))
 					except selenium.common.exceptions.NoSuchElementException:
-						uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
-						time.sleep(1.7)
-						browser.close()
-						exit()
+						try:
+							balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss102.jss44").text.replace(',', ''))
+						except selenium.common.exceptions.NoSuchElementException:
+							try:
+								balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss226.jss44").text.replace(',', ''))
+							except:
+								try:
+									balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss221.jss44").text.replace(',', ''))
+								except:
+									uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
+									time.sleep(1.7)
+									browser.close()
+									exit()
 			uiprint(f"Your balance is {balance}")
 			if balance < betamount:
 				uiprint("You don't have enough robux to continue betting.", "error")
