@@ -184,6 +184,14 @@ class main:
 
 
 			try:
+				self.maxbet =  float(config["max_betamount"])
+			except:
+				uiprint("Invalid max_betamount amount inside JSON file. Must be a valid number", "error")
+				time.sleep(1.6)
+				exit()
+
+
+			try:
 				self.stoploss =  float(config["stop_loss"])
 			except:
 				uiprint("Invalid auto stop_loss inside JSON file. Must be a valid number", "error")
@@ -289,6 +297,7 @@ class main:
 		browser = self.browser
 		average = self.average
 		restart = self.restart
+		maxbet = self.maxbet
 		stop = self.stop
 		lastgame = None
 		winning = 0
@@ -340,8 +349,11 @@ class main:
 					browser.close()
 					exit()
 				elif balance-betamount < stoploss:
-					uiprint(f"Resetting bet amount to {self.betamount}. If game is lost balance will be under stop loss", "warning")
+					uiprint(f"Resetting bet amount to {self.betamount}; If game is lost balance will be under stop loss", "yellow")
 					betamount = self.betamount
+
+				if betamount > maxbet:
+					uiprint(f"Resetting bet amount to {self.betamount}; Bet amount is above max_betamount:{maxbet}", "yellow")
 				
 
 				uiprint(f"Placing bet with {betamount} Robux on {multiplier}x multiplier")
