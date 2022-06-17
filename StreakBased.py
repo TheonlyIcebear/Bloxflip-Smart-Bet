@@ -350,7 +350,10 @@ class main:
 					uiprint(f"Winning streak detected.", "good")
 					uiprint(f"Placing bet for {multiplier}x")
 					time.sleep(2)
-					browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
+					try:
+						browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
+					except:
+						browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss143.MuiButton-containedPrimary").click()
 				else:
 					uiprint(f"Losing streak detected.", "bad")
 
