@@ -97,6 +97,29 @@ class main:
 		uiprint("Chrome driver installed.", "good")
 
 
+	def getBalance(self):
+		uiprint = self.print
+		balance = None
+		browser = self.browser
+
+		classnames = [".MuiBox-root.jss227.jss44", ".MuiBox-root.jss220.jss44", ".MuiBox-root.jss102.jss44", ".MuiBox-root.jss226.jss44", ".MuiBox-root.jss221.jss44"]
+		for possibleclass in classnames:
+			try:
+				balance = float(browser.find_element_by_css_selector(possibleclass).text.replace(',', ''))
+			except selenium.common.exceptions.NoSuchElementException:
+				pass
+			except ValueError:
+				pass
+		if not balance:
+			uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
+			time.sleep(1.7)
+			while True:
+				pass
+			browser.close()
+			exit()
+		return balance
+
+
 	def getConfig(self): # Get configuration from data.json file
 		uiprint = self.print
 		print("[", end="")
@@ -181,8 +204,6 @@ class main:
 				exit()
 
 
-			
-
 			self.installDriver()
 			options = webdriver.ChromeOptions()
 			options.add_experimental_option('excludeSwitches', ['enable-logging'])
@@ -197,39 +218,19 @@ class main:
 					time.sleep(5)
 					exit()
 
+
 			browser = self.browser
 			browser.get("https://bloxflip.com/crash") # Open bloxflip
 			browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
 			browser.execute_script(f'''window.location = window.location''')
 			time.sleep(1.5)
 
-
+			self.getBalance()
 			elements = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
 			if not elements:
 				uiprint("Blocked by DDoS protection. Solve the captcha on the chrome window to continue.")
 			while not elements:
 				elements = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
-
-
-			try:
-				balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss227.jss44").text.replace(',', ''))
-			except selenium.common.exceptions.NoSuchElementException:
-				try:
-					balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text.replace(',', ''))
-				except selenium.common.exceptions.NoSuchElementException:
-					try:
-						balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss102.jss44").text.replace(',', ''))
-					except selenium.common.exceptions.NoSuchElementException:
-						try:
-							balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss226.jss44").text.replace(',', ''))
-						except:
-							try:
-								balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss221.jss44").text.replace(',', ''))
-							except:
-								uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
-								time.sleep(1.7)
-								browser.close()
-								exit()
 
 
 			elements[0].send_keys(f"{Keys.BACKSPACE}")
@@ -302,25 +303,7 @@ class main:
 
 			if game[0] == "game_start":
 				uiprint("Game Starting...")
-				try:
-					balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss227.jss44").text.replace(',', ''))
-				except selenium.common.exceptions.NoSuchElementException:
-					try:
-						balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss220.jss44").text.replace(',', ''))
-					except selenium.common.exceptions.NoSuchElementException:
-						try:
-							balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss102.jss44").text.replace(',', ''))
-						except selenium.common.exceptions.NoSuchElementException:
-							try:
-								balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss226.jss44").text.replace(',', ''))
-							except:
-								try:
-									balance = float(browser.find_element_by_css_selector(".MuiBox-root.jss221.jss44").text.replace(',', ''))
-								except:
-									uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
-									time.sleep(1.7)
-									browser.close()
-									exit()
+				balance = self.getBalance()
 
 
 				try:
