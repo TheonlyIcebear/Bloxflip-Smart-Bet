@@ -101,7 +101,15 @@ class main:
 		balance = None
 		browser = self.browser
 
-		classnames = [".MuiBox-root.jss227.jss44", ".MuiBox-root.jss220.jss44", ".MuiBox-root.jss102.jss44", ".MuiBox-root.jss226.jss44", ".MuiBox-root.jss221.jss44"]
+		classnames = [".MuiBox-root.jss227.jss44", 
+					  ".MuiBox-root.jss220.jss44", 
+					  ".MuiBox-root.jss102.jss44", 
+					  ".MuiBox-root.jss226.jss44", 
+					  ".MuiBox-root.jss221.jss44", 
+					  ".MuiBox-root.jss271.jss44", 
+					  ".MuiBox-root.jss359.jss44", 
+					  ".MuiBox-root.jss221.jss44",
+					  ".MuiBox-root.jss233.jss44"]
 		for possibleclass in classnames:
 			try:
 				balance = float(browser.find_element_by_css_selector(possibleclass).text.replace(',', ''))
