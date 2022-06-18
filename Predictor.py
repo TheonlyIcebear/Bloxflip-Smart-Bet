@@ -102,7 +102,15 @@ class main:
 		balance = None
 		browser = self.browser
 
-		classnames = [".MuiBox-root.jss227.jss44", ".MuiBox-root.jss220.jss44", ".MuiBox-root.jss102.jss44", ".MuiBox-root.jss226.jss44", ".MuiBox-root.jss221.jss44"]
+		classnames = [".MuiBox-root.jss227.jss44", 
+					  ".MuiBox-root.jss220.jss44", 
+					  ".MuiBox-root.jss102.jss44", 
+					  ".MuiBox-root.jss226.jss44", 
+					  ".MuiBox-root.jss221.jss44", 
+					  ".MuiBox-root.jss271.jss44", 
+					  ".MuiBox-root.jss359.jss44", 
+					  ".MuiBox-root.jss221.jss44",
+					  ".MuiBox-root jss233 jss44"]
 		for possibleclass in classnames:
 			try:
 				balance = float(browser.find_element_by_css_selector(possibleclass).text.replace(',', ''))
@@ -321,10 +329,8 @@ class main:
 					continue
 				chance = 1
 				for game in games:
-					print(game, chance)
 					chance = chance * ((100/game)/100)
-				print(chance)
-				multiplier = 1/(chance*(10**(average/1.5)))
+				multiplier = 1/(chance*(10**(int(str(chance).split("e-")[1])-1)))
 				uiprint(f"Setting multiplier to {multiplier}")
 				self.updateMultiplier(round(multiplier, 2) )
 
@@ -353,7 +359,7 @@ class main:
 					exit()
 				
 				if round(multiplier, 2) <= 1:
-					uiprint("Cancelling bet this game. As the game will likely crash around 1.")
+					uiprint("Cancelling bet this game. As the game will likely crash around 1x.")
 					continue
 
 				uiprint(f"Placing bet with {betamount} Robux on {multiplier}x multiplier")
