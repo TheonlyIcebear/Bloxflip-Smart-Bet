@@ -297,7 +297,7 @@ class main:
 		browser = self.browser
 		average = self.average
 		restart = self.restart
-		maxbet = self.maxbet
+		maxbet = self.maxbetamount
 		stop = self.stop
 		lastgame = None
 		winning = 0
@@ -352,7 +352,7 @@ class main:
 					uiprint(f"Resetting bet amount to {self.betamount}; If game is lost balance will be under stop loss", "yellow")
 					betamount = self.betamount
 
-				if betamount > maxbet:
+				if betamount >= maxbet:
 					uiprint(f"Resetting bet amount to {self.betamount}; Bet amount is above max_betamount:{maxbet}", "yellow")
 				
 
