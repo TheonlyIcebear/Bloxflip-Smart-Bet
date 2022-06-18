@@ -297,7 +297,7 @@ class main:
 		browser = self.browser
 		average = self.average
 		restart = self.restart
-		maxbet = self.maxbetamount
+		maxbet = self.maxbet
 		stop = self.stop
 		lastgame = None
 		winning = 0
