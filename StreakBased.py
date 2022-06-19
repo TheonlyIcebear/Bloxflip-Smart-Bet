@@ -47,6 +47,11 @@ class main:
 			print(" ] ", end="")
 			if message:
 			  cprint(message, "yellow")
+		elif option == "yellow":
+			cprint("AUTOBET", "yellow", end="")
+			print(" ] ", end="")
+			if message:
+			  cprint(message, "yellow")
 		elif option == "good":
 			cprint("AUTOBET", "green", end="")
 			print(" ] ", end="")
@@ -109,7 +114,10 @@ class main:
 					  ".MuiBox-root.jss271.jss44", 
 					  ".MuiBox-root.jss359.jss44", 
 					  ".MuiBox-root.jss221.jss44",
-					  ".MuiBox-root.jss233.jss44"]
+					  ".MuiBox-root.jss233.jss44",
+					  ".MuiBox-root.jss226.jss44",
+					  ".MuiBox-root.jss247.jss44"]
+					  
 		for possibleclass in classnames:
 			try:
 				balance = float(browser.find_element_by_css_selector(possibleclass).text.replace(',', ''))

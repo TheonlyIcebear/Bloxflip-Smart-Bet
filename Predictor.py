@@ -1,12 +1,12 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning
 
-import subprocess, selenium, requests, logging, base64, json, time, os
+import subprocess, threading, selenium, requests, logging, base64, json, time, os
 from selenium.webdriver.common.keys import Keys
+from playsound import playsound
 from selenium import webdriver
 from termcolor import cprint
 from zipfile import *
 from sys import exit
-
 
 class main:
 	def __init__(self):
@@ -45,6 +45,11 @@ class main:
 			  cprint(message, "red")
 		elif option == "warning":
 			cprint("WARNING", "yellow", end="")
+			print(" ] ", end="")
+			if message:
+			  cprint(message, "yellow")
+		elif option == "yellow":
+			cprint("AUTOBET", "yellow", end="")
 			print(" ] ", end="")
 			if message:
 			  cprint(message, "yellow")
@@ -110,7 +115,9 @@ class main:
 					  ".MuiBox-root.jss271.jss44", 
 					  ".MuiBox-root.jss359.jss44", 
 					  ".MuiBox-root.jss221.jss44",
-					  ".MuiBox-root.jss233.jss44"]
+					  ".MuiBox-root.jss233.jss44",
+					  ".MuiBox-root.jss226.jss44",
+					  ".MuiBox-root.jss247.jss44"]
 		for possibleclass in classnames:
 			try:
 				balance = float(browser.find_element_by_css_selector(possibleclass).text.replace(',', ''))
@@ -315,6 +322,7 @@ class main:
 		for game in self.ChrashPoints():
 			if game[0] == "history":
 				games = game[1]
+				lastgame = game[1][-1]
 				avg = sum(games)/len(games)
 				uiprint(f"Average Crashpoint: {avg}")
 
@@ -324,13 +332,32 @@ class main:
 
 
 				try:
+					if lastgame > multiplier:
+						uiprint("Won previous game.", "good")
+						threading.Thread(target=playsound, args=(r"C:\Users\ekila\Downloads\Smart Auto Bet\assets\Win.mp3",)).start()
+						uiprint(f"Accuracy on last guess: {(multiplier/lastgame)*100}", "yellow")
+					else:
+						uiprint("Lost previous game.", "bad")
+						threading.Thread(target=playsound, args=(r"C:\Users\ekila\Downloads\Smart Auto Bet\assets\Loss.mp3",)).start()
+						uiprint(f"Accuracy on last guess: {(lastgame/multiplier)*100}", "yellow")
+				except ValueError:
+					uiprint(f"No data for accuracy calculations", "error")
+				except TypeError:
+					uiprint(f"No data for accuracy calculations", "error")
+
+				try:
 					games[0]
 				except:
 					continue
+
 				chance = 1
 				for game in games:
 					chance = chance * ((100/game)/100)
-				multiplier = 1/(chance*(10**(int(str(chance).split("e-")[1])-1)))
+				try:
+					multiplier = 1/(chance*(10**(int(str(chance).split("e-")[1])-1)))
+				except:
+					multiplier = 1/(chance*(10**average/2.3))
+
 				uiprint(f"Setting multiplier to {multiplier}")
 				self.updateMultiplier(round(multiplier, 2) )
 
@@ -364,9 +391,9 @@ class main:
 
 				uiprint(f"Placing bet with {betamount} Robux on {multiplier}x multiplier")
 				
-				try:
-					browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
-				except:
-					browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss143.MuiButton-containedPrimary").click()
+				# try:
+				# 	browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
+				# except:
+				# 	browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss143.MuiButton-containedPrimary").click()
 if __name__ == "__main__":
 	main()
