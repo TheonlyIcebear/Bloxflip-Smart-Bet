@@ -118,6 +118,7 @@ class main:
 					  ".MuiBox-root.jss233.jss44",
 					  ".MuiBox-root.jss226.jss44",
 					  ".MuiBox-root.jss247.jss44"]
+
 		for possibleclass in classnames:
 			try:
 				balance = float(browser.find_element_by_css_selector(possibleclass).text.replace(',', ''))
@@ -332,14 +333,16 @@ class main:
 
 
 				try:
-					if lastgame > multiplier:
+					if lastgame-1 > multiplier-1:
 						uiprint("Won previous game.", "good")
 						threading.Thread(target=playsound, args=(r"C:\Users\ekila\Downloads\Smart Auto Bet\assets\Win.mp3",)).start()
-						uiprint(f"Accuracy on last guess: {(multiplier/lastgame)*100}", "yellow")
+						print(multiplier-1, lastgame-1)
+						uiprint(f"Accuracy on last guess: {(multiplier-1/lastgame-1)*100}", "yellow")
 					else:
 						uiprint("Lost previous game.", "bad")
 						threading.Thread(target=playsound, args=(r"C:\Users\ekila\Downloads\Smart Auto Bet\assets\Loss.mp3",)).start()
-						uiprint(f"Accuracy on last guess: {(lastgame/multiplier)*100}", "yellow")
+						print(lastgame-1, multiplier-1)
+						uiprint(f"Accuracy on last guess: {(lastgame-1/multiplier-1)*100}", "yellow")
 				except ValueError:
 					uiprint(f"No data for accuracy calculations", "error")
 				except TypeError:
@@ -391,9 +394,9 @@ class main:
 
 				uiprint(f"Placing bet with {betamount} Robux on {multiplier}x multiplier")
 				
-				# try:
-				# 	browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
-				# except:
-				# 	browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss143.MuiButton-containedPrimary").click()
+				try:
+					browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
+				except:
+					browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss143.MuiButton-containedPrimary").click()
 if __name__ == "__main__":
 	main()
