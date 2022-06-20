@@ -336,11 +336,17 @@ class main:
 				try:
 					if lastgame-1 > multiplier-1:
 						uiprint("Won previous game.", "good")
-						threading.Thread(target=playsound, args=(r"C:\Users\ekila\Downloads\Smart Auto Bet\assets\Win.mp3",)).start()
+						try:
+							threading.Thread(target=playsound, args=(os.getcwd()+r"\assets\Win.mp3",)).start()
+						except:
+							pass
 						uiprint(f"Accuracy on last guess: {(abs((multiplier-1)/(lastgame)-1))*100}", "yellow")
 					else:
 						uiprint("Lost previous game.", "bad")
-						threading.Thread(target=playsound, args=(r"C:\Users\ekila\Downloads\Smart Auto Bet\assets\Loss.mp3",)).start()
+						try:
+							threading.Thread(target=playsound, args=(os.getcwd()+r"\assets\Loss.mp3",)).start()
+						except:
+							pass
 						uiprint(f"Accuracy on last guess: {(abs((lastgame-1)/(multiplier-1)))*100}", "yellow")
 				except ValueError:
 					uiprint(f"No data for accuracy calculations", "error")
@@ -366,11 +372,15 @@ class main:
 				
 				uiprint(f"Your balance is {balance}")
 				if balance < betamount:
+					ToastNotifier().show_toast("Bloxflip Smart Bet", "Oh No! You've been cleaned!", duration = 10,
+					 icon_path ="\\assets\\Bloxflip.png")
 					uiprint("You don't have enough robux to continue betting.", "error")
 					input("Press enter to exit >> ")
 					browser.close()
 					exit()
 				elif balance > stop:
+					ToastNotifier().show_toast("Bloxflip Smart Bet", "Your auto stop goal has been reached!", duration = 10,
+					 icon_path ="\\assets\\Bloxflip.png")
 					uiprint("Auto Stop goal reached. Betting has stopped.", "good")
 					uiprint("If the program is reaching the goal instantly that likely means your balance is already above the auto_stop amount.", "warning")
 					uiprint("To fix this simply increase the number to a number higher than your current balance.", "warning")
@@ -382,6 +392,8 @@ class main:
 						except:
 							uiprint("Ivalid number.", "error")
 				elif balance < stoploss:
+					ToastNotifier().show_toast("Bloxflip Smart Bet", "Oh No! You've hit your stop loss!", duration = 10,
+					 icon_path ="\\assets\\Bloxflip.png")
 					uiprint(f"Balance is below stop loss. All betting has stopped.", "bad")
 					input("Press enter to exit >> ")
 					browser.close()
