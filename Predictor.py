@@ -2,6 +2,7 @@
 
 import subprocess, threading, selenium, requests, logging, base64, json, time, os
 from selenium.webdriver.common.keys import Keys
+from win10toast import ToastNotifier
 from playsound import playsound
 from selenium import webdriver
 from termcolor import cprint
@@ -336,13 +337,11 @@ class main:
 					if lastgame-1 > multiplier-1:
 						uiprint("Won previous game.", "good")
 						threading.Thread(target=playsound, args=(r"C:\Users\ekila\Downloads\Smart Auto Bet\assets\Win.mp3",)).start()
-						print(multiplier-1, lastgame-1)
-						uiprint(f"Accuracy on last guess: {(multiplier-1/lastgame-1)*100}", "yellow")
+						uiprint(f"Accuracy on last guess: {(abs((multiplier-1)/(lastgame)-1))*100}", "yellow")
 					else:
 						uiprint("Lost previous game.", "bad")
 						threading.Thread(target=playsound, args=(r"C:\Users\ekila\Downloads\Smart Auto Bet\assets\Loss.mp3",)).start()
-						print(lastgame-1, multiplier-1)
-						uiprint(f"Accuracy on last guess: {(lastgame-1/multiplier-1)*100}", "yellow")
+						uiprint(f"Accuracy on last guess: {(abs((lastgame-1)/(multiplier-1)))*100}", "yellow")
 				except ValueError:
 					uiprint(f"No data for accuracy calculations", "error")
 				except TypeError:
