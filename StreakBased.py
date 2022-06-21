@@ -310,17 +310,39 @@ class main:
 
 			uiprint(f"Your balance is {balance}")
 			if balance < betamount:
-				uiprint("You don't have enough robux to continue betting.", "error")
-				exit()
+					threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
+					ToastNotifier().show_toast("Bloxflip Smart Bet", 
+						   "Oh No! You've run out of robux to bet!", duration = 3,
+					 	   icon_path ="assets\\Bloxflip.ico",
+					 	   threaded=True
+					 	   )
+					browser.close()
+					exit()
 			elif balance > stop:
 				uiprint("Auto Stop goal reached. Betting has stopped.", "good")
+				threading.Thread(target=playsound, args=('Assets\Win.mp3',)).start()
+				ToastNotifier().show_toast("Bloxflip Smart Bet", 
+					   "Your auto stop goal has been reached!", duration = 3,
+				 	   icon_path ="assets\\Bloxflip.ico",
+				 	   threaded=True
+				 	   )
 				uiprint("If the program is reaching the goal instantly that likely means your balance is already above the auto_stop amount.", "warning")
 				uiprint("To fix this simply increase the number to a number higher than your current balance.", "warning")
-				input("Press enter to exit >> ")
-				browser.close()
-				exit()
+				input("Press enter to resume betting >> ")
+				while True:
+					try:
+						stop = float(input("Enter new goal: "))
+						break
+					except:
+						uiprint("Ivalid number.", "error")
 			elif balance < stoploss:
 				uiprint(f"Balance is below stop loss. All betting has stopped.", "bad")
+				threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
+				ToastNotifier().show_toast("Bloxflip Smart Bet", 
+					   "You've hit your stop loss!", duration = 3,
+				 	   icon_path ="assets\\Bloxflip.ico",
+				 	   threaded=True
+				 	   )
 				input("Press enter to exit >> ")
 				browser.close()
 				exit()
@@ -352,6 +374,10 @@ class main:
 					continue
 				if percent >= (1/(multiplier-1))/(1/(multiplier-1)+1)*100:
 					uiprint(f"Winning streak detected.", "good")
+					try:
+						threading.Thread(target=playsound, args=('Assets\Win.mp3',)).start()
+					except:
+						pass
 					uiprint(f"Placing bet for {multiplier}x")
 					time.sleep(2)
 					try:
@@ -360,6 +386,10 @@ class main:
 						browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss143.MuiButton-containedPrimary").click()
 				else:
 					uiprint(f"Losing streak detected.", "bad")
+					try:
+						threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
+					except:
+						pass
 
 if __name__ == "__main__":
 	main()

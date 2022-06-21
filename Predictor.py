@@ -337,14 +337,14 @@ class main:
 					if lastgame-1 > multiplier-1:
 						uiprint("Won previous game.", "good")
 						try:
-							threading.Thread(target=playsound, args=(os.getcwd()+r"\assets\Win.mp3",)).start()
+							threading.Thread(target=playsound, args=('Assets\Win.mp3',)).start()
 						except:
 							pass
 						uiprint(f"Accuracy on last guess: {(abs((multiplier-1)/(lastgame)-1))*100}", "yellow")
 					else:
 						uiprint("Lost previous game.", "bad")
 						try:
-							threading.Thread(target=playsound, args=(os.getcwd()+r"\assets\Loss.mp3",)).start()
+							threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
 						except:
 							pass
 						uiprint(f"Accuracy on last guess: {(abs((lastgame-1)/(multiplier-1)))*100}", "yellow")
@@ -372,16 +372,22 @@ class main:
 				
 				uiprint(f"Your balance is {balance}")
 				if balance < betamount:
-					ToastNotifier().show_toast("Bloxflip Smart Bet", "Oh No! You've been cleaned!", duration = 10,
-					 icon_path ="\\assets\\Bloxflip.png")
-					uiprint("You don't have enough robux to continue betting.", "error")
-					input("Press enter to exit >> ")
+					threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
+					ToastNotifier().show_toast("Bloxflip Smart Bet", 
+						   "Oh No! You've run out of robux to bet!", duration = 3,
+					 	   icon_path ="assets\\Bloxflip.ico",
+					 	   threaded=True
+					 	   )
 					browser.close()
 					exit()
 				elif balance > stop:
-					ToastNotifier().show_toast("Bloxflip Smart Bet", "Your auto stop goal has been reached!", duration = 10,
-					 icon_path ="\\assets\\Bloxflip.png")
 					uiprint("Auto Stop goal reached. Betting has stopped.", "good")
+					threading.Thread(target=playsound, args=('Assets\Win.mp3',)).start()
+					ToastNotifier().show_toast("Bloxflip Smart Bet", 
+						   "Your auto stop goal has been reached!", duration = 3,
+					 	   icon_path ="assets\\Bloxflip.ico",
+					 	   threaded=True
+					 	   )
 					uiprint("If the program is reaching the goal instantly that likely means your balance is already above the auto_stop amount.", "warning")
 					uiprint("To fix this simply increase the number to a number higher than your current balance.", "warning")
 					input("Press enter to resume betting >> ")
@@ -392,9 +398,13 @@ class main:
 						except:
 							uiprint("Ivalid number.", "error")
 				elif balance < stoploss:
-					ToastNotifier().show_toast("Bloxflip Smart Bet", "Oh No! You've hit your stop loss!", duration = 10,
-					 icon_path ="\\assets\\Bloxflip.png")
 					uiprint(f"Balance is below stop loss. All betting has stopped.", "bad")
+					threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
+					ToastNotifier().show_toast("Bloxflip Smart Bet", 
+						   "You've hit your stop loss!", duration = 3,
+					 	   icon_path ="assets\\Bloxflip.ico",
+					 	   threaded=True
+					 	   )
 					input("Press enter to exit >> ")
 					browser.close()
 					exit()
