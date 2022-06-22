@@ -269,19 +269,13 @@ class main:
 			try:
 				games = json.loads(data)
 			except json.decoder.JSONDecodeError:
-				uiprint("Blocked by ddos protection. If there's a captcha solve it.", "error")
+				uiprint("Blocked by ddos protection. Solve the captcha to continue.", "error")
 				time.sleep(20)
 				browser.close()
 				exit()
-			if games["current"]["status"] == 2 and not sent:
-				sent = True
-				previd = games["current"]["_id"]
-				yield ["game_start", games["history"][0]["crashPoint"]]
-			elif games["current"]["status"] == 3:
-				sent = False
 			if not history == games["history"]:
 				history = games["history"]
-				yield ["history", [float(crashpoint["crashPoint"]) for crashpoint in history[:average] ]]
+				yield [games["history"][0]["crashPoint"], [float(crashpoint["crashPoint"]) for crashpoint in history[:average]]]
 			time.sleep(0.01)
 
 			
@@ -311,6 +305,26 @@ class main:
 
 
 			uiprint(f"Your balance is {balance}")
+			self.crashpoints = game[1]
+			games = self.crashpoints
+			avg = sum(games)/len(games)
+			uiprint(f"Average Crashpoint: {avg}")
+
+			for crashpoint in games:
+				if crashpoint >= multiplier:
+					winning += 1
+				else:
+					losing += 1
+			if losing == 0:
+				losing = 1
+			if winning == 0:
+				winning = 1
+
+			percent = winning/(winning+losing)*100
+			uiprint(f"{percent}% of Games Above {multiplier}")
+			uiprint(f"{(1/(multiplier-1))/(1/(multiplier-1)+1)*100}% needed to make profit")
+
+
 			if balance < betamount:
 					threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
 					ToastNotifier().show_toast("Bloxflip Smart Bet", 
@@ -348,50 +362,31 @@ class main:
 				input("Press enter to exit >> ")
 				browser.close()
 				exit()
-			if game[0] == "history":
-				self.crashpoints = game[1]
-				games = self.crashpoints
-				avg = sum(games)/len(games)
-				uiprint(f"Average Crashpoint: {avg}")
 
-				for crashpoint in games:
-					if crashpoint >= multiplier:
-						winning += 1
-					else:
-						losing += 1
-				if losing == 0:
-					losing = 1
-				if winning == 0:
-					winning = 1
 
-				percent = winning/(winning+losing)*100
-				uiprint(f"{percent}% of Games Above {multiplier}")
-				uiprint(f"{(1/(multiplier-1))/(1/(multiplier-1)+1)*100}% needed to make profit")
-
-			elif game[0] == "game_start":
-				uiprint("Game Starting...")
+			uiprint("Game Starting...")
+			try:
+				percent
+			except:
+				continue
+			if percent >= (1/(multiplier-1))/(1/(multiplier-1)+1)*100:
+				uiprint(f"Winning streak detected.", "good")
 				try:
-					percent
+					threading.Thread(target=playsound, args=('Assets\Win.mp3',)).start()
 				except:
-					continue
-				if percent >= (1/(multiplier-1))/(1/(multiplier-1)+1)*100:
-					uiprint(f"Winning streak detected.", "good")
-					try:
-						threading.Thread(target=playsound, args=('Assets\Win.mp3',)).start()
-					except:
-						pass
-					uiprint(f"Placing bet for {multiplier}x")
-					time.sleep(2)
-					try:
-						browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
-					except:
-						browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss143.MuiButton-containedPrimary").click()
-				else:
-					uiprint(f"Losing streak detected.", "bad")
-					try:
-						threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
-					except:
-						pass
+					pass
+				uiprint(f"Placing bet for {multiplier}x")
+				time.sleep(2)
+				try:
+					browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
+				except:
+					browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss143.MuiButton-containedPrimary").click()
+			else:
+				uiprint(f"Losing streak detected.", "bad")
+				try:
+					threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
+				except:
+					pass
 
 if __name__ == "__main__":
 	main()

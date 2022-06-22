@@ -285,15 +285,9 @@ class main:
 				time.sleep(20)
 				browser.close()
 				exit()
-			if games["current"]["status"] == 2 and not sent:
-				sent = True
-				previd = games["current"]["_id"]
-				yield ["game_start", games["history"][0]["crashPoint"]]
-			elif games["current"]["status"] == 3:
-				sent = False
 			if not history == games["history"]:
 				history = games["history"]
-				yield ["history", [float(crashpoint["crashPoint"]) for crashpoint in history[:average] ]]
+				yield [games["history"][0]["crashPoint"], [float(crashpoint["crashPoint"]) for crashpoint in history[:average]]]
 			time.sleep(0.01)
 
 	def updateBetAmount(self, amount):
@@ -322,120 +316,119 @@ class main:
 
 
 		for game in self.ChrashPoints():
-			if game[0] == "history":
-				games = game[1]
-				avg = sum(games)/len(games)
-				uiprint(f"Average Crashpoint: {avg}")
+			uiprint("Game Starting...")
+			balance = self.getBalance()
 
-			if game[0] == "game_start":
-				uiprint("Game Starting...")
-				balance = self.getBalance()
+			games = game[1]
+			lastgame = game[0]
+			avg = sum(games)/len(games)
+			uiprint(f"Average Crashpoint: {avg}")
 
 
-				try:
-					games[0]
-				except:
-					continue
-				uiprint(f"Your balance is {balance}")
-				if balance < betamount:
-					uiprint("You don't have enough robux to continue betting.", "error")
-					threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
-					ToastNotifier().show_toast("Bloxflip Smart Bet", 
-						   "Oh No! You've run out of robux to bet!", duration = 3,
-					 	   icon_path ="assets\\Bloxflip.ico",
-					 	   threaded=True
-					 	   )
-					if not balance < self.betamount and not restart:
-						input(f"Press enter to restart betting with {self.betamount} robux")
-						betamount = self.betamount
-					elif not balance < self.betamount and restart:
-						uiprint("Overwritten: Auto Restart is enabled", "warning")
-						threading.Thread(target=playsound, args=('Assets\Win.mp3',)).start()
-						ToastNotifier().show_toast("Bloxflip Smart Bet", 
-							   "Overwritten: Auto restart is enabled.", duration = 3,
-						 	   icon_path ="assets\\Bloxflip.ico",
-						 	   threaded=True
-						 	   )
-						betamount = self.betamount
-					else:
-						input("Press enter to exit >> ")
-						browser.close()
-						exit()
-				elif balance > stop:
-					uiprint("Auto Stop goal reached. Betting has stopped.", "good")
+			try:
+				games[0]
+			except:
+				continue
+			uiprint(f"Your balance is {balance}")
+			if balance < betamount:
+				uiprint("You don't have enough robux to continue betting.", "error")
+				threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
+				ToastNotifier().show_toast("Bloxflip Smart Bet", 
+					   "Oh No! You've run out of robux to bet!", duration = 3,
+				 	   icon_path ="assets\\Bloxflip.ico",
+				 	   threaded=True
+				 	   )
+				if not balance < self.betamount and not restart:
+					input(f"Press enter to restart betting with {self.betamount} robux")
+					betamount = self.betamount
+				elif not balance < self.betamount and restart:
+					uiprint("Overwritten: Auto Restart is enabled", "warning")
 					threading.Thread(target=playsound, args=('Assets\Win.mp3',)).start()
 					ToastNotifier().show_toast("Bloxflip Smart Bet", 
-						   "Your auto stop goal has been reached!", duration = 3,
+						   "Overwritten: Auto restart is enabled.", duration = 3,
 					 	   icon_path ="assets\\Bloxflip.ico",
 					 	   threaded=True
 					 	   )
-					uiprint("If the program is reaching the goal instantly that likely means your balance is already above the auto_stop amount.", "warning")
-					uiprint("To fix this simply increase the number to a number higher than your current balance.", "warning")
-					input("Press enter to resume betting >> ")
-					while True:
-						try:
-							stop = float(input("Enter new goal: "))
-							break
-						except:
-							uiprint("Ivalid number.", "error")
-				elif balance < stoploss:
-					uiprint(f"Balance is below stop loss. All betting has stopped.", "bad")
-					threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
-					ToastNotifier().show_toast("Bloxflip Smart Bet", 
-						   "You've hit your stop loss!", duration = 3,
-					 	   icon_path ="assets\\Bloxflip.ico",
-					 	   threaded=True
-					 	   )
+					betamount = self.betamount
+				else:
 					input("Press enter to exit >> ")
 					browser.close()
 					exit()
-				elif balance-betamount < stoploss:
-					uiprint(f"Resetting bet amount to {self.betamount}; If game is lost balance will be under stop loss", "yellow")
-					threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
-					ToastNotifier().show_toast("Bloxflip Smart Bet", 
-						   "You've almost hit your stop loss! Resetting bet amount", duration = 3,
-					 	   icon_path ="assets\\Bloxflip.ico",
-					 	   threaded=True
-					 	   )
-					betamount = self.betamount
+			elif balance > stop:
+				uiprint("Auto Stop goal reached. Betting has stopped.", "good")
+				threading.Thread(target=playsound, args=('Assets\Win.mp3',)).start()
+				ToastNotifier().show_toast("Bloxflip Smart Bet", 
+					   "Your auto stop goal has been reached!", duration = 3,
+				 	   icon_path ="assets\\Bloxflip.ico",
+				 	   threaded=True
+				 	   )
+				uiprint("If the program is reaching the goal instantly that likely means your balance is already above the auto_stop amount.", "warning")
+				uiprint("To fix this simply increase the number to a number higher than your current balance.", "warning")
+				input("Press enter to resume betting >> ")
+				while True:
+					try:
+						stop = float(input("Enter new goal: "))
+						break
+					except:
+						uiprint("Ivalid number.", "error")
+			elif balance < stoploss:
+				uiprint(f"Balance is below stop loss. All betting has stopped.", "bad")
+				threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
+				ToastNotifier().show_toast("Bloxflip Smart Bet", 
+					   "You've hit your stop loss!", duration = 3,
+				 	   icon_path ="assets\\Bloxflip.ico",
+				 	   threaded=True
+				 	   )
+				input("Press enter to exit >> ")
+				browser.close()
+				exit()
+			elif balance-betamount < stoploss:
+				uiprint(f"Resetting bet amount to {self.betamount}; If game is lost balance will be under stop loss", "yellow")
+				threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
+				ToastNotifier().show_toast("Bloxflip Smart Bet", 
+					   "You've almost hit your stop loss! Resetting bet amount", duration = 3,
+				 	   icon_path ="assets\\Bloxflip.ico",
+				 	   threaded=True
+				 	   )
+				betamount = self.betamount
 
-				if betamount >= maxbet:
-					uiprint(f"Resetting bet amount to {self.betamount}; Bet amount is above max_betamount:{maxbet}", "yellow")
-					threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
-					ToastNotifier().show_toast("Bloxflip Smart Bet", 
-						   "You've hit your maxbet! Resetting bet amount", duration = 3,
-					 	   icon_path ="assets\\Bloxflip.ico",
-					 	   threaded=True
-					 	   )
-					betamount = self.betamount
-					continue
-				
+			if betamount >= maxbet:
+				uiprint(f"Resetting bet amount to {self.betamount}; Bet amount is above max_betamount:{maxbet}", "yellow")
+				threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
+				ToastNotifier().show_toast("Bloxflip Smart Bet", 
+					   "You've hit your maxbet! Resetting bet amount", duration = 3,
+				 	   icon_path ="assets\\Bloxflip.ico",
+				 	   threaded=True
+				 	   )
+				betamount = self.betamount
+				continue
+			
 
-				uiprint(f"Placing bet with {betamount} Robux on {multiplier}x multiplier")
-				if lastgame:
-					lastgame = game[1]
-					if lastgame < multiplier:
-						betamount = betamount*2
-						self.updateBetAmount(betamount)
-						uiprint(f"Lost game. Increasing bet amount to {betamount}", "bad")
-						try:
-							threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
-						except:
-							pass
-					else:
-						betamount = self.betamount
-						self.updateBetAmount(betamount)
-						uiprint(f"Won game. Lowering bet amount to {betamount}", "good")
-						try:
-							threading.Thread(target=playsound, args=('Assets\Win.mp3',)).start()
-						except:
-							pass
+			uiprint(f"Placing bet with {betamount} Robux on {multiplier}x multiplier")
+			if lastgame:
+				lastgame = game[1]
+				if lastgame < multiplier:
+					betamount = betamount*2
+					self.updateBetAmount(betamount)
+					uiprint(f"Lost game. Increasing bet amount to {betamount}", "bad")
+					try:
+						threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
+					except:
+						pass
 				else:
-					lastgame = games[0]
-				time.sleep(2)
-				try:
-					browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
-				except:
-					browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss143.MuiButton-containedPrimary").click()
+					betamount = self.betamount
+					self.updateBetAmount(betamount)
+					uiprint(f"Won game. Lowering bet amount to {betamount}", "good")
+					try:
+						threading.Thread(target=playsound, args=('Assets\Win.mp3',)).start()
+					except:
+						pass
+			else:
+				lastgame = games[0]
+			time.sleep(2)
+			try:
+				browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
+			except:
+				browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss143.MuiButton-containedPrimary").click()
 if __name__ == "__main__":
 	main()
