@@ -326,7 +326,6 @@ class main:
 
 
 			try:
-				print(lastgame, multiplier)
 				if lastgame > multiplier:
 					uiprint("Won previous game.", "good")
 					try:
