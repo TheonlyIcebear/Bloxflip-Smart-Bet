@@ -406,7 +406,7 @@ class main:
 
 			uiprint(f"Placing bet with {betamount} Robux on {multiplier}x multiplier")
 			if lastgame:
-				lastgame = game[1]
+				lastgame = game[0]
 				if lastgame < multiplier:
 					betamount = betamount*2
 					self.updateBetAmount(betamount)
@@ -429,6 +429,9 @@ class main:
 			try:
 				browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
 			except:
-				browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss143.MuiButton-containedPrimary").click()
+				try:
+					browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss143.MuiButton-containedPrimary").click()
+				except:
+					pass
 if __name__ == "__main__":
 	main()
