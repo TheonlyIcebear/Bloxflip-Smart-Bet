@@ -7,5 +7,6 @@
 	"auto_stop": 200,
 	"stop_loss": 30,
 	"auto_restart": true,
+	"key": "",
 	"authorization": ""
 }
