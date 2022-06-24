@@ -1,6 +1,6 @@
 {
 	"multiplier": 2.3,
-	"games_averaged": 7,
+	"games_averaged": 15,
 	"bet_amount": 1,
 	"auto_bet": false,
 	"max_betamount": 32,
