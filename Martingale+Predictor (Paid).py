@@ -354,16 +354,17 @@ class main:
 
 			try:
 				if lastgame > prediction:
-					uiprint("Won previous game.", "good")
-					uiprint(f"Accuracy on last guess: {(1-(abs(multiplier-lastgame))/lastgame)*100}", "yellow")
+					uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
+					uiprint(f"Accuracy on previous guess: {(1-(abs(multiplier-lastgame))/lastgame)*100}", "yellow")
 					betamount = self.betamount
 					try:
 						threading.Thread(target=playsound, args=('Assets\Win.mp3',)).start()
 					except:
 						pass
 				else:
-					uiprint("Lost previous game.", "bad")
-					uiprint(f"Accuracy on last guess: {(1-(abs(lastgame-multiplier))/multiplier)*100}", "yellow")
+					uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
+					uiprint(f"Accuracy on previous guess: {(1-(abs(lastgame-multiplier))/multiplier)*100}", "yellow")
+
 					betamount *= 2
 					try:
 						threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
