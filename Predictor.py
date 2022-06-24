@@ -356,6 +356,8 @@ class main:
 				uiprint(f"No data for accuracy calculations", "error")
 			except UnboundLocalError:
 				uiprint(f"No data for accuracy calculations", "error")
+			except NameError:
+				uiprint(f"No data for accuracy calculations", "error")
 
 			try:
 				games[0]
