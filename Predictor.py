@@ -325,7 +325,7 @@ class main:
 
 
 		multiplier = self.multiplier
-		playsounds = self.playsound
+		playsounds = self.playsounds
 		betamount = self.betamount
 		stoploss = self.stoploss
 		browser = self.browser

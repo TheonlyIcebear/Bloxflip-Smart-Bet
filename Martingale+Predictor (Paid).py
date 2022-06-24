@@ -336,13 +336,18 @@ class main:
 		element.send_keys(f"{multiplier}")
 
 
+	def playsounds(self, file):
+		if self.sound:
+			playsound(file)
+
+
 	def sendBets(self): # Actually compare the user's chances of winning and place the bets
 		uiprint = self.print
 		uiprint("Betting started. Press Ctrl + C to exit")
 
 
 		multiplier = self.multiplier
-		playsounds = self.playsound
+		playsounds = self.playsounds
 		betamount = self.betamount
 		stoploss = self.stoploss
 		browser = self.browser
