@@ -201,6 +201,14 @@ class main:
 
 
 			try:
+				self.maxbet =  float(config["max_betamount"])
+			except:
+				uiprint("Invalid max_betamount amount inside JSON file. Must be a valid number", "error")
+				time.sleep(1.6)
+				exit()
+
+
+			try:
 				self.bet = float(config["auto_bet"])
 			except:
 				uiprint("Invalid bet inside JSON file. Must be true or false", "error")
@@ -325,6 +333,7 @@ class main:
 		browser = self.browser
 		average = self.average
 		restart = self.restart
+		maxbet = self.maxbet
 		stop = self.stop
 		lastgame = None
 		bet = self.bet
@@ -451,6 +460,27 @@ class main:
 				input("Press enter to exit >> ")
 				browser.close()
 				exit()
+
+			elif balance-betamount < stoploss:
+				uiprint(f"Resetting bet amount to {self.betamount}; If game is lost balance will be under stop loss", "yellow")
+				threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
+				ToastNotifier().show_toast("Bloxflip Smart Bet", 
+					   "You've almost hit your stop loss! Resetting bet amount", duration = 3,
+				 	   icon_path ="assets\\Bloxflip.ico",
+				 	   threaded=True
+				 	   )
+				betamount = self.betamount
+
+			if betamount >= maxbet:
+				uiprint(f"Resetting bet amount to {self.betamount}; Bet amount is above max_betamount:{maxbet}", "yellow")
+				threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
+				ToastNotifier().show_toast("Bloxflip Smart Bet", 
+					   "You've hit your maxbet! Resetting bet amount", duration = 3,
+				 	   icon_path ="assets\\Bloxflip.ico",
+				 	   threaded=True
+				 	   )
+				betamount = self.betamount
+				continue
 			
 			if round(multiplier, 2) <= 1:
 				uiprint("Cancelling bet this game. As the game will likely crash around 1x.")
