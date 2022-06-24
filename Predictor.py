@@ -335,7 +335,7 @@ class main:
 
 
 			try:
-				if lastgame > multiplier:
+				if lastgame > prediction:
 					uiprint("Won previous game.", "good")
 					uiprint(f"Accuracy on last guess: {(1-(abs(multiplier-lastgame))/lastgame)*100}", "yellow")
 					try:
@@ -354,6 +354,8 @@ class main:
 				uiprint(f"No data for accuracy calculations", "error")
 			except TypeError:
 				uiprint(f"No data for accuracy calculations", "error")
+			except UnboundLocalError:
+				uiprint(f"No data for accuracy calculations", "error")
 
 			try:
 				games[0]
@@ -369,8 +371,8 @@ class main:
 				multiplier = 1/(1-(chance*(10**average/1.5)))
 
 
-			uiprint(f"Setting multiplier to {multiplier}", "yellow")
-			self.updateMultiplier(round(multiplier, 2) )
+			uiprint(f"Setting multiplier to {prediction}", "yellow")
+			self.updateMultiplier(round(prediction, 2) )
 
 			
 			uiprint(f"Your balance is {balance}")
@@ -418,7 +420,7 @@ class main:
 					uiprint("Cancelling bet this game. As the game will likely crash around 1x.")
 					continue
 
-				uiprint(f"Placing bet with {betamount} Robux on {multiplier}x multiplier")
+				uiprint(f"Placing bet with {betamount} Robux on {prediction}x multiplier")
 				
 				try:
 					browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
