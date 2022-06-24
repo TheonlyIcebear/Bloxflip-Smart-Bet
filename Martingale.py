@@ -408,7 +408,7 @@ class main:
 			if lastgame:
 				lastgame = game[0]
 				if lastgame < multiplier:
-					betamount = betamount*2
+					betamount *= 2
 					self.updateBetAmount(betamount)
 					uiprint(f"Lost game. Increasing bet amount to {betamount}", "bad")
 					try:
