@@ -368,9 +368,9 @@ class main:
 			for game in games:
 				chance = chance * ((100/game)/100)
 			try:
-				multiplier = 1/(1-(chance*(10**(int(str(chance).split("e-")[1])-1))))
+				prediction = 1/(1-(chance*(10**(int(str(chance).split("e-")[1])-1))))
 			except:
-				multiplier = 1/(1-(chance*(10**average/1.5)))
+				prediction = 1/(1-(chance*(10**average/1.5)))
 
 
 			uiprint(f"Setting multiplier to {prediction}", "yellow")
