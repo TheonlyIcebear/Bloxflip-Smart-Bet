@@ -357,6 +357,7 @@ class main:
 					uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
 					uiprint(f"Accuracy on previous guess: {(1-(abs(multiplier-lastgame))/lastgame)*100}", "yellow")
 					betamount = self.betamount
+					self.updateBetAmount(betamount)
 					try:
 						threading.Thread(target=playsound, args=('Assets\Win.mp3',)).start()
 					except:
@@ -364,8 +365,8 @@ class main:
 				else:
 					uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
 					uiprint(f"Accuracy on previous guess: {(1-(abs(lastgame-multiplier))/multiplier)*100}", "yellow")
-
 					betamount *= 2
+					self.updateBetAmount(betamount)
 					try:
 						threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
 					except:
@@ -434,12 +435,12 @@ class main:
 				browser.close()
 				exit()
 			elif balance > stop:
-				uiprint("You don't have enough robux to continue betting.", "error")
+				uiprint("Auto Stop goal reached. Betting has stopped.", "good")
 				threading.Thread(target=playsound, args=('Assets\Win.mp3',)).start()
 				ToastNotifier().show_toast("Bloxflip Smart Bet", 
 					   "Your auto stop goal has been reached!", duration = 3,
 				 	   icon_path ="assets\\Bloxflip.ico",
-				 	   thresaded=True
+				 	   threaded=True
 				 	   )
 				uiprint("If the program is reaching the goal instantly that likely means your balance is already above the auto_stop amount.", "warning")
 				uiprint("To fix this simply increase the number to a number higher than your current balance.", "warning")
