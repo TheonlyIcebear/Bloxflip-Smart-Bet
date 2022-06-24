@@ -193,6 +193,14 @@ class main:
 
 
 			try:
+				self.sound = config["play_sounds"]
+			except:
+				uiprint("Invalid play_sounds boolean inside JSON file. Must be true or false", "error")
+				time.sleep(1.6)
+				exit()
+
+
+			try:
 				self.betamount = float(config["bet_amount"])
 			except:
 				uiprint("Invalid bet_amount inside JSON file. Must be valid number", "error")
@@ -306,6 +314,12 @@ class main:
 				yield [games["history"][0]["crashPoint"], [float(crashpoint["crashPoint"]) for crashpoint in history[:average]]]
 			time.sleep(0.01)
 
+
+	def playsounds(self, file):
+		if self.sound:
+			playsound(file)
+
+
 	def updateBetAmount(self, amount):
 		browser = self.browser
 		element = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')[0]
@@ -354,21 +368,21 @@ class main:
 
 			try:
 				if lastgame > prediction:
-					uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
-					uiprint(f"Accuracy on previous guess: {(1-(abs(multiplier-lastgame))/lastgame)*100}", "yellow")
 					betamount = self.betamount
+					uiprint(f"Won previous game. lowering bet amount to {betamount}", "bad")
+					uiprint(f"Accuracy on previous guess: {(1-(abs(multiplier-lastgame))/lastgame)*100}", "yellow")
 					self.updateBetAmount(betamount)
 					try:
-						threading.Thread(target=playsound, args=('Assets\Win.mp3',)).start()
+						threading.Thread(target=playsounds, args=('Assets\Won.mp3',)).start()
 					except:
 						pass
 				else:
+					betamount *= 2
 					uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
 					uiprint(f"Accuracy on previous guess: {(1-(abs(lastgame-multiplier))/multiplier)*100}", "yellow")
-					betamount *= 2
 					self.updateBetAmount(betamount)
 					try:
-						threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
+						threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
 					except:
 						pass
 				
@@ -426,7 +440,7 @@ class main:
 			uiprint(f"Your balance is {balance}")
 			if balance < betamount:
 				uiprint("You don't have enough robux to continue betting.", "error")
-				threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
+				threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
 				ToastNotifier().show_toast("Bloxflip Smart Bet", 
 					   "Oh No! You've run out of robux to bet!", duration = 3,
 				 	   icon_path ="assets\\Bloxflip.ico",
@@ -436,7 +450,7 @@ class main:
 				exit()
 			elif balance > stop:
 				uiprint("Auto Stop goal reached. Betting has stopped.", "good")
-				threading.Thread(target=playsound, args=('Assets\Win.mp3',)).start()
+				threading.Thread(target=playsounds, args=('Assets\Win.mp3',)).start()
 				ToastNotifier().show_toast("Bloxflip Smart Bet", 
 					   "Your auto stop goal has been reached!", duration = 3,
 				 	   icon_path ="assets\\Bloxflip.ico",
@@ -453,7 +467,7 @@ class main:
 						uiprint("Ivalid number.", "error")
 			elif balance < stoploss:
 				uiprint(f"Balance is below stop loss. All betting has stopped.", "bad")
-				threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
+				threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
 				ToastNotifier().show_toast("Bloxflip Smart Bet", 
 					   "You've hit your stop loss!", duration = 3,
 				 	   icon_path ="assets\\Bloxflip.ico",
@@ -465,7 +479,7 @@ class main:
 
 			elif balance-betamount < stoploss:
 				uiprint(f"Resetting bet amount to {self.betamount}; If game is lost balance will be under stop loss", "yellow")
-				threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
+				threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
 				ToastNotifier().show_toast("Bloxflip Smart Bet", 
 					   "You've almost hit your stop loss! Resetting bet amount", duration = 3,
 				 	   icon_path ="assets\\Bloxflip.ico",
@@ -475,7 +489,7 @@ class main:
 
 			if betamount > maxbet:
 				uiprint(f"Resetting bet amount to {self.betamount}; Bet amount is above max_betamount:{maxbet}", "yellow")
-				threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
+				threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
 				ToastNotifier().show_toast("Bloxflip Smart Bet", 
 					   "You've hit your maxbet! Resetting bet amount", duration = 3,
 				 	   icon_path ="assets\\Bloxflip.ico",

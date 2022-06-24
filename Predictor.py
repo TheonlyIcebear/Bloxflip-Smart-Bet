@@ -395,7 +395,7 @@ class main:
 					ToastNotifier().show_toast("Bloxflip Smart Bet", 
 						   "Your auto stop goal has been reached!", duration = 3,
 					 	   icon_path ="assets\\Bloxflip.ico",
-					 	   thresaded=True
+					 	   threaded=True
 					 	   )
 					uiprint("If the program is reaching the goal instantly that likely means your balance is already above the auto_stop amount.", "warning")
 					uiprint("To fix this simply increase the number to a number higher than your current balance.", "warning")
