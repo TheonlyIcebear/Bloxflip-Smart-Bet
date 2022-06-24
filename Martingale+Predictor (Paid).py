@@ -473,7 +473,7 @@ class main:
 				 	   )
 				betamount = self.betamount
 
-			if betamount >= maxbet:
+			if betamount > maxbet:
 				uiprint(f"Resetting bet amount to {self.betamount}; Bet amount is above max_betamount:{maxbet}", "yellow")
 				threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
 				ToastNotifier().show_toast("Bloxflip Smart Bet", 
