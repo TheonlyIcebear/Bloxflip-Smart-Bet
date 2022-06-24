@@ -193,6 +193,14 @@ class main:
 
 
 			try:
+				self.sound = config["play_sounds"]
+			except:
+				uiprint("Invalid play_sounds boolean inside JSON file. Must be true or false", "error")
+				time.sleep(1.6)
+				exit()
+
+
+			try:
 				self.stop =  float(config["auto_stop"])
 			except:
 				uiprint("Invalid auto stop amount inside JSON file. Must be a valid number", "error")
@@ -291,6 +299,7 @@ class main:
 
 
 		multiplier = self.multiplier
+		playsounds = self.playsound
 		betamount = self.betamount
 		stoploss = self.stoploss
 		browser = self.browser
@@ -326,7 +335,7 @@ class main:
 
 
 			if balance < betamount:
-					threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
+					threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
 					ToastNotifier().show_toast("Bloxflip Smart Bet", 
 						   "Oh No! You've run out of robux to bet!", duration = 3,
 					 	   icon_path ="assets\\Bloxflip.ico",
@@ -336,7 +345,7 @@ class main:
 					exit()
 			elif balance > stop:
 				uiprint("Auto Stop goal reached. Betting has stopped.", "good")
-				threading.Thread(target=playsound, args=('Assets\Win.mp3',)).start()
+				threading.Thread(target=playsounds, args=('Assets\Win.mp3',)).start()
 				ToastNotifier().show_toast("Bloxflip Smart Bet", 
 					   "Your auto stop goal has been reached!", duration = 3,
 				 	   icon_path ="assets\\Bloxflip.ico",
@@ -353,7 +362,7 @@ class main:
 						uiprint("Ivalid number.", "error")
 			elif balance < stoploss:
 				uiprint(f"Balance is below stop loss. All betting has stopped.", "bad")
-				threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
+				threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
 				ToastNotifier().show_toast("Bloxflip Smart Bet", 
 					   "You've hit your stop loss!", duration = 3,
 				 	   icon_path ="assets\\Bloxflip.ico",
@@ -372,7 +381,7 @@ class main:
 			if percent >= (1/(multiplier-1))/(1/(multiplier-1)+1)*100:
 				uiprint(f"Winning streak detected.", "good")
 				try:
-					threading.Thread(target=playsound, args=('Assets\Win.mp3',)).start()
+					threading.Thread(target=playsounds, args=('Assets\Win.mp3',)).start()
 				except:
 					pass
 				uiprint(f"Placing bet for {multiplier}x")
@@ -384,7 +393,7 @@ class main:
 			else:
 				uiprint(f"Losing streak detected.", "bad")
 				try:
-					threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
+					threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
 				except:
 					pass
 

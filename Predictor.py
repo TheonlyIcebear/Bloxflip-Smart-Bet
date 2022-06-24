@@ -193,6 +193,14 @@ class main:
 
 
 			try:
+				self.sound = config["play_sounds"]
+			except:
+				uiprint("Invalid play_sounds boolean inside JSON file. Must be true or false", "error")
+				time.sleep(1.6)
+				exit()
+
+
+			try:
 				self.bet = float(config["auto_bet"])
 			except:
 				uiprint("Invalid bet inside JSON file. Must be true or false", "error")
@@ -306,6 +314,11 @@ class main:
 		element.send_keys(f"{multiplier}")
 
 
+	def playsounds(self, file):
+		if self.sound:
+			playsound(file)
+
+
 	def sendBets(self): # Actually compare the user's chances of winning and place the bets
 		uiprint = self.print
 		uiprint("Betting started. Press Ctrl + C to exit")
@@ -340,14 +353,14 @@ class main:
 					uiprint("Won previous game.", "good")
 					uiprint(f"Accuracy on last guess: {(1-(abs(multiplier-lastgame))/lastgame)*100}", "yellow")
 					try:
-						threading.Thread(target=playsound, args=('Assets\Win.mp3',)).start()
+						threading.Thread(target=playsounds, args=('Assets\Win.mp3',)).start()
 					except:
 						pass
 				else:
 					uiprint("Lost previous game.", "bad")
 					uiprint(f"Accuracy on last guess: {(1-(abs(lastgame-multiplier))/multiplier)*100}", "yellow")
 					try:
-						threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
+						threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
 					except:
 						pass
 				
@@ -382,7 +395,7 @@ class main:
 			if bet:
 				if balance < betamount:
 					uiprint("You don't have enough robux to continue betting.", "error")
-					threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
+					threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
 					ToastNotifier().show_toast("Bloxflip Smart Bet", 
 						   "Oh No! You've run out of robux to bet!", duration = 3,
 					 	   icon_path ="assets\\Bloxflip.ico",
@@ -392,7 +405,7 @@ class main:
 					exit()
 				elif balance > stop:
 					uiprint("You don't have enough robux to continue betting.", "error")
-					threading.Thread(target=playsound, args=('Assets\Win.mp3',)).start()
+					threading.Thread(target=playsounds, args=('Assets\Win.mp3',)).start()
 					ToastNotifier().show_toast("Bloxflip Smart Bet", 
 						   "Your auto stop goal has been reached!", duration = 3,
 					 	   icon_path ="assets\\Bloxflip.ico",
@@ -409,7 +422,7 @@ class main:
 							uiprint("Ivalid number.", "error")
 				elif balance < stoploss:
 					uiprint(f"Balance is below stop loss. All betting has stopped.", "bad")
-					threading.Thread(target=playsound, args=('Assets\Loss.mp3',)).start()
+					threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
 					ToastNotifier().show_toast("Bloxflip Smart Bet", 
 						   "You've hit your stop loss!", duration = 3,
 					 	   icon_path ="assets\\Bloxflip.ico",
