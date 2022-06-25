@@ -2,6 +2,7 @@
 
 import subprocess, threading, selenium, requests, logging, base64, json, time, os
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
 from win10toast import ToastNotifier
 from playsound import playsound
 from selenium import webdriver
@@ -122,7 +123,7 @@ class main:
 					  
 		for possibleclass in classnames:
 			try:
-				balance = float(browser.find_element_by_css_selector(possibleclass).text.replace(',', ''))
+				balance = float(browser.find_element(By.CSS_SELECTOR, possibleclass).text.replace(',', ''))
 			except selenium.common.exceptions.NoSuchElementException:
 				pass
 			except ValueError:
@@ -259,11 +260,11 @@ class main:
 			time.sleep(1.5)
 
 			self.getBalance()
-			elements = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
+			elements = browser.find_elements(By.CSS_SELECTOR, '.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
 			if not elements:
 				uiprint("Blocked by DDoS protection. Solve the captcha on the chrome window to continue.")
 			while not elements:
-				elements = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
+				elements = browser.find_elements(By.CSS_SELECTOR, '.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
 
 
 			elements[0].send_keys(f"{Keys.BACKSPACE}")
@@ -300,7 +301,7 @@ class main:
 
 	def updateBetAmount(self, amount):
 		browser = self.browser
-		elemnts = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
+		elemnts = browser.find_elements(By.CSS_SELECTOR, '.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
 		for _ in range(10):
 			elemnts[0].send_keys(f"{Keys.BACKSPACE}")
 		elemnts[0].send_keys(f"{amount}")
@@ -442,10 +443,10 @@ class main:
 				lastgame = games[0]
 			time.sleep(2)
 			try:
-				browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
+				browser.find_element(By.CSS_SELECTOR, ".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
 			except:
 				try:
-					browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss143.MuiButton-containedPrimary").click()
+					browser.find_element(By.CSS_SELECTOR, ".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss143.MuiButton-containedPrimary").click()
 				except:
 					pass
 if __name__ == "__main__":

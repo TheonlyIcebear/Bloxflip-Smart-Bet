@@ -2,6 +2,7 @@
 
 import subprocess, threading, selenium, requests, logging, base64, json, time, os
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
 from win10toast import ToastNotifier
 from playsound import playsound
 from selenium import webdriver
@@ -122,7 +123,7 @@ class main:
 					  
 		for possibleclass in classnames:
 			try:
-				balance = float(browser.find_element_by_css_selector(possibleclass).text.replace(',', ''))
+				balance = float(browser.find_element(By.CSS_SELECTOR, possibleclass).text.replace(',', ''))
 			except selenium.common.exceptions.NoSuchElementException:
 				pass
 			except ValueError:
@@ -247,11 +248,11 @@ class main:
 			time.sleep(1.5)
 
 			self.getBalance()
-			elements = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
+			elements = browser.find_elements(By.CSS_SELECTOR, '.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
 			if not elements:
 				uiprint("Blocked by DDoS protection. Solve the captcha on the chrome window to continue.")
 			while not elements:
-				elements = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
+				elements = browser.find_elements(By.CSS_SELECTOR, '.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
 
 
 			elements[0].send_keys(f"{Keys.BACKSPACE}")
@@ -286,6 +287,11 @@ class main:
 				yield [games["history"][0]["crashPoint"], [float(crashpoint["crashPoint"]) for crashpoint in history[:average]]]
 			time.sleep(0.01)
 
+
+	def playsounds(self, file):
+		if self.sound:
+			playsound(file)
+
 			
 	def sendBets(self): # Actually compare the user's chances of winning and place the bets
 		uiprint = self.print
@@ -299,7 +305,7 @@ class main:
 
 
 		multiplier = self.multiplier
-		playsounds = self.playsound
+		playsounds = self.playsounds
 		betamount = self.betamount
 		stoploss = self.stoploss
 		browser = self.browser
@@ -387,9 +393,9 @@ class main:
 				uiprint(f"Placing bet for {multiplier}x")
 				time.sleep(2)
 				try:
-					browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
+					browser.find_element(By.CSS_SELECTOR, ".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
 				except:
-					browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss143.MuiButton-containedPrimary").click()
+					browser.find_element(By.CSS_SELECTOR, ".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss143.MuiButton-containedPrimary").click()
 			else:
 				uiprint(f"Losing streak detected.", "bad")
 				try:

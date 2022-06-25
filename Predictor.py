@@ -2,6 +2,7 @@
 
 import subprocess, threading, selenium, requests, logging, base64, json, time, os
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
 from win10toast import ToastNotifier
 from playsound import playsound
 from selenium import webdriver

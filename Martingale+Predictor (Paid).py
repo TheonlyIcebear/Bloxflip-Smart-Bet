@@ -2,6 +2,7 @@
 
 import subprocess, threading, selenium, requests, logging, base64, json, time, os
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
 from win10toast import ToastNotifier
 from playsound import playsound
 from selenium import webdriver
@@ -275,11 +276,11 @@ class main:
 			time.sleep(1.5)
 
 			self.getBalance()
-			elements = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
+			elements = browser.find_elements(By.CSS_SELECTOR, '.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
 			if not elements:
 				uiprint("Blocked by DDoS protection. Solve the captcha on the chrome window to continue.")
 			while not elements:
-				elements = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
+				elements = browser.find_elements(By.CSS_SELECTOR, '.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
 
 
 			elements[0].send_keys(f"{Keys.BACKSPACE}")
@@ -322,7 +323,7 @@ class main:
 
 	def updateBetAmount(self, amount):
 		browser = self.browser
-		element = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')[0]
+		element = browser.find_elements(By.CSS_SELECTOR, '.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')[0]
 		for _ in range(10):
 			element.send_keys(f"{Keys.BACKSPACE}")
 		element.send_keys(f"{amount}")
@@ -330,7 +331,7 @@ class main:
 
 	def updateMultiplier(self, multiplier):
 		browser = self.browser
-		element = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')[1]
+		element = browser.find_elements(By.CSS_SELECTOR, '.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')[1]
 		for _ in range(10):
 			element.send_keys(f"{Keys.BACKSPACE}")
 		element.send_keys(f"{multiplier}")
@@ -511,8 +512,8 @@ class main:
 			uiprint(f"Placing bet with {betamount} Robux on {prediction}x multiplier")
 			
 			try:
-				browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
+				browser.find_element(By.CSS_SELECTOR, ".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
 			except:
-				browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss143.MuiButton-containedPrimary").click()
+				browser.find_element(By.CSS_SELECTOR, ".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss143.MuiButton-containedPrimary").click()
 if __name__ == "__main__":
 	main()
