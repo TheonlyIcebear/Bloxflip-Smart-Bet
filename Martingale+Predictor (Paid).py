@@ -375,7 +375,7 @@ class main:
 			try:
 				if lastgame > prediction:
 					betamount = self.betamount
-					uiprint(f"Won previous game. lowering bet amount to {betamount}", "bad")
+					uiprint(f"Won previous game. lowering bet amount to {betamount}", "good")
 					uiprint(f"Accuracy on previous guess: {(1-(abs(multiplier-lastgame))/lastgame)*100}", "yellow")
 					self.updateBetAmount(betamount)
 					try:
