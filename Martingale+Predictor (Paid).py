@@ -123,7 +123,7 @@ class main:
 
 		for possibleclass in classnames:
 			try:
-				balance = float(browser.find_element_by_css_selector(possibleclass).text.replace(',', ''))
+				balance = float(browser.find_element(By.CSS_SELECTOR, possibleclass).text.replace(',', ''))
 			except selenium.common.exceptions.NoSuchElementException:
 				pass
 			except ValueError:
