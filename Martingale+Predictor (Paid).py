@@ -374,10 +374,11 @@ class main:
 
 
 			try:
+				print(abs(multiplier-lastgame))
 				if lastgame > prediction:
 					betamount = self.betamount
 					uiprint(f"Won previous game. lowering bet amount to {betamount}", "good")
-					uiprint(f"Accuracy on previous guess: {(1-(abs(multiplier-lastgame))/lastgame)*100}", "yellow")
+					uiprint(f"Accuracy on previous guess: {(1-(abs(multiplier-lastgame)/lastgame))*100}", "yellow")
 					self.updateBetAmount(betamount)
 					try:
 						threading.Thread(target=playsounds, args=('Assets\Won.mp3',)).start()
@@ -386,7 +387,7 @@ class main:
 				else:
 					betamount *= 2
 					uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
-					uiprint(f"Accuracy on previous guess: {(1-(abs(lastgame-multiplier))/multiplier)*100}", "yellow")
+					uiprint(f"Accuracy on previous guess: {(1-((abs(lastgame-multiplier))/multiplier))*100}", "yellow")
 					self.updateBetAmount(betamount)
 					try:
 						threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
@@ -411,7 +412,8 @@ class main:
 			for game in games:
 				chance = chance * ((100/game)/100)
 			
-			request = requests.get("https://predictor.repl.co/multiplier", 
+			while True:
+				request = requests.get("https://predictor.repl.co/multiplier", 
 										data={"key": key, 
 											  "average": average,
 											  "multiplier": self.multiplier, 
@@ -419,23 +421,20 @@ class main:
 										}
 									)
 
-			if request.status_code == 403:
-				uiprint("Invalid key! To buy a valid key create a ticket on the discord. https://discord.gg/HhwNFRaC", "error")
-				input("Press enter to exit >> ")
-				browser.close()
-				exit()
-			elif request.status_code == 500:
-				uiprint("Internal server error. Please try again later", "error")
-				input("Press enter to exit >> ")
-				browser.close()
-				exit()
-			elif request.status_code == 200:
-				prediction = float(request.text)
-			else:
-				uiprint("Internal server error. Please try again later", "error")
-				input("Press enter to exit >> ")
-				browser.close()
-				exit()
+				if request.status_code == 403:
+					uiprint("Invalid key! To buy a valid key create a ticket on the discord. https://discord.gg/HhwNFRaC", "error")
+					input("Press enter to exit >> ")
+					browser.close()
+					exit()
+				elif request.status_code == 500:
+					uiprint("Internal server error. Trying again 1.5 seconds...", "error")
+					time.sleep(1.5)
+				elif request.status_code == 200:
+					prediction = float(request.text)
+					break
+				else:
+					uiprint("Internal server error. Trying again 1.5 seconds...", "error")
+					time.sleep(1.5)
 
 
 
@@ -453,8 +452,22 @@ class main:
 				 	   icon_path ="assets\\Bloxflip.ico",
 				 	   threaded=True
 				 	   )
-				browser.close()
-				exit()
+				if not balance < self.betamount and not restart:
+					input(f"Press enter to restart betting with {self.betamount} robux")
+					betamount = self.betamount
+				elif not balance < self.betamount and restart:
+					uiprint("Overwritten: Auto Restart is enabled", "warning")
+					threading.Thread(target=playsounds, args=('Assets\Win.mp3',)).start()
+					ToastNotifier().show_toast("Bloxflip Smart Bet", 
+						   "Overwritten: Auto restart is enabled.", duration = 3,
+					 	   icon_path ="assets\\Bloxflip.ico",
+					 	   threaded=True
+					 	   )
+					betamount = self.betamount
+				else:
+					input("Press enter to exit >> ")
+					browser.close()
+					exit()
 			elif balance > stop:
 				uiprint("Auto Stop goal reached. Betting has stopped.", "good")
 				threading.Thread(target=playsounds, args=('Assets\Win.mp3',)).start()
