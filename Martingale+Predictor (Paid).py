@@ -120,7 +120,8 @@ class main:
 					  ".MuiBox-root.jss233.jss44",
 					  ".MuiBox-root.jss226.jss44",
 					  ".MuiBox-root.jss247.jss44",
-					  ".MuiBox-root.jss240.jss44"]
+					  ".MuiBox-root.jss240.jss44",
+					  ".MuiBox-root.jss214.jss44"]
 
 		for possibleclass in classnames:
 			try:
@@ -267,8 +268,14 @@ class main:
 
 			self.installDriver()
 			options = webdriver.ChromeOptions()
+			options.add_argument(f'user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36')
+			options.add_argument('--disable-extensions')
+			options.add_argument('--profile-directory=Default')
+			options.add_argument("--incognito")
+			options.add_argument("--disable-plugins-discovery");
+			options.add_argument("--start-maximized")
 			options.add_experimental_option("excludeSwitches", ["enable-automation", 'enable-logging'])
-			options.add_experimental_option('useAutomationExtension', False)
+			options.add_experimental_option('useAutomationExtension', False)		
 			try:
 				self.browser = webdriver.Chrome("chromedriver.exe", options=options)
 			except selenium.common.exceptions.SessionNotCreatedException:
@@ -303,9 +310,19 @@ class main:
 			elements[1].send_keys(f"{self.multiplier}")
 
 
-	def ChrashPoints(self):		
-		browser = webdriver.Chrome('chromedriver.exe')
+	def ChrashPoints(self):
+		options = webdriver.ChromeOptions()
+		options.add_argument(f'user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36')
+		options.add_argument('--disable-extensions')
+		options.add_argument('--profile-directory=Default')
+		options.add_argument("--incognito")
+		options.add_argument("--disable-plugins-discovery");
+		options.add_argument("--start-maximized")
+		options.add_experimental_option("excludeSwitches", ["enable-automation", 'enable-logging'])
+		options.add_experimental_option('useAutomationExtension', False)		
+		browser = webdriver.Chrome('chromedriver.exe', options=options)
 		browser.get("https://rest-bf.blox.land/games/crash")
+
 
 		average = self.average
 		history = None
