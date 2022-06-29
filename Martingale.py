@@ -119,7 +119,9 @@ class main:
 					  ".MuiBox-root.jss359.jss44", 
 					  ".MuiBox-root.jss221.jss44",
 					  ".MuiBox-root.jss233.jss44",
-					  ".MuiBox-root.jss226.jss44"]
+					  ".MuiBox-root.jss226.jss44",
+					  ".MuiBox-root.jss247.jss44"
+					  ".MuiBox-root.jss240.jss44"]
 					  
 		for possibleclass in classnames:
 			try:
