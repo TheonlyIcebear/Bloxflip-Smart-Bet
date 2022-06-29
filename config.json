@@ -4,7 +4,7 @@
 	"bet_amount": 1,
 	"auto_bet": false,
 	"play_sounds": false,
-	"webhook"
+	"webhook" : "",
 	"max_betamount": 32,
 	"auto_stop": 200,
 	"stop_loss": 30,
