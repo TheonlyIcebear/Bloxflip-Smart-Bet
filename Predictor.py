@@ -204,7 +204,7 @@ class main:
 			try:
 				self.webhook = config["webhook"]
 				if not "https://" in self.webhook:
-					uiprint("Invalid webhook inside JSON file file. Make sure you put the https:// with it.")
+					uiprint("Invalid webhook inside JSON file file. Make sure you put the https:// with it.", "warning")
 			except:
 				uiprint("Invalid webhook boolean inside JSON file. Make sure it's a valid string", "error")
 				time.sleep(1.6)
@@ -301,9 +301,12 @@ class main:
 				games = json.loads(data)
 			except json.decoder.JSONDecodeError:
 				uiprint("Blocked by ddos protection. Solve the captcha to continue.", "error")
-				time.sleep(20)
-				browser.close()
-				exit()
+			while True:
+				try:
+					games = json.loads(data)
+					break
+				except json.decoder.JSONDecodeError:
+					pass
 			if not history == games["history"]:
 				history = games["history"]
 				yield [games["history"][0]["crashPoint"], [float(crashpoint["crashPoint"]) for crashpoint in history[:average]]]
