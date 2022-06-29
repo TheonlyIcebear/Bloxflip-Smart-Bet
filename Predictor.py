@@ -426,7 +426,7 @@ class main:
 			except:
 				prediction = 1/(1-(chance*(10**average/1.5)))
 
-			prediction -= 0.2
+			prediction -= 0.06
 
 
 			uiprint(f"Setting multiplier to {prediction}", "yellow")
