@@ -39,39 +39,37 @@ class main:
 			cprint("AUTOBET", "magenta", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "magenta")
+				cprint(message, "magenta")
 		elif option == "error":
 			cprint("ERROR", "red", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "red")
+				cprint(message, "red")
 		elif option == "warning":
 			cprint("WARNING", "yellow", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "yellow")
+				cprint(message, "yellow")
 		elif option == "yellow":
 			cprint("AUTOBET", "yellow", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "yellow")
+				cprint(message, "yellow")
 		elif option == "good":
 			cprint("AUTOBET", "green", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "green")
+				cprint(message, "green")
 		elif option == "bad":
 			cprint("AUTOBET", "red", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "red")
+				cprint(message, "red")
 
 
 	def clear(self): # Clear the console
-		if os.name == 'nt':
-		  os.system("cls")
-		else:
-		  os.system("clear")
+		os.system('cls' if os.name == 'nt' else 'clear')
+
 
 
 	def installDriver(self, version=None):
