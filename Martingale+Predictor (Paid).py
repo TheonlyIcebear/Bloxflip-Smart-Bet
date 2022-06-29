@@ -215,9 +215,7 @@ class main:
 				if config['webhook'] == "":
 					self.webhook = None
 				else:
-					if "https://" in self.webhook:
-						pass
-					else:
+					if not "https://" in self.webhook:
 						uiprint("Invalid webhook inside JSON file file. Make sure you put the https:// with it.")
 			except:
 				uiprint("Invalid webhook boolean inside JSON file. Make sure it's a valid string", "error")
