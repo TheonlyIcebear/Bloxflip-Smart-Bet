@@ -39,39 +39,38 @@ class main:
 			cprint("AUTOBET", "magenta", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "magenta")
+				cprint(message, "magenta")
 		elif option == "error":
 			cprint("ERROR", "red", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "red")
+				cprint(message, "red")
 		elif option == "warning":
 			cprint("WARNING", "yellow", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "yellow")
+				cprint(message, "yellow")
 		elif option == "yellow":
 			cprint("AUTOBET", "yellow", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "yellow")
+				cprint(message, "yellow")
 		elif option == "good":
 			cprint("AUTOBET", "green", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "green")
+				cprint(message, "green")
 		elif option == "bad":
 			cprint("AUTOBET", "red", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "red")
-
+				cprint(message, "red")
 
 	def clear(self): # Clear the console
 		if os.name == 'nt':
-		  os.system("cls")
+			os.system("cls")
 		else:
-		  os.system("clear")
+			os.system("clear")
 
 
 	def installDriver(self, version=None):
@@ -138,21 +137,21 @@ class main:
 		return balance
 
 
-	def getConfig(self): # Get configuration from config.json file
+	def getConfig(self): # Get configuration from data.json file
 		uiprint = self.print
 		print("[", end="")
 		cprint(base64.b64decode(b'IENSRURJVFMg').decode('utf-8'), "cyan", end="")
 		print("]", end="")
-		print(base64.b64decode(b'IE1hZGUgYnkgSWNlIEJlYXIjMDE2Nw==').decode('utf-8'))
+		print(base64.b64decode(b'IE1hZGUgYnkgSWNlIEJlYXIjMDE2NyAmIEN1dGVjYXQgYnV0IHRlcm1lZCM0NzI4').decode('utf-8'))
 		time.sleep(3)
 		self.clear()
 
 		try:
-			open("config.json", "r").close()
+			open("data.json", "r").close()
 		except:
-			uiprint("config.json file is missing. Make sure you downloaded all the files and they're all in the same folder", "error")
+			uiprint("data.json file is missing. Make sure you downloaded all the files and they're all in the same folder", "error")
 
-		with open("config.json", "r+") as data:
+		with open("data.json", "r+") as data:
 			try:
 				config = json.load(data)
 				self.multiplier = float(config["multiplier"])
@@ -175,8 +174,6 @@ class main:
 				uiprint("Invalid amount of games to be averaged inside JSON file. Must be valid number", "error")
 				time.sleep(1.6)
 				exit()
-
-
 			try:
 				self.auth = config["authorization"]
 			except:
@@ -197,16 +194,6 @@ class main:
 				self.sound = config["play_sounds"]
 			except:
 				uiprint("Invalid play_sounds boolean inside JSON file. Must be true or false", "error")
-				time.sleep(1.6)
-				exit()
-
-
-			try:
-				self.webhook = config["webhook"]
-				if not "https://" in self.webhook:
-					uiprint("Invalid webhook inside JSON file file. Make sure you put the https:// with it.")
-			except:
-				uiprint("Invalid webhook boolean inside JSON file. Make sure it's a valid string", "error")
 				time.sleep(1.6)
 				exit()
 
@@ -266,10 +253,9 @@ class main:
 
 			self.installDriver()
 			options = webdriver.ChromeOptions()
-			options.add_experimental_option("excludeSwitches", ["enable-automation", 'enable-logging'])
-			options.add_experimental_option('useAutomationExtension', False)
+			options.add_experimental_option('excludeSwitches', ['enable-logging'])
 			try:
-				self.browser = webdriver.Chrome("chromedriver.exe", options=options)
+				self.browser = webdriver.Chrome("chromedriver.exe", chrome_options=options)
 			except selenium.common.exceptions.SessionNotCreatedException:
 				try:
 					self.installDrier(100)
@@ -365,7 +351,6 @@ class main:
 		browser = self.browser
 		average = self.average
 		restart = self.restart
-		webhook = self.webhook
 		maxbet = self.maxbet
 		stop = self.stop
 		lastgame = None
@@ -373,7 +358,8 @@ class main:
 		key = self.key
 		winning = 0
 		losing = 0
-
+		stat_webhook = self.stat_webhook
+		prediction_webhook = self.prediction_webhook
 
 		for game in self.ChrashPoints():
 			uiprint("Game Starting...")
@@ -390,18 +376,6 @@ class main:
 				if lastgame > prediction:
 					betamount = self.betamount
 					uiprint(f"Won previous game. lowering bet amount to {betamount}", "good")
-					data = {
-						"content" : "",
-						"username" : "Smart Bet",
-						"embeds": [
-										{
-											"description": f"You have won with {betamount}\nYou have {balance} now",
-											"title" : "You Won!",
-											"color" : 0x83d687
-										}
-									]
-					}
-					requests.post(webhook, json=data)
 					uiprint(f"Accuracy on previous guess: {(1-(abs(multiplier-lastgame)/lastgame))*100}", "yellow")
 					self.updateBetAmount(betamount)
 					try:
@@ -411,18 +385,6 @@ class main:
 				else:
 					betamount *= 2
 					uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
-					data = {
-						"content" : "",
-						"username" : "Smart Bet",
-						"embeds": [
-										{
-											"description" : f"You lost with {betamount}\nYou have {balance} Left",
-											"title" : "You lost",
-											"color" : 0xcc1c16
-										}
-									]
-					}
-					requests.post(webhook, json=data)
 					uiprint(f"Accuracy on previous guess: {(1-((abs(lastgame-multiplier))/multiplier))*100}", "yellow")
 					self.updateBetAmount(betamount)
 					try:
@@ -559,18 +521,6 @@ class main:
 				continue
 
 			uiprint(f"Placing bet with {betamount} Robux on {prediction}x multiplier")
-			data = {
-				"content" : "",
-				"username" : "Smart Bet",
-				"embeds": [
-								{
-									"description" : f"Betting {betamount} Robux at {prediction}x\n{balance-betamount} Robux Left",
-									"title" : f"Betting {betamount} Robux ",
-									"color" : 0x903cde
-								}
-							]
-			}
-			requests.post(webhook, json=data)
 			
 			try:
 				browser.find_element(By.CSS_SELECTOR, ".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
