@@ -1,5 +1,6 @@
 termcolor >= 1.1.0
 selenium >= 4.1.3
+selenium-stealth >= 1.0.6
 requests >= 2.27.1
 playsound == 1.2.2
 win10toast >= 0.9
