@@ -391,17 +391,17 @@ class main:
 					betamount = self.betamount
 					uiprint(f"Won previous game. lowering bet amount to {betamount}", "good")
 					data = {
-		                "content" : "",
-		                "username" : "Smart Bet",
-		                "embeds": [
-			                			{
-			                				"description": f"You have won with {betamount}\nYou have {balance} now",
-			                				"title" : "You Won!",
-			                				"color" : 0x83d687
-			                			}
-			                		]
-		            }
-		            requests.post(webhook, json=data)
+						"content" : "",
+						"username" : "Smart Bet",
+						"embeds": [
+										{
+											"description": f"You have won with {betamount}\nYou have {balance} now",
+											"title" : "You Won!",
+											"color" : 0x83d687
+										}
+									]
+					}
+					requests.post(webhook, json=data)
 					uiprint(f"Accuracy on previous guess: {(1-(abs(multiplier-lastgame)/lastgame))*100}", "yellow")
 					self.updateBetAmount(betamount)
 					try:
@@ -412,17 +412,17 @@ class main:
 					betamount *= 2
 					uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
 					data = {
-		                "content" : "",
-		                "username" : "Smart Bet",
-		                "embeds": [
-			                			{
-			                				"description" : f"You lost with {betamount}\nYou have {balance} Left",
-			                				"title" : "You lost",
-			                				"color" : 0xcc1c16
-			                			}
-			                		]
-		            }
-		            requests.post(webhook, json=data)
+						"content" : "",
+						"username" : "Smart Bet",
+						"embeds": [
+										{
+											"description" : f"You lost with {betamount}\nYou have {balance} Left",
+											"title" : "You lost",
+											"color" : 0xcc1c16
+										}
+									]
+					}
+					requests.post(webhook, json=data)
 					uiprint(f"Accuracy on previous guess: {(1-((abs(lastgame-multiplier))/multiplier))*100}", "yellow")
 					self.updateBetAmount(betamount)
 					try:
@@ -559,18 +559,18 @@ class main:
 				continue
 
 			uiprint(f"Placing bet with {betamount} Robux on {prediction}x multiplier")
-            data = {
-                "content" : "",
-                "username" : "Smart Bet",
-                "embeds": [
-	                			{
-	                				"description" : f"Betting {betamount} Robux at {prediction}x\n{balance-betamount} Robux Left",
-	                				"title" : f"Betting {betamount} Robux ",
-	                				"color" : 0x903cde
-	                			}
-	                		]
-            }
-            requests.post(webhook, json=data)
+			data = {
+				"content" : "",
+				"username" : "Smart Bet",
+				"embeds": [
+								{
+									"description" : f"Betting {betamount} Robux at {prediction}x\n{balance-betamount} Robux Left",
+									"title" : f"Betting {betamount} Robux ",
+									"color" : 0x903cde
+								}
+							]
+			}
+			requests.post(webhook, json=data)
 			
 			try:
 				browser.find_element(By.CSS_SELECTOR, ".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()

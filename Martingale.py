@@ -194,6 +194,16 @@ class main:
 
 
 			try:
+				self.webhook = config["webhook"]
+				if not "https://" in self.webhook:
+					uiprint("Invalid webhook inside JSON file file. Make sure you put the https:// with it.")
+			except:
+				uiprint("Invalid webhook boolean inside JSON file. Make sure it's a valid string", "error")
+				time.sleep(1.6)
+				exit()
+
+
+			try:
 				self.betamount = float(config["bet_amount"])
 			except:
 				uiprint("Invalid bet_amount inside JSON file. Must be valid number", "error")
@@ -324,6 +334,7 @@ class main:
 		browser = self.browser
 		average = self.average
 		restart = self.restart
+		webhook = self.webhook
 		maxbet = self.maxbet
 		stop = self.stop
 		lastgame = None
@@ -423,17 +434,17 @@ class main:
 			uiprint(f"Placing bet with {betamount} Robux on {multiplier}x multiplier")
 
 			data = {
-                "content" : "",
-                "username" : "Smart Bet",
-                "embeds": [
-	                			{
-	                				"description" : f"Betting {betamount} Robux at {prediction}x\n{balance-betamount} Robux Left",
-	                				"title" : f"Betting {betamount} Robux ",
-	                				"color" : 0x903cde
-	                			}
-	                		]
-            }
-            requests.post(webhook, json=data)
+				"content" : "",
+				"username" : "Smart Bet",
+				"embeds": [
+								{
+									"description" : f"Betting {betamount} Robux at {prediction}x\n{balance-betamount} Robux Left",
+									"title" : f"Betting {betamount} Robux ",
+									"color" : 0x903cde
+								}
+							]
+			}
+			requests.post(webhook, json=data)
 
 			if lastgame:
 				lastgame = game[0]
@@ -443,17 +454,17 @@ class main:
 					uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
 
 					data = {
-		                "content" : "",
-		                "username" : "Smart Bet",
-		                "embeds": [
-			                			{
-			                				"description" : f"You lost with {betamount}\nYou have {balance} Left",
-			                				"title" : "You lost",
-			                				"color" : 0xcc1c16
-			                			}
-			                		]
-		            }
-		            requests.post(webhook, json=data)
+						"content" : "",
+						"username" : "Smart Bet",
+						"embeds": [
+										{
+											"description" : f"You lost with {betamount}\nYou have {balance} Left",
+											"title" : "You lost",
+											"color" : 0xcc1c16
+										}
+									]
+					}
+					requests.post(webhook, json=data)
 
 					try:
 						threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
@@ -465,18 +476,18 @@ class main:
 					uiprint(f"Won game. Lowering bet amount to {betamount}", "good")
 
 					data = {
-		                "content" : "",
-		                "username" : "Smart Bet",
-		                "embeds": [
-			                			{
-			                				"description": f"You have won with {betamount}\nYou have {balance} now",
-			                				"title" : "You Won!",
-			                				"color" : 0x83d687
-			                			}
-			                		]
-		            }
-		            requests.post(webhook, json=data)
-					
+						"content" : "",
+						"username" : "Smart Bet",
+						"embeds": [
+										{
+											"description": f"You have won with {betamount}\nYou have {balance} now",
+											"title" : "You Won!",
+											"color" : 0x83d687
+										}
+									]
+					}
+					requests.post(webhook, json=data)
+
 					try:
 						threading.Thread(target=playsounds, args=('Assets\Win.mp3',)).start()
 					except:

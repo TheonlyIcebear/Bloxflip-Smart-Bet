@@ -202,6 +202,16 @@ class main:
 
 
 			try:
+				self.webhook = config["webhook"]
+				if not "https://" in self.webhook:
+					uiprint("Invalid webhook inside JSON file file. Make sure you put the https:// with it.")
+			except:
+				uiprint("Invalid webhook boolean inside JSON file. Make sure it's a valid string", "error")
+				time.sleep(1.6)
+				exit()
+
+
+			try:
 				self.bet = float(config["auto_bet"])
 			except:
 				uiprint("Invalid bet inside JSON file. Must be true or false", "error")
@@ -331,6 +341,7 @@ class main:
 		stoploss = self.stoploss
 		browser = self.browser
 		average = self.average
+		webhook = self.webhook
 		restart = self.restart
 		stop = self.stop
 		lastgame = None
@@ -352,6 +363,20 @@ class main:
 			try:
 				if lastgame > prediction:
 					uiprint("Won previous game.", "good")
+
+					data = {
+						"content" : "",
+						"username" : "Smart Bet",
+						"embeds": [
+										{
+											"description": f"You have won with {betamount}\nYou have {balance} now",
+											"title" : "You Won!",
+											"color" : 0x83d687
+										}
+									]
+					}
+					requests.post(webhook, json=data)
+
 					uiprint(f"Accuracy on last guess: {(1-(abs(multiplier-lastgame))/lastgame)*100}", "yellow")
 					try:
 						threading.Thread(target=playsounds, args=('Assets\Win.mp3',)).start()
@@ -359,6 +384,20 @@ class main:
 						pass
 				else:
 					uiprint("Lost previous game.", "bad")
+
+					data = {
+						"content" : "",
+						"username" : "Smart Bet",
+						"embeds": [
+										{
+											"description" : f"You lost with {betamount}\nYou have {balance} Left",
+											"title" : "You lost",
+											"color" : 0xcc1c16
+										}
+									]
+					}
+					requests.post(webhook, json=data)
+
 					uiprint(f"Accuracy on last guess: {(1-(abs(lastgame-multiplier))/multiplier)*100}", "yellow")
 					try:
 						threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
@@ -440,6 +479,18 @@ class main:
 					continue
 
 				uiprint(f"Placing bet with {betamount} Robux on {prediction}x multiplier")
+				data = {
+						"content" : "",
+						"username" : "Smart Bet",
+						"embeds": [
+										{
+											"description": f"You have won with {betamount}\nYou have {balance} now",
+											"title" : "You Won!",
+											"color" : 0x83d687
+										}
+									]
+				}
+				requests.post(webhook, json=data)
 				
 				try:
 					browser.find_element(By.CSS_SELECTOR, ".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
