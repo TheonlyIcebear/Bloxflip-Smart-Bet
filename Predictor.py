@@ -39,39 +39,39 @@ class main:
 			cprint("AUTOBET", "magenta", end="")
 			print(" ] ", end="")
 			if message:
-				cprint(message, "magenta")
+			  cprint(message, "magenta")
 		elif option == "error":
 			cprint("ERROR", "red", end="")
 			print(" ] ", end="")
 			if message:
-				cprint(message, "red")
+			  cprint(message, "red")
 		elif option == "warning":
 			cprint("WARNING", "yellow", end="")
 			print(" ] ", end="")
 			if message:
-				cprint(message, "yellow")
+			  cprint(message, "yellow")
 		elif option == "yellow":
 			cprint("AUTOBET", "yellow", end="")
 			print(" ] ", end="")
 			if message:
-				cprint(message, "yellow")
+			  cprint(message, "yellow")
 		elif option == "good":
 			cprint("AUTOBET", "green", end="")
 			print(" ] ", end="")
 			if message:
-				cprint(message, "green")
+			  cprint(message, "green")
 		elif option == "bad":
 			cprint("AUTOBET", "red", end="")
 			print(" ] ", end="")
 			if message:
-				cprint(message, "red")
+			  cprint(message, "red")
 
 
 	def clear(self): # Clear the console
 		if os.name == 'nt':
-			os.system("cls")
+		  os.system("cls")
 		else:
-			os.system("clear")
+		  os.system("clear")
 
 
 	def installDriver(self, version=None):
@@ -123,7 +123,7 @@ class main:
 
 		for possibleclass in classnames:
 			try:
-				balance = float(browser.find_element_by_css_selector(possibleclass).text.replace(',', ''))
+				balance = float(browser.find_element(By.CSS_SELECTOR, possibleclass).text.replace(',', ''))
 			except selenium.common.exceptions.NoSuchElementException:
 				pass
 			except ValueError:
@@ -138,7 +138,7 @@ class main:
 		return balance
 
 
-	def getConfig(self): # Get configuration from data.json file
+	def getConfig(self): # Get configuration from config.json file
 		uiprint = self.print
 		print("[", end="")
 		cprint(base64.b64decode(b'IENSRURJVFMg').decode('utf-8'), "cyan", end="")
@@ -148,11 +148,11 @@ class main:
 		self.clear()
 
 		try:
-			open("data.json", "r").close()
+			open("config.json", "r").close()
 		except:
-			uiprint("data.json file is missing. Make sure you downloaded all the files and they're all in the same folder", "error")
+			uiprint("config.json file is missing. Make sure you downloaded all the files and they're all in the same folder", "error")
 
-		with open("data.json", "r+") as data:
+		with open("config.json", "r+") as data:
 			try:
 				config = json.load(data)
 				self.multiplier = float(config["multiplier"])
@@ -260,11 +260,11 @@ class main:
 			time.sleep(1.5)
 
 			self.getBalance()
-			elements = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
+			elements = browser.find_elements(By.CSS_SELECTOR, '.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
 			if not elements:
 				uiprint("Blocked by DDoS protection. Solve the captcha on the chrome window to continue.")
 			while not elements:
-				elements = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
+				elements = browser.find_elements(By.CSS_SELECTOR, '.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
 
 
 			elements[0].send_keys(f"{Keys.BACKSPACE}")
@@ -301,7 +301,7 @@ class main:
 
 	def updateBetAmount(self, amount):
 		browser = self.browser
-		element = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')[0]
+		element = browser.find_elements(By.CSS_SELECTOR, '.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')[0]
 		for _ in range(10):
 			element.send_keys(f"{Keys.BACKSPACE}")
 		element.send_keys(f"{amount}")
@@ -309,7 +309,7 @@ class main:
 
 	def updateMultiplier(self, multiplier):
 		browser = self.browser
-		element = browser.find_elements_by_css_selector('.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')[1]
+		element = browser.find_elements(By.CSS_SELECTOR, '.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')[1]
 		for _ in range(10):
 			element.send_keys(f"{Keys.BACKSPACE}")
 		element.send_keys(f"{multiplier}")
@@ -387,6 +387,8 @@ class main:
 			except:
 				prediction = 1/(1-(chance*(10**average/1.5)))
 
+			prediction -= 0.2
+
 
 			uiprint(f"Setting multiplier to {prediction}", "yellow")
 			self.updateMultiplier(round(prediction, 2) )
@@ -440,8 +442,8 @@ class main:
 				uiprint(f"Placing bet with {betamount} Robux on {prediction}x multiplier")
 				
 				try:
-					browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
+					browser.find_element(By.CSS_SELECTOR, ".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
 				except:
-					browser.find_element_by_css_selector(".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss143.MuiButton-containedPrimary").click()
+					browser.find_element(By.CSS_SELECTOR, ".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss143.MuiButton-containedPrimary").click()
 if __name__ == "__main__":
 	main()

@@ -138,7 +138,7 @@ class main:
 		return balance
 
 
-	def getConfig(self): # Get configuration from data.json file
+	def getConfig(self): # Get configuration from config.json file
 		uiprint = self.print
 		print("[", end="")
 		cprint(base64.b64decode(b'IENSRURJVFMg').decode('utf-8'), "cyan", end="")
@@ -148,11 +148,11 @@ class main:
 		self.clear()
 
 		try:
-			open("data.json", "r").close()
+			open("config.json", "r").close()
 		except:
-			uiprint("data.json file is missing. Make sure you downloaded all the files and they're all in the same folder", "error")
+			uiprint("config.json file is missing. Make sure you downloaded all the files and they're all in the same folder", "error")
 
-		with open("data.json", "r+") as data:
+		with open("config.json", "r+") as data:
 			try:
 				config = json.load(data)
 				self.multiplier = float(config["multiplier"])
@@ -421,12 +421,40 @@ class main:
 			
 
 			uiprint(f"Placing bet with {betamount} Robux on {multiplier}x multiplier")
+
+			data = {
+                "content" : "",
+                "username" : "Smart Bet",
+                "embeds": [
+	                			{
+	                				"description" : f"Betting {betamount} Robux at {prediction}x\n{balance-betamount} Robux Left",
+	                				"title" : f"Betting {betamount} Robux ",
+	                				"color" : 0x903cde
+	                			}
+	                		]
+            }
+            requests.post(webhook, json=data)
+
 			if lastgame:
 				lastgame = game[0]
 				if lastgame < multiplier:
 					betamount *= 2
 					self.updateBetAmount(betamount)
-					uiprint(f"Lost game. Increasing bet amount to {betamount}", "bad")
+					uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
+
+					data = {
+		                "content" : "",
+		                "username" : "Smart Bet",
+		                "embeds": [
+			                			{
+			                				"description" : f"You lost with {betamount}\nYou have {balance} Left",
+			                				"title" : "You lost",
+			                				"color" : 0xcc1c16
+			                			}
+			                		]
+		            }
+		            requests.post(webhook, json=data)
+
 					try:
 						threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
 					except:
@@ -435,6 +463,20 @@ class main:
 					betamount = self.betamount
 					self.updateBetAmount(betamount)
 					uiprint(f"Won game. Lowering bet amount to {betamount}", "good")
+
+					data = {
+		                "content" : "",
+		                "username" : "Smart Bet",
+		                "embeds": [
+			                			{
+			                				"description": f"You have won with {betamount}\nYou have {balance} now",
+			                				"title" : "You Won!",
+			                				"color" : 0x83d687
+			                			}
+			                		]
+		            }
+		            requests.post(webhook, json=data)
+					
 					try:
 						threading.Thread(target=playsounds, args=('Assets\Win.mp3',)).start()
 					except:
