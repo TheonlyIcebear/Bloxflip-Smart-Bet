@@ -83,7 +83,6 @@ class main:
 							]
 		}
 		r = requests.post(url, json=data)
-		print(r.status_code)
 	def installDriver(self, version=None):
 		uiprint = self.print
 		if not version:
@@ -601,7 +600,8 @@ class main:
 			if self.webhook == None:
 				pass
 			else:
-				sendwbmessage(self.webhook, f"Betting {betamount} Robux at {prediction}x\n{balance-betamount} Robux Left", f"Betting {betamount} Robux ", 0x903cde, f"")
+				sendwbmessage(self.webhook, f"Betting {betamount} Robux at {round(prediction,2)}x\n{round(balance-betamount,2)} Robux Left", f"Betting {betamount} Robux ", 0x903cde, f"")
+				sendwbmessage(self.webhook,f"Average Crash : {round(avg,2)}\nMultiplier Set to : {multiplier}\n Accuracy on last crash : {round((1-(abs(multiplier-lastgame)/lastgame))*100, 2)}%","Round Predictions", 0xaf5ebd, f"")
 			try:
 				browser.find_element(By.CSS_SELECTOR, ".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
 			except:
