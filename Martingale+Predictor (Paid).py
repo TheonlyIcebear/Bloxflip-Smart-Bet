@@ -12,7 +12,6 @@ from zipfile import *
 
 import requests
 import selenium
-from cv2 import undistortPointsIter
 from playsound import playsound
 from selenium import webdriver
 from selenium.webdriver.common.by import By
