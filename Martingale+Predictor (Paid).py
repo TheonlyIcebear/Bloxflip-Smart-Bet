@@ -15,7 +15,7 @@ class main:
 		logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
 		self.crashPoints = None
 		self.multiplier = 0
-		version = "1.0.0"
+		version = "1.0.1"
 		url = "http://ec2-3-85-227-174.compute-1.amazonaws.com:8080/version"
 		data = {"type": "paid"}
 		r = requests.get(url, json=data)
