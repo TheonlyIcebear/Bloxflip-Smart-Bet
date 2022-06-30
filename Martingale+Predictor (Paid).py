@@ -1,24 +1,14 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning
 
-import base64
-import json
-import logging
-import os
-import subprocess
-import threading
-import time
-from sys import exit
-from zipfile import *
-import webbrowser
-import requests
-import selenium
+import subprocess, threading, selenium, requests, logging, base64, json, time, os
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from win10toast import ToastNotifier
 from playsound import playsound
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from termcolor import cprint
-from win10toast import ToastNotifier
-
+from zipfile import *
+from sys import exit
 
 class main:
 	def __init__(self):
@@ -26,19 +16,6 @@ class main:
 		self.crashPoints = None
 		self.multiplier = 0
 		os.system("")
-		version = "1.0.0"
-		url = "http://ec2-3-85-227-174.compute-1.amazonaws.com:8080/version"
-		data = {"type": "paid"}
-		r = requests.get(url, json=data)
-		rjson = r.json()
-		if rjson['version'] == version:
-			print("[Bloxflip Smart Bet] Your Version is up to date.")
-		else:
-			print(f"You are currently on {version}v. Please update to the newest version {rjson['version']} Now opening Github Website....")
-			time.sleep(1)
-			webbrowser.open("https://github.com/TheonlyIcebear/Bloxflip-Smart-Bet")
-			exit()
-
 		try:
 			self.getConfig()
 			self.sendBets()
@@ -150,12 +127,11 @@ class main:
 					  ".MuiBox-root.jss221.jss44", 
 					  ".MuiBox-root.jss271.jss44", 
 					  ".MuiBox-root.jss359.jss44", 
-					  ".MuiBox-root.jss227.jss44",
+					  ".MuiBox-root.jss221.jss44",
 					  ".MuiBox-root.jss233.jss44",
 					  ".MuiBox-root.jss226.jss44",
 					  ".MuiBox-root.jss247.jss44",
 					  ".MuiBox-root.jss240.jss44",
-					  ".MuiBox-root jss220 jss44"
 					  ".MuiBox-root.jss214.jss44"]
 
 		for possibleclass in classnames:
@@ -240,7 +216,7 @@ class main:
 
 			try:
 				self.webhook = config["webhook"]
-				if self.webhook:
+				if not "https://" in self.webhook:
 					uiprint("Invalid webhook inside JSON file file. Make sure you put the https:// with it.", "warning")
 					self.webhook = None
 			except:
@@ -374,11 +350,6 @@ class main:
 			element.send_keys(f"{Keys.BACKSPACE}")
 		element.send_keys(f"{amount}")
 
-	
-	def sendBets(self): # Actually compare the user's chances of winning and place the bets
-		uiprint = self.print
-		uiprint("Betting started. Press Ctrl + C to exit")
-
 
 	def updateMultiplier(self, multiplier):
 		uiprint = self.print
@@ -397,6 +368,9 @@ class main:
 			playsound(file)
 
 
+	def sendBets(self): # Actually compare the user's chances of winning and place the bets
+		uiprint = self.print
+		uiprint("Betting started. Press Ctrl + C to exit")
 
 
 		sendwebhookmsg = self.sendwbmsg
@@ -409,7 +383,6 @@ class main:
 		restart = self.restart
 		webhook = self.webhook
 		maxbet = self.maxbet
-		uiprint = self.print
 		stop = self.stop
 		lastgame = None
 		bet = self.bet
