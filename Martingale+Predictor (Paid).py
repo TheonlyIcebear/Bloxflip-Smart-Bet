@@ -67,18 +67,19 @@ class main:
 				cprint(message, "red")
 
 	def sendwbmsg(self,url,message,title,color,content):
-		data = {
-			"content": content,
-			"username": "Smart Bet",
-			"embeds": [
-								{
-									"description" : message,
-									"title" : title,
-									"color" : color
-								}
-							]
-		}
-		r = requests.post(url, json=data)
+		if "https://" in url:
+			data = {
+				"content": content,
+				"username": "Smart Bet",
+				"embeds": [
+									{
+										"description" : message,
+										"title" : title,
+										"color" : color
+									}
+								]
+			}
+			r = requests.post(url, json=data)
 
 	def clear(self): # Clear the console
 		os.system('cls' if os.name == 'nt' else 'clear')
