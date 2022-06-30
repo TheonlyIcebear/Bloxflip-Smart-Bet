@@ -397,7 +397,6 @@ class main:
 
 
 			try:
-				print(abs(multiplier-lastgame))
 				if lastgame > prediction:
 					betamount = self.betamount
 					uiprint(f"Won previous game. lowering bet amount to {betamount}", "good")
