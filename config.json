@@ -5,7 +5,7 @@
 	"auto_bet": false,
 	"play_sounds": false,
 	"webhook" : "",
-	"max_betamount": 32,
+	"max_betamount": 1024,
 	"auto_stop": 200,
 	"stop_loss": 30,
 	"auto_restart": true,
