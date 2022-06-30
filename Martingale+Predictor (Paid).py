@@ -353,6 +353,9 @@ class main:
 
 	def updateMultiplier(self, multiplier):
 		browser = self.browser
+		if multiplier < self.multiplier:
+			multiplier = self.multiplier
+		uiprint(f"Setting multiplier to {multiplier}", "yellow")
 		element = browser.find_elements(By.CSS_SELECTOR, '.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')[1]
 		for _ in range(10):
 			element.send_keys(f"{Keys.BACKSPACE}")
@@ -369,10 +372,10 @@ class main:
 		uiprint("Betting started. Press Ctrl + C to exit")
 
 
+		sendwebhookmsg = self.sendwbmsg
 		multiplier = self.multiplier
 		playsounds = self.playsounds
 		betamount = self.betamount
-		sendwebhookmsg = self.sendwbmsg
 		stoploss = self.stoploss
 		browser = self.browser
 		average = self.average
@@ -467,12 +470,9 @@ class main:
 
 			if prediction < multiplier:
 				uiprint(f"Game will likely crash around {prediction}. Ignoring and betting on {multiplier} to ensure profit.")
-				prediction = multiplier
 
 
 
-
-			uiprint(f"Setting multiplier to {prediction}", "yellow")
 			self.updateMultiplier(round(prediction, 2) )
 
 			
