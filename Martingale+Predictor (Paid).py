@@ -1,6 +1,6 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning
 
-import subprocess, threading, selenium, requests, logging, base64, json, time, os
+import subprocess, threading, selenium, requests, logging, base64, json, time, os, webbrowser
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from win10toast import ToastNotifier
@@ -15,6 +15,19 @@ class main:
 		logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
 		self.crashPoints = None
 		self.multiplier = 0
+		version = "1.0.0"
+		url = "http://ec2-3-85-227-174.compute-1.amazonaws.com:8080/version"
+		data = {"type": "paid"}
+		r = requests.get(url, json=data)
+		rjson = r.json()
+		if rjson['version'] == version:
+			print("[Bloxflip Smart Bet] Your Version is up to date.")
+		else:
+			print(f"You are currently on {version}v. Please update to the newest version {rjson['version']} Now opening Github Website....")
+			time.sleep(1)
+			webbrowser.open("https://github.com/TheonlyIcebear/Bloxflip-Smart-Bet")
+			exit()
+
 		os.system("")
 		try:
 			self.getConfig()
@@ -216,9 +229,11 @@ class main:
 
 			try:
 				self.webhook = config["webhook"]
-				if not "https://" in self.webhook:
-					uiprint("Invalid webhook inside JSON file file. Make sure you put the https:// with it.", "warning")
+				if self.webhook == "":
+					uiprint("you are running / working with no webhook", "warning")
 					self.webhook = None
+				else:
+					pass
 			except:
 				uiprint("Invalid webhook boolean inside JSON file. Make sure it's a valid string", "error")
 				time.sleep(1.6)
