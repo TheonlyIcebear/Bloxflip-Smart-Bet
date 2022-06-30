@@ -466,7 +466,7 @@ class main:
 					time.sleep(1.5)
 
 			if prediction < multiplier:
-				uiprint(f"Game will likely crash around {prediction}. Ignoring and betting on {multiplier} for martingale to work.")
+				uiprint(f"Game will likely crash around {prediction}. Ignoring and betting on {multiplier} to ensure profit.")
 				prediction = multiplier
 
 
