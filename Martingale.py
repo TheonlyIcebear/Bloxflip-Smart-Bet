@@ -442,7 +442,7 @@ class main:
 			uiprint(f"Placing bet with {betamount} Robux on {multiplier}x multiplier")
 
 			if not self.webhook == None:
-					sendwebhookmsg(self.webhook, f"Betting {betamount} Robux at {round(prediction,2)}x\n{round(balance-betamount,2)} Robux Left", f"Betting {betamount} Robux ", 0x903cde, f"")
+					sendwebhookmsg(self.webhook, f"Betting {betamount} Robux at {round(multiplier,2)}x\n{round(balance-betamount,2)} Robux Left", f"Betting {betamount} Robux ", 0x903cde, f"")
 					sendwebhookmsg(self.webhook,f"Average Crash : {round(avg,2)}\nMultiplier Set to : {multiplier}\n Accuracy on last crash : {round((1-(abs(multiplier-lastgame)/lastgame))*100, 2)}%","Round Predictions", 0xaf5ebd, f"")
 
 			if lastgame:
