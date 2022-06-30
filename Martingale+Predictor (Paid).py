@@ -39,39 +39,49 @@ class main:
 			cprint("AUTOBET", "magenta", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "magenta")
+				cprint(message, "magenta")
 		elif option == "error":
 			cprint("ERROR", "red", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "red")
+				cprint(message, "red")
 		elif option == "warning":
 			cprint("WARNING", "yellow", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "yellow")
+				cprint(message, "yellow")
 		elif option == "yellow":
 			cprint("AUTOBET", "yellow", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "yellow")
+				cprint(message, "yellow")
 		elif option == "good":
 			cprint("AUTOBET", "green", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "green")
+				cprint(message, "green")
 		elif option == "bad":
 			cprint("AUTOBET", "red", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "red")
+				cprint(message, "red")
 
+	def sendwbmsg(self,url,message,title,color,content):
+		data = {
+			"content": content,
+			"username": "Smart Bet",
+			"embeds": [
+								{
+									"description" : message,
+									"title" : title,
+									"color" : color
+								}
+							]
+		}
+		r = requests.post(url, json=data)
 
 	def clear(self): # Clear the console
-		if os.name == 'nt':
-		  os.system("cls")
-		else:
-		  os.system("clear")
+		os.system('cls' if os.name == 'nt' else 'clear')
 
 
 	def installDriver(self, version=None):
@@ -145,7 +155,7 @@ class main:
 		print("[", end="")
 		cprint(base64.b64decode(b'IENSRURJVFMg').decode('utf-8'), "cyan", end="")
 		print("]", end="")
-		print(base64.b64decode(b'IE1hZGUgYnkgSWNlIEJlYXIjMDE2Nw==').decode('utf-8'))
+		print(base64.b64decode(b'IE1hZGUgYnkgSWNlIEJlYXIjMDE2NyAmIEN1dGVjYXQgYnV0IHRlcm1lZCM0NzI4').decode('utf-8'))
 		time.sleep(3)
 		self.clear()
 
@@ -204,14 +214,17 @@ class main:
 
 
 			try:
-				self.webhook = config["webhook"]
-				if not "https://" in self.webhook:
-					uiprint("Invalid webhook inside JSON file file. Make sure you put the https:// with it.")
+				if config['webhook'] == "":
+					self.webhook = None
+				else:
+					if "https://" in self.webhook:
+						pass
+					else:
+						uiprint("Invalid webhook inside JSON file file. Make sure you put the https:// with it.")
 			except:
-				uiprint("Invalid webhook inside JSON file. Make sure it's a valid string", "warning")
+				uiprint("Invalid webhook inside JSON file. Make sure it's a valid string", "error")
 				time.sleep(1.6)
 				exit()
-
 
 			try:
 				self.betamount = float(config["bet_amount"])
@@ -384,6 +397,7 @@ class main:
 		multiplier = self.multiplier
 		playsounds = self.playsounds
 		betamount = self.betamount
+		sednwebhookmsg = self.sendwbmsg
 		stoploss = self.stoploss
 		browser = self.browser
 		average = self.average
@@ -413,18 +427,23 @@ class main:
 				if lastgame > prediction:
 					betamount = self.betamount
 					uiprint(f"Won previous game. lowering bet amount to {betamount}", "good")
-					data = {
-						"content" : "",
-						"username" : "Smart Bet",
-						"embeds": [
-										{
-											"description": f"You have won with {betamount}\nYou have {balance} now",
-											"title" : "You Won!",
-											"color" : 0x83d687
-										}
-									]
-					}
-					requests.post(webhook, json=data)
+					#data = {
+					#	"content" : "",
+					#	"username" : "Smart Bet",
+					#	"embeds": [
+					#					{
+					#						"description": f"You have won with {betamount}\nYou have {balance} now",
+					#						"title" : "You Won!",
+					#						"color" : 0x83d687
+					#					}
+					#				]
+					#}
+					#requests.post(webhook, json=data)
+					if self.webhook == None:
+						pass
+					else:
+						sednwebhookmsg(self.webhook, f"You have won while betting {betamount}", f"You Won!", 0x83d687, f"")
+
 					uiprint(f"Accuracy on previous guess: {(1-(abs(multiplier-lastgame)/lastgame))*100}", "yellow")
 					self.updateBetAmount(betamount)
 					try:
@@ -434,18 +453,23 @@ class main:
 				else:
 					betamount *= 2
 					uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
-					data = {
-						"content" : "",
-						"username" : "Smart Bet",
-						"embeds": [
-										{
-											"description" : f"You lost with {betamount}\nYou have {balance} Left",
-											"title" : "You lost",
-											"color" : 0xcc1c16
-										}
-									]
-					}
-					requests.post(webhook, json=data)
+					#data = {
+					#	"content" : "",
+					#	"username" : "Smart Bet",
+					#	"embeds": [
+					#					{
+					#						"description" : f"You lost with {betamount}\nYou have {balance} Left",
+					##						"title" : "You lost",
+					#						"color" : 0xcc1c16
+					#					}
+					#				]
+					#}
+					#requests.post(webhook, json=data)
+					if self.webhook == None:
+						pass
+					else:
+						sednwebhookmsg(self.webhook, f"You lost with {betamount} \n You have {balance} left", f"You Lost!", 0xcc1c16, f"")
+
 					uiprint(f"Accuracy on previous guess: {(1-((abs(lastgame-multiplier))/multiplier))*100}", "yellow")
 					self.updateBetAmount(betamount)
 					try:
@@ -582,19 +606,24 @@ class main:
 				continue
 
 			uiprint(f"Placing bet with {betamount} Robux on {prediction}x multiplier")
-			data = {
-				"content" : "",
-				"username" : "Smart Bet",
-				"embeds": [
-								{
-									"description" : f"Betting {betamount} Robux at {prediction}x\n{balance-betamount} Robux Left",
-									"title" : f"Betting {betamount} Robux ",
-									"color" : 0x903cde
-								}
-							]
-			}
-			requests.post(webhook, json=data)
-			
+			#data = {
+			#	"content" : "",
+			#	"username" : "Smart Bet",
+			#	"embeds": [
+			#					{
+			#						"description" : f"Betting {betamount} Robux at {prediction}x\n{balance-betamount} Robux Left",
+			#						"title" : f"Betting {betamount} Robux ",
+			#						"color" : 0x903cde
+			#					}
+			#				]
+			#}
+			#requests.post(webhook, json=data)
+			#def sendwbmsg(self,url,message,title,color,content):
+			if self.webhook == None:
+				pass
+			else:
+				sednwebhookmsg(self.webhook, f"Betting {betamount} Robux at {round(prediction,2)}x\n{round(balance-betamount,2)} Robux Left", f"Betting {betamount} Robux ", 0x903cde, f"")
+				sednwebhookmsg(self.webhook,f"Average Crash : {round(avg,2)}\nMultiplier Set to : {multiplier}\n Accuracy on last crash : {round((1-(abs(multiplier-lastgame)/lastgame))*100, 2)}%","Round Predictions", 0xaf5ebd, f"")
 			try:
 				browser.find_element(By.CSS_SELECTOR, ".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
 			except:
