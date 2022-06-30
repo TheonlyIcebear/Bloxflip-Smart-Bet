@@ -23,7 +23,7 @@ class main:
 		if rjson['version'] == version:
 			print("[Bloxflip Smart Bet] Your Version is up to date.")
 		else:
-			print(f"You are currently on {version}v. Please update to the newest version {rjson['version']} Now opening Github Website....")
+			print(f"You are currently on v{version}. Please update to the newest version {rjson['version']} Now opening Github Website....")
 			time.sleep(1)
 			webbrowser.open("https://github.com/TheonlyIcebear/Bloxflip-Smart-Bet")
 			exit()
@@ -230,7 +230,7 @@ class main:
 			try:
 				self.webhook = config["webhook"]
 				if self.webhook == "":
-					uiprint("you are running / working with no webhook", "warning")
+					uiprint("No webhook provided, the program won't send any discord embeds.", "warning")
 					self.webhook = None
 				else:
 					pass
