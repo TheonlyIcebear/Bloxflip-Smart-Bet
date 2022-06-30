@@ -263,25 +263,17 @@ class main:
 			elements[1].send_keys(f"{self.multiplier}")
 
 
-	def ChrashPoints(self):		
-		browser = webdriver.Chrome('chromedriver.exe')
-		browser.get("https://rest-bf.blox.land/games/crash")
-
+	def ChrashPoints(self):
+		browser = self.browser
 		average = self.average
 		history = None
 		uiprint = self.print
 		sent = False
 		
+		
+
 		while True:
-			browser.refresh()
-			data = browser.page_source.replace('<html><head><meta name="color-scheme" content="light dark"></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">', "").replace("</pre></body></html>", "")
-			try:
-				games = json.loads(data)
-			except json.decoder.JSONDecodeError:
-				uiprint("Blocked by ddos protection. Solve the captcha to continue.", "error")
-				time.sleep(20)
-				browser.close()
-				exit()
+			games = browser.execute_script("""return fetch('https://rest-bf.blox.land/games/crash').then(res => res.json());""")
 			if not history == games["history"]:
 				history = games["history"]
 				yield [games["history"][0]["crashPoint"], [float(crashpoint["crashPoint"]) for crashpoint in history[:average]]]
