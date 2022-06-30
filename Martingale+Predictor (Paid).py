@@ -1,14 +1,25 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning
 
-import subprocess, threading, selenium, requests, logging, base64, json, time, os
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
-from win10toast import ToastNotifier
+import base64
+import json
+import logging
+import os
+import subprocess
+import threading
+import time
+from sys import exit
+from zipfile import *
+
+import requests
+import selenium
+from cv2 import undistortPointsIter
 from playsound import playsound
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from termcolor import cprint
-from zipfile import *
-from sys import exit
+from win10toast import ToastNotifier
+
 
 class main:
 	def __init__(self):
@@ -16,6 +27,7 @@ class main:
 		self.crashPoints = None
 		self.multiplier = 0
 		os.system("")
+		version = "1.0"
 		try:
 			self.getConfig()
 			self.sendBets()
@@ -216,7 +228,7 @@ class main:
 
 			try:
 				self.webhook = config["webhook"]
-				if not "https://" in self.webhook:
+				if self.webhook:
 					uiprint("Invalid webhook inside JSON file file. Make sure you put the https:// with it.", "warning")
 					self.webhook = None
 			except:
@@ -350,8 +362,14 @@ class main:
 			element.send_keys(f"{Keys.BACKSPACE}")
 		element.send_keys(f"{amount}")
 
+	
+	def sendBets(self): # Actually compare the user's chances of winning and place the bets
+		uiprint = self.print
+		uiprint("Betting started. Press Ctrl + C to exit")
+
 
 	def updateMultiplier(self, multiplier):
+		uiprint = self.print
 		browser = self.browser
 		if multiplier < self.multiplier:
 			multiplier = self.multiplier
@@ -367,9 +385,6 @@ class main:
 			playsound(file)
 
 
-	def sendBets(self): # Actually compare the user's chances of winning and place the bets
-		uiprint = self.print
-		uiprint("Betting started. Press Ctrl + C to exit")
 
 
 		sendwebhookmsg = self.sendwbmsg
@@ -382,6 +397,7 @@ class main:
 		restart = self.restart
 		webhook = self.webhook
 		maxbet = self.maxbet
+		uiprint = self.print
 		stop = self.stop
 		lastgame = None
 		bet = self.bet
