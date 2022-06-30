@@ -39,39 +39,50 @@ class main:
 			cprint("AUTOBET", "magenta", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "magenta")
+				cprint(message, "magenta")
 		elif option == "error":
 			cprint("ERROR", "red", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "red")
+				cprint(message, "red")
 		elif option == "warning":
 			cprint("WARNING", "yellow", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "yellow")
+				cprint(message, "yellow")
 		elif option == "yellow":
 			cprint("AUTOBET", "yellow", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "yellow")
+				cprint(message, "yellow")
 		elif option == "good":
 			cprint("AUTOBET", "green", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "green")
+				cprint(message, "green")
 		elif option == "bad":
 			cprint("AUTOBET", "red", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "red")
+				cprint(message, "red")
 
+
+	def sendwbmsg(self,url,message,title,color,content):
+		data = {
+			"content": content,
+			"username": "Smart Bet",
+			"embeds": [
+								{
+									"description" : message,
+									"title" : title,
+									"color" : color
+								}
+							]
+		}
+		r = requests.post(url, json=data)
 
 	def clear(self): # Clear the console
-		if os.name == 'nt':
-		  os.system("cls")
-		else:
-		  os.system("clear")
+		os.system('cls' if os.name == 'nt' else 'clear')
 
 
 	def installDriver(self, version=None):
@@ -287,28 +298,17 @@ class main:
 			elements[1].send_keys(f"{self.multiplier}")
 
 
-	def ChrashPoints(self):		
-		browser = webdriver.Chrome('chromedriver.exe')
-		browser.get("https://rest-bf.blox.land/games/crash")
-
+	def ChrashPoints(self):
+		browser = self.browse
 		average = self.average
 		history = None
 		uiprint = self.print
 		sent = False
 		
+		
+
 		while True:
-			browser.refresh()
-			data = browser.page_source.replace('<html><head><meta name="color-scheme" content="light dark"></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">', "").replace("</pre></body></html>", "")
-			try:
-				games = json.loads(data)
-			except json.decoder.JSONDecodeError:
-				uiprint("Blocked by ddos protection. Solve the captcha to continue.", "error")
-			while True:
-				try:
-					games = json.loads(data)
-					break
-				except json.decoder.JSONDecodeError:
-					pass
+			games = browser.execute_script("""return fetch('https://rest-bf.blox.land/games/crash').then(res => res.json());""")
 			if not history == games["history"]:
 				history = games["history"]
 				yield [games["history"][0]["crashPoint"], [float(crashpoint["crashPoint"]) for crashpoint in history[:average]]]
@@ -340,6 +340,7 @@ class main:
 		uiprint("Betting started. Press Ctrl + C to exit")
 
 
+		sednwebhookmsg = self.sendwbmsg
 		multiplier = self.multiplier
 		playsounds = self.playsounds
 		betamount = self.betamount
@@ -369,19 +370,8 @@ class main:
 				if lastgame > prediction:
 					uiprint("Won previous game.", "good")
 
-					data = {
-						"content" : "",
-						"username" : "Smart Bet",
-						"embeds": [
-										{
-											"description": f"You have won with {betamount}\nYou have {balance} now",
-											"title" : "You Won!",
-											"color" : 0x83d687
-										}
-									]
-					}
-					requests.post(webhook, json=data)
-
+					if not self.webhook == None:
+						sednwebhookmsg(self.webhook, f"You have won while betting {betamount}", f"You Won!", 0x83d687, f"")
 					uiprint(f"Accuracy on last guess: {(1-(abs(multiplier-lastgame))/lastgame)*100}", "yellow")
 					try:
 						threading.Thread(target=playsounds, args=('Assets\Win.mp3',)).start()
@@ -390,18 +380,8 @@ class main:
 				else:
 					uiprint("Lost previous game.", "bad")
 
-					data = {
-						"content" : "",
-						"username" : "Smart Bet",
-						"embeds": [
-										{
-											"description" : f"You lost with {betamount}\nYou have {balance} Left",
-											"title" : "You lost",
-											"color" : 0xcc1c16
-										}
-									]
-					}
-					requests.post(webhook, json=data)
+					if not self.webhook == None:
+						sednwebhookmsg(self.webhook, f"You lost with {betamount} \n You have {balance} left", f"You Lost!", 0xcc1c16, f"")
 
 					uiprint(f"Accuracy on last guess: {(1-(abs(lastgame-multiplier))/multiplier)*100}", "yellow")
 					try:
@@ -484,18 +464,9 @@ class main:
 					continue
 
 				uiprint(f"Placing bet with {betamount} Robux on {prediction}x multiplier")
-				data = {
-						"content" : "",
-						"username" : "Smart Bet",
-						"embeds": [
-										{
-											"description": f"You have won with {betamount}\nYou have {balance} now",
-											"title" : "You Won!",
-											"color" : 0x83d687
-										}
-									]
-				}
-				requests.post(webhook, json=data)
+				if not self.webhook == None:
+					sednwebhookmsg(self.webhook, f"Betting {betamount} Robux at {round(prediction,2)}x\n{round(balance-betamount,2)} Robux Left", f"Betting {betamount} Robux ", 0x903cde, f"")
+					sednwebhookmsg(self.webhook,f"Average Crash : {round(avg,2)}\nMultiplier Set to : {multiplier}\n Accuracy on last crash : {round((1-(abs(multiplier-lastgame)/lastgame))*100, 2)}%","Round Predictions", 0xaf5ebd, f"")
 				
 				try:
 					browser.find_element(By.CSS_SELECTOR, ".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()

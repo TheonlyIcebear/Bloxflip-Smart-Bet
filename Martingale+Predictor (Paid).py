@@ -285,8 +285,7 @@ class main:
 			options.add_argument('--disable-extensions')
 			options.add_argument('--profile-directory=Default')
 			options.add_argument("--incognito")
-			options.add_argument("--disable-plugins-discovery");
-			options.add_argument("--start-maximized")
+			options.add_argument("--disable-plugins-discovery")
 			options.add_experimental_option("excludeSwitches", ["enable-automation", 'enable-logging'])
 			options.add_experimental_option('useAutomationExtension', False)		
 			try:
@@ -324,19 +323,7 @@ class main:
 
 
 	def ChrashPoints(self):
-		options = webdriver.ChromeOptions()
-		options.add_argument(f'user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36')
-		options.add_argument('--disable-extensions')
-		options.add_argument('--profile-directory=Default')
-		options.add_argument("--incognito")
-		options.add_argument("--disable-plugins-discovery");
-		options.add_argument("--start-maximized")
-		options.add_experimental_option("excludeSwitches", ["enable-automation", 'enable-logging'])
-		options.add_experimental_option('useAutomationExtension', False)		
-		browser = webdriver.Chrome('chromedriver.exe', options=options)
-		browser.get("https://rest-bf.blox.land/games/crash")
-
-
+		browser = self.browse
 		average = self.average
 		history = None
 		uiprint = self.print
@@ -345,22 +332,12 @@ class main:
 		
 
 		while True:
-			browser.refresh()
-			data = browser.page_source.replace('<html><head><meta name="color-scheme" content="light dark"></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">', "").replace("</pre></body></html>", "")
-			try:
-				games = json.loads(data)
-			except json.decoder.JSONDecodeError:
-				uiprint("Blocked by ddos protection. Solve the captcha to continue.", "error")
-			while True:
-				try:
-					games = json.loads(data)
-					break
-				except json.decoder.JSONDecodeError:
-					pass
+			games = browser.execute_script("""return fetch('https://rest-bf.blox.land/games/crash').then(res => res.json());""")
 			if not history == games["history"]:
 				history = games["history"]
 				yield [games["history"][0]["crashPoint"], [float(crashpoint["crashPoint"]) for crashpoint in history[:average]]]
 			time.sleep(0.01)
+
 
 
 	def playsounds(self, file):
