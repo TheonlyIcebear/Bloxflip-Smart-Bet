@@ -323,7 +323,7 @@ class main:
 
 
 	def ChrashPoints(self):
-		browser = self.browse
+		browser = self.browser
 		average = self.average
 		history = None
 		uiprint = self.print
@@ -374,7 +374,7 @@ class main:
 		multiplier = self.multiplier
 		playsounds = self.playsounds
 		betamount = self.betamount
-		sednwebhookmsg = self.sendwbmsg
+		sendwebhookmsg = self.sendwbmsg
 		stoploss = self.stoploss
 		browser = self.browser
 		average = self.average
@@ -404,22 +404,8 @@ class main:
 				if lastgame > prediction:
 					betamount = self.betamount
 					uiprint(f"Won previous game. lowering bet amount to {betamount}", "good")
-					#data = {
-					#	"content" : "",
-					#	"username" : "Smart Bet",
-					#	"embeds": [
-					#					{
-					#						"description": f"You have won with {betamount}\nYou have {balance} now",
-					#						"title" : "You Won!",
-					#						"color" : 0x83d687
-					#					}
-					#				]
-					#}
-					#requests.post(webhook, json=data)
-					if self.webhook == None:
-						pass
-					else:
-						sednwebhookmsg(self.webhook, f"You have won while betting {betamount}", f"You Won!", 0x83d687, f"")
+					if not self.webhook == None:
+						sendwebhookmsg(self.webhook, f"You have won while betting {betamount}", f"You Won!", 0x83d687, f"")
 
 					uiprint(f"Accuracy on previous guess: {(1-(abs(multiplier-lastgame)/lastgame))*100}", "yellow")
 					self.updateBetAmount(betamount)
@@ -430,22 +416,8 @@ class main:
 				else:
 					betamount *= 2
 					uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
-					#data = {
-					#	"content" : "",
-					#	"username" : "Smart Bet",
-					#	"embeds": [
-					#					{
-					#						"description" : f"You lost with {betamount}\nYou have {balance} Left",
-					##						"title" : "You lost",
-					#						"color" : 0xcc1c16
-					#					}
-					#				]
-					#}
-					#requests.post(webhook, json=data)
-					if self.webhook == None:
-						pass
-					else:
-						sednwebhookmsg(self.webhook, f"You lost with {betamount} \n You have {balance} left", f"You Lost!", 0xcc1c16, f"")
+					if not self.webhook == None:
+						sendwebhookmsg(self.webhook, f"You lost with {betamount} \n You have {balance} left", f"You Lost!", 0xcc1c16, f"")
 
 					uiprint(f"Accuracy on previous guess: {(1-((abs(lastgame-multiplier))/multiplier))*100}", "yellow")
 					self.updateBetAmount(betamount)
@@ -583,24 +555,11 @@ class main:
 				continue
 
 			uiprint(f"Placing bet with {betamount} Robux on {prediction}x multiplier")
-			#data = {
-			#	"content" : "",
-			#	"username" : "Smart Bet",
-			#	"embeds": [
-			#					{
-			#						"description" : f"Betting {betamount} Robux at {prediction}x\n{balance-betamount} Robux Left",
-			#						"title" : f"Betting {betamount} Robux ",
-			#						"color" : 0x903cde
-			#					}
-			#				]
-			#}
-			#requests.post(webhook, json=data)
-			#def sendwbmsg(self,url,message,title,color,content):s
 			if self.webhook == None:
 				pass
 			else:
-				sednwebhookmsg(self.webhook, f"Betting {betamount} Robux at {round(prediction,2)}x\n{round(balance-betamount,2)} Robux Left", f"Betting {betamount} Robux ", 0x903cde, f"")
-				sednwebhookmsg(self.webhook,f"Average Crash : {round(avg,2)}\nMultiplier Set to : {multiplier}\n Accuracy on last crash : {round((1-(abs(multiplier-lastgame)/lastgame))*100, 2)}%","Round Predictions", 0xaf5ebd, f"")
+				sendwebhookmsg(self.webhook, f"Betting {betamount} Robux at {round(prediction,2)}x\n{round(balance-betamount,2)} Robux Left", f"Betting {betamount} Robux ", 0x903cde, f"")
+				sendwebhookmsg(self.webhook,f"Average Crash : {round(avg,2)}\nMultiplier Set to : {multiplier}\n Accuracy on last crash : {round((1-(abs(multiplier-lastgame)/lastgame))*100, 2)}%","Round Predictions", 0xaf5ebd, f"")
 			try:
 				browser.find_element(By.CSS_SELECTOR, ".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
 			except:

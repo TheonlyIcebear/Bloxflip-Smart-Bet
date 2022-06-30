@@ -68,11 +68,22 @@ class main:
 				cprint(message, "red")
 
 
+	def sendwbmsg(self,url,message,title,color,content):
+		data = {
+			"content": content,
+			"username": "Smart Bet",
+			"embeds": [
+								{
+									"description" : message,
+									"title" : title,
+									"color" : color
+								}
+							]
+		}
+		r = requests.post(url, json=data)
+
 	def clear(self): # Clear the console
-		if os.name == 'nt':
-			os.system("cls")
-		else:
-			os.system("clear")
+		os.system('cls' if os.name == 'nt' else 'clear')
 
 
 	def installDriver(self, version=None):
@@ -323,7 +334,7 @@ class main:
 		uiprint("Betting started. Press Ctrl + C to exit")
 
 
-		sednwebhookmsg = self.sendwbmsg
+		sendwebhookmsg = self.sendwbmsg
 		multiplier = self.multiplier
 		playsounds = self.playsounds
 		betamount = self.betamount
@@ -431,8 +442,8 @@ class main:
 			uiprint(f"Placing bet with {betamount} Robux on {multiplier}x multiplier")
 
 			if not self.webhook == None:
-					sednwebhookmsg(self.webhook, f"Betting {betamount} Robux at {round(prediction,2)}x\n{round(balance-betamount,2)} Robux Left", f"Betting {betamount} Robux ", 0x903cde, f"")
-					sednwebhookmsg(self.webhook,f"Average Crash : {round(avg,2)}\nMultiplier Set to : {multiplier}\n Accuracy on last crash : {round((1-(abs(multiplier-lastgame)/lastgame))*100, 2)}%","Round Predictions", 0xaf5ebd, f"")
+					sendwebhookmsg(self.webhook, f"Betting {betamount} Robux at {round(prediction,2)}x\n{round(balance-betamount,2)} Robux Left", f"Betting {betamount} Robux ", 0x903cde, f"")
+					sendwebhookmsg(self.webhook,f"Average Crash : {round(avg,2)}\nMultiplier Set to : {multiplier}\n Accuracy on last crash : {round((1-(abs(multiplier-lastgame)/lastgame))*100, 2)}%","Round Predictions", 0xaf5ebd, f"")
 
 			if lastgame:
 				lastgame = game[0]
@@ -442,7 +453,7 @@ class main:
 					uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
 
 					if not self.webhook == None:
-						sednwebhookmsg(self.webhook, f"You lost with {betamount} \n You have {balance} left", f"You Lost!", 0xcc1c16, f"")
+						sendwebhookmsg(self.webhook, f"You lost with {betamount} \n You have {balance} left", f"You Lost!", 0xcc1c16, f"")
 
 					try:
 						threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
@@ -454,7 +465,7 @@ class main:
 					uiprint(f"Won game. Lowering bet amount to {betamount}", "good")
 
 					if not self.webhook == None:
-						sednwebhookmsg(self.webhook, f"You have won while betting {betamount}", f"You Won!", 0x83d687, f"")
+						sendwebhookmsg(self.webhook, f"You have won while betting {betamount}", f"You Won!", 0x83d687, f"")
 
 					try:
 						threading.Thread(target=playsounds, args=('Assets\Win.mp3',)).start()
