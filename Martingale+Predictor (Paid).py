@@ -9,7 +9,7 @@ import threading
 import time
 from sys import exit
 from zipfile import *
-
+import webbrowser
 import requests
 import selenium
 from playsound import playsound
@@ -26,7 +26,19 @@ class main:
 		self.crashPoints = None
 		self.multiplier = 0
 		os.system("")
-		version = "1.0"
+		version = "1.0.0"
+		url = "http://ec2-3-85-227-174.compute-1.amazonaws.com:8080/version"
+		data = {"type": "paid"}
+		r = requests.get(url, json=data)
+		rjson = r.json()
+		if rjson['version'] == version:
+			print("[Bloxflip Smart Bet] Your Version is up to date.")
+		else:
+			print(f"You are currently on {version}v. Please update to the newest version {rjson['version']} Now opening Github Website....")
+			time.sleep(1)
+			webbrowser.open("https://github.com/TheonlyIcebear/Bloxflip-Smart-Bet")
+			exit()
+
 		try:
 			self.getConfig()
 			self.sendBets()
