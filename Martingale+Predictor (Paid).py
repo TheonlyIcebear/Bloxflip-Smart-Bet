@@ -618,7 +618,7 @@ class main:
 			#				]
 			#}
 			#requests.post(webhook, json=data)
-			#def sendwbmsg(self,url,message,title,color,content):
+			#def sendwbmsg(self,url,message,title,color,content):s
 			if self.webhook == None:
 				pass
 			else:
