@@ -465,6 +465,9 @@ class main:
 					uiprint("Internal server error. Trying again 1.5 seconds...", "error")
 					time.sleep(1.5)
 
+			if prediction < multiplier:
+				prediction = multiplier
+
 
 
 
