@@ -365,11 +365,7 @@ class main:
 
 
 	def updateMultiplier(self, multiplier):
-		uiprint = self.print
 		browser = self.browser
-		if multiplier < self.multiplier:
-			multiplier = self.multiplier
-		uiprint(f"Setting multiplier to {multiplier}", "yellow")
 		element = browser.find_elements(By.CSS_SELECTOR, '.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')[1]
 		for _ in range(10):
 			element.send_keys(f"{Keys.BACKSPACE}")
@@ -416,10 +412,10 @@ class main:
 
 			try:
 				if lastgame > prediction:
+					if not self.webhook == None:
+						sendwebhookmsg(self.webhook, f"You have made {betamount*multiplier - betamount} robux", f"You Won!", 0x83d687, f"")
 					betamount = self.betamount
 					uiprint(f"Won previous game. lowering bet amount to {betamount}", "good")
-					if not self.webhook == None:
-						sendwebhookmsg(self.webhook, f"You have won while betting {betamount}", f"You Won!", 0x83d687, f"")
 
 					uiprint(f"Accuracy on previous guess: {(1-(abs(multiplier-lastgame)/lastgame))*100}", "yellow")
 					self.updateBetAmount(betamount)
@@ -431,7 +427,7 @@ class main:
 					betamount *= 2
 					uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
 					if not self.webhook == None:
-						sendwebhookmsg(self.webhook, f"You lost with {betamount} \n You have {balance} left", f"You Lost!", 0xcc1c16, f"")
+						sendwebhookmsg(self.webhook, f"You lost {betamount} robux\n You have {balance} left", f"You Lost!", 0xcc1c16, f"")
 
 					uiprint(f"Accuracy on previous guess: {(1-((abs(lastgame-multiplier))/multiplier))*100}", "yellow")
 					self.updateBetAmount(betamount)
@@ -484,9 +480,10 @@ class main:
 
 			if prediction < multiplier:
 				uiprint(f"Game will likely crash around {prediction}. Ignoring and betting on {multiplier} to ensure profit.")
+				prediction = multiplier
 
 
-
+			uiprint(f"Setting multiplier to {multiplier}", "yellow")
 			self.updateMultiplier(round(prediction, 2) )
 
 			
