@@ -1,6 +1,6 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning
 
-import subprocess, threading, selenium, requests, logging, base64, json, time, os
+import subprocess, threading, selenium, requests, logging, base64, json, time, os, webbrowser
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from win10toast import ToastNotifier
@@ -15,6 +15,19 @@ class main:
 		logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
 		self.crashPoints = None
 		self.multiplier = 0
+
+		version = "1.0.1"
+		url = "http://ec2-3-85-227-174.compute-1.amazonaws.com:8080/version"
+		data = {"type": "paid"}
+		r = requests.get(url, json=data)
+		rjson = r.json()
+		if rjson['version'] == version:
+			print("[Bloxflip Smart Bet] Your Version is up to date.")
+		else:
+			print(f"You are currently on {version}v. Please update to the newest version {rjson['version']} Now opening Github Website....")
+			time.sleep(1)
+			webbrowser.open("https://github.com/TheonlyIcebear/Bloxflip-Smart-Bet")
+			exit()
 
 		os.system("")
 		try:
@@ -276,20 +289,6 @@ class main:
 				uiprint("Invalid auto_restart boolean inside JSON file. Must be true or false", "error")
 				time.sleep(1.6)
 				exit()
-
-
-			version = "1.0.1"
-			url = "http://ec2-3-85-227-174.compute-1.amazonaws.com:8080/version"
-			data = {"type": "paid"}
-			r = requests.get(url, json=data)
-			rjson = r.json()
-			if rjson['version'] == version:
-				uiprint("Your Version is up to date.")
-			else:
-			self.print(f"You are currently on {version}v. Please update to the newest version {rjson['version']} Now opening Github Website....", "error")
-			time.sleep(1)
-			webbrowser.open("https://github.com/TheonlyIcebear/Bloxflip-Smart-Bet")
-			exit()
 
 
 			self.installDriver()
