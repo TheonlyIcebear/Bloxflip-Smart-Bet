@@ -407,7 +407,8 @@ class main:
 
 			chance = 1
 			for game in games:
-				chance = chance * ((100/game)/100)
+				chance *= (1 - (1/33 + (32/33)*(.01 + .99*(1 - 1/game))))
+
 			try:
 				prediction = 1/(1-(chance*(10**(int(str(chance).split("e-")[1])-1))))
 			except:

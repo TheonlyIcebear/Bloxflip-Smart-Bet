@@ -1,6 +1,6 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning
 
-import subprocess, threading, selenium, requests, logging, base64, json, time, os, webbrowser
+import subprocess, threading, selenium, requests, logging, base64, json, time, os
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from win10toast import ToastNotifier
@@ -15,6 +15,7 @@ class main:
 		logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
 		self.crashPoints = None
 		self.multiplier = 0
+
 		version = "1.0.1"
 		url = "http://ec2-3-85-227-174.compute-1.amazonaws.com:8080/version"
 		data = {"type": "paid"}
@@ -229,11 +230,9 @@ class main:
 
 			try:
 				self.webhook = config["webhook"]
-				if self.webhook == "":
-					uiprint("you are running / working with no webhook", "warning")
+				if not "https://" in self.webhook:
+					uiprint("Invalid webhook inside JSON file file. Make sure you put the https:// with it.", "warning")
 					self.webhook = None
-				else:
-					pass
 			except:
 				uiprint("Invalid webhook boolean inside JSON file. Make sure it's a valid string", "error")
 				time.sleep(1.6)
@@ -458,7 +457,7 @@ class main:
 
 			chance = 1
 			for game in games:
-				chance = chance * ((100/game)/100)
+				chance *= (1 - (1/33 + (32/33)*(.01 + .99*(1 - 1/game))))
 			
 			while True:
 				request = requests.get("https://predictor.repl.co/multiplier", 
