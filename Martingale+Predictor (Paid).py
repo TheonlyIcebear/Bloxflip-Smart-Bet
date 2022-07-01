@@ -405,6 +405,7 @@ class main:
 			balance = self.getBalance()
 
 			games = game[1]
+			accuracy = None
 			lastgame = game[0]
 			avg = sum(games)/len(games)
 			uiprint(f"Average Crashpoint: {avg}")
