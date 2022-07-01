@@ -30,7 +30,7 @@ while True:
 			uiprint(f"You can lose {count} games in a row losing before getting cleaned.")
 			chance = (((1/33 + (32/33)*(.01 + .99*(1 - 1/multiplier))))**count)*100
 			uiprint(f"There's a {chance:.20f}% chance of you getting cleaned before this chance decreases even more.")
-			uiprint(f"Or about the same change of a game crashing at {100/chance}")
+			uiprint(f"Or about the same chance of a game crashing at {100/chance}")
 			print("Press enter to retry")
 			input(">> ")
 			os.system("cls")
