@@ -263,6 +263,18 @@ class main:
 				exit()
 
 
+			version = "1.2.2"
+			data = {"type": "paid"}
+			latest_release = requests.get("https://predictor.repl.co/latest_release").text
+			if latest_release == version:
+				uiprint("Your version is up to date.", "good")
+			else:
+				uiprint(f"You are currently on v{version}. Please update to the newest version {latest_release} Now opening Github Website....", "error")
+				webbrowser.open("https://github.com/TheonlyIcebear/Bloxflip-Smart-Bet")
+				time.sleep(10)
+				exit()
+
+
 			self.installDriver()
 			options = webdriver.ChromeOptions()
 			options.add_experimental_option('excludeSwitches', ['enable-logging'])

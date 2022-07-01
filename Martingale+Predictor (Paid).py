@@ -284,9 +284,9 @@ class main:
 			if latest_release == version:
 				uiprint("Your version is up to date.", "good")
 			else:
-				uiprint(f"You are currently on v{version}. Please update to the newest version {rjson['version']} Now opening Github Website....", "error")
+				uiprint(f"You are currently on v{version}. Please update to the newest version {latest_release} Now opening Github Website....", "error")
 				webbrowser.open("https://github.com/TheonlyIcebear/Bloxflip-Smart-Bet")
-				time.sleep(1.6)
+				time.sleep(10)
 				exit()
 
 
