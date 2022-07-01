@@ -416,7 +416,7 @@ class main:
 						sendwebhookmsg(self.webhook, f"You have made {betamount*multiplier - betamount} robux", f"You Won!", 0x83d687, f"")
 					betamount = self.betamount
 					uiprint(f"Won previous game. lowering bet amount to {betamount}", "good")
-
+					accuracy = (1-(abs(multiplier-lastgame)/lastgame))*100
 					uiprint(f"Accuracy on previous guess: {(1-(abs(multiplier-lastgame)/lastgame))*100}", "yellow")
 					self.updateBetAmount(betamount)
 					try:
@@ -571,7 +571,7 @@ class main:
 				pass
 			else:
 				sendwebhookmsg(self.webhook, f"Betting {betamount} Robux at {round(prediction,2)}x\n{round(balance-betamount,2)} Robux Left", f"Betting {betamount} Robux ", 0x903cde, f"")
-				sendwebhookmsg(self.webhook,f"Average Crash : {round(avg,2)}\nMultiplier Set to : {multiplier}\n Accuracy on last crash : {round((1-(abs(multiplier-lastgame)/lastgame))*100, 2)}%","Round Predictions", 0xaf5ebd, f"")
+				sendwebhookmsg(self.webhook,f"Average Crash : {round(avg,2)}\nMultiplier Set to : {multiplier}\n Accuracy on last crash : {, 2)}%","Round Predictions", 0xaf5ebd, f"")
 			try:
 				browser.find_element(By.CSS_SELECTOR, ".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
 			except:

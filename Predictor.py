@@ -398,6 +398,7 @@ class main:
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You lost with {betamount} \n You have {balance} left", f"You Lost!", 0xcc1c16, f"")
 
+					accuracy = (1-(abs(lastgame-multiplier))/multiplier)*100
 					uiprint(f"Accuracy on last guess: {(1-(abs(lastgame-multiplier))/multiplier)*100}", "yellow")
 					try:
 						threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
@@ -482,7 +483,7 @@ class main:
 				uiprint(f"Placing bet with {betamount} Robux on {prediction}x multiplier")
 				if not self.webhook == None:
 					sendwebhookmsg(self.webhook, f"Betting {betamount} Robux at {round(prediction,2)}x\n{round(balance-betamount,2)} Robux Left", f"Betting {betamount} Robux ", 0x903cde, f"")
-					sendwebhookmsg(self.webhook,f"Average Crash : {round(avg,2)}\nMultiplier Set to : {multiplier}\n Accuracy on last crash : {round((1-(abs(multiplier-lastgame)/lastgame))*100, 2)}%","Round Predictions", 0xaf5ebd, f"")
+					sendwebhookmsg(self.webhook,f"Average Crash : {round(avg,2)}\nMultiplier Set to : {multiplier}\n Accuracy on last crash : {accuracy}%","Round Predictions", 0xaf5ebd, f"")
 				
 				try:
 					browser.find_element(By.CSS_SELECTOR, ".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
