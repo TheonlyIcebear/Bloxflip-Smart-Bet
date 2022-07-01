@@ -15,7 +15,7 @@ class main:
 		logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
 		self.crashPoints = None
 		self.multiplier = 0
-		self.version = "1.2.2"
+		self.version = "1.2.5"
 		os.system("")
 		try:
 			self.getConfig()
@@ -387,7 +387,7 @@ class main:
 
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You have won while betting {betamount}", f"You Won!", 0x83d687, f"")
-					uiprint(f"Accuracy on last guess: {(1-(abs(multiplier-lastgame))/lastgame)*100}", "yellow")
+					uiprint(f"Accuracy on last guess: {abs(1-(abs(multiplier-lastgame))/lastgame)*100}", "yellow")
 					try:
 						threading.Thread(target=playsounds, args=('Assets\Win.mp3',)).start()
 					except:
@@ -399,7 +399,7 @@ class main:
 						sendwebhookmsg(self.webhook, f"You lost with {betamount} \n You have {balance} left", f"You Lost!", 0xcc1c16, f"")
 
 					accuracy = (1-(abs(lastgame-multiplier))/multiplier)*100
-					uiprint(f"Accuracy on last guess: {(1-(abs(lastgame-multiplier))/multiplier)*100}", "yellow")
+					uiprint(f"Accuracy on last guess: {abs(1-(abs(lastgame-multiplier))/multiplier)*100}", "yellow")
 					try:
 						threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
 					except:

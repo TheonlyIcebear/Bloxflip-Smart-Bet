@@ -15,7 +15,7 @@ class main:
 		logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
 		self.crashPoints = None
 		self.multiplier = 0
-		self.version = "1.2.2"
+		self.version = "1.2.5"
 		os.system("")
 		try:
 			self.getConfig()
@@ -412,13 +412,13 @@ class main:
 
 
 			try:
-				if lastgame > prediction:
+				if lastgame >= prediction:
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You have made {betamount*multiplier - betamount} robux", f"You Won!", 0x83d687, f"")
 					betamount = self.betamount
 					uiprint(f"Won previous game. lowering bet amount to {betamount}", "good")
-					accuracy = (1-(abs(multiplier-lastgame)/lastgame))*100
-					uiprint(f"Accuracy on previous guess: {(1-(abs(multiplier-lastgame)/lastgame))*100}", "yellow")
+					accuracy = abs(1-(abs(multiplier-lastgame)/lastgame))*100
+					uiprint(f"Accuracy on previous guess: {abs(1-(abs(multiplier-lastgame)/lastgame))*100}", "yellow")
 					self.updateBetAmount(betamount)
 					try:
 						threading.Thread(target=playsounds, args=('Assets\Won.mp3',)).start()
