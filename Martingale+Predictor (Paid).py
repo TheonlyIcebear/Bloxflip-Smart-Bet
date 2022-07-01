@@ -1,6 +1,6 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning
 
-import subprocess, webbrowser, threading, selenium, requests, logging, base64, json, time, os, webbrowser
+import subprocess, webbrowser, threading, selenium, requests, logging, base64, json, time, os
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from win10toast import ToastNotifier
@@ -278,15 +278,13 @@ class main:
 				exit()
 
 
-			version = "1.0.1"
-			url = "http://ec2-3-85-227-174.compute-1.amazonaws.com:8080/version"
+			version = "1.2.2"
 			data = {"type": "paid"}
-			r = requests.get(url, json=data)
-			rjson = r.json()
-			if rjson['version'] == version:
-				uiprint("Your Version is up to date.", "good")
+			latest_release = requests.get("https://predictor.repl.co/latest_release").text
+			if latest_release == version:
+				uiprint("Your version is up to date.", "good")
 			else:
-				uiprint(f"You are currently on {version}v. Please update to the newest version {rjson['version']} Now opening Github Website....", "error")
+				uiprint(f"You are currently on v{version}. Please update to the newest version {rjson['version']} Now opening Github Website....", "error")
 				webbrowser.open("https://github.com/TheonlyIcebear/Bloxflip-Smart-Bet")
 				time.sleep(1.6)
 				exit()
@@ -317,7 +315,7 @@ class main:
 			browser.get("https://bloxflip.com/crash") # Open bloxflip
 			browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
 			browser.execute_script(f'''window.location = window.location''')
-			time.sleep(1.5)
+			time.sleep(3)
 
 			self.getBalance()
 			elements = browser.find_elements(By.CSS_SELECTOR, '.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
