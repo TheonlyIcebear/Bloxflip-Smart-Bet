@@ -123,13 +123,13 @@ class main:
 		balance = None
 		browser = self.browser
 
-		classnames = [".MuiBox-root.jss227.jss44", 
-					  ".MuiBox-root.jss220.jss44", 
-					  ".MuiBox-root.jss102.jss44", 
-					  ".MuiBox-root.jss226.jss44", 
-					  ".MuiBox-root.jss221.jss44", 
-					  ".MuiBox-root.jss271.jss44", 
-					  ".MuiBox-root.jss359.jss44", 
+		classnames = [".MuiBox-root.jss227.jss44",
+					  ".MuiBox-root.jss220.jss44",
+					  ".MuiBox-root.jss102.jss44",
+					  ".MuiBox-root.jss226.jss44",
+					  ".MuiBox-root.jss221.jss44",
+					  ".MuiBox-root.jss271.jss44",
+					  ".MuiBox-root.jss359.jss44",
 					  ".MuiBox-root.jss221.jss44",
 					  ".MuiBox-root.jss233.jss44",
 					  ".MuiBox-root.jss226.jss44",
@@ -297,8 +297,13 @@ class main:
 
 			browser = self.browser
 			browser.get("https://bloxflip.com/crash") # Open bloxflip
-			browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
-			browser.execute_script(f'''window.location = window.location''')
+			while True:
+				try:
+					browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
+					browser.execute_script(f'''window.location = window.location''')
+					break
+				except:
+					pass
 			time.sleep(1.5)
 
 			self.getBalance()
