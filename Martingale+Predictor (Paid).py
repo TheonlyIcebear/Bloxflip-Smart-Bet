@@ -121,19 +121,21 @@ class main:
 		balance = None
 		browser = self.browser
 
-		classnames = [".MuiBox-root.jss227.jss44", 
-					  ".MuiBox-root.jss220.jss44", 
-					  ".MuiBox-root.jss102.jss44", 
-					  ".MuiBox-root.jss226.jss44", 
-					  ".MuiBox-root.jss221.jss44", 
-					  ".MuiBox-root.jss271.jss44", 
-					  ".MuiBox-root.jss359.jss44", 
+		classnames = [".MuiBox-root.jss227.jss44",
+					  ".MuiBox-root.jss220.jss44",
+					  ".MuiBox-root.jss102.jss44",
+					  ".MuiBox-root.jss226.jss44",
+					  ".MuiBox-root.jss221.jss44",
+					  ".MuiBox-root.jss271.jss44",
+					  ".MuiBox-root.jss359.jss44",
 					  ".MuiBox-root.jss221.jss44",
 					  ".MuiBox-root.jss233.jss44",
 					  ".MuiBox-root.jss226.jss44",
 					  ".MuiBox-root.jss247.jss44",
 					  ".MuiBox-root.jss240.jss44",
-					  ".MuiBox-root.jss218.jss44"
+					  ".MuiBox-root.jss218.jss44",
+					  ".MuiBox-root.jss1046.jss44",
+					  ".MuiBox-root.jss219.jss44",
 					  ".MuiBox-root.jss214.jss44"]
 
 		for possibleclass in classnames:
