@@ -18,7 +18,7 @@ def getGames(balance):
 		betamount *= 2
 		totalbet += betamount
 		if totalbet > balance:
-			chance = (((1/33 + (32/33)*(.01 + .99*(1 - 1/multiplier))))**count)
+			chance = (1/33 + (32/33)*(.01 + .99*(1 - 1/multiplier)))**count
 			return [chance, count]
 
 
@@ -36,9 +36,10 @@ while True:
 	
 
 	uiprint(f"You can lose {count} games in a row losing before getting cleaned.")
-	uiprint(f"There's a {chance*100:.100f}% chance of you getting cleaned before this chance decreases even more.")
+	chance = 1-(1-((1/33 + (32/33)*(.01 + .99*(1 - 1/multiplier))) **count) )**(200/count)
+	uiprint(f"There's around a {chance*100:.20f}% chance of you getting cleaned in 200 games")
 	uiprint(f"Or about the same chance of a game crashing at {1/chance}")
-	uiprint(f"There's a little over a {(1-chance)**15:.100f}% chance of you winning {count*15} games")
+	
 	print("Press enter to retry")
 	input(">> ")
 	os.system("cls")
