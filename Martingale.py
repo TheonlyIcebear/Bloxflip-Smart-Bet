@@ -304,7 +304,7 @@ class main:
 					break
 				except:
 					pass
-			time.sleep(1.5)
+			time.sleep(3.2)
 
 			self.getBalance()
 			elements = browser.find_elements(By.CSS_SELECTOR, '.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
