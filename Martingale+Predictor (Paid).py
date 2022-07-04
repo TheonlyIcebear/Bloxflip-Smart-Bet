@@ -420,7 +420,7 @@ class main:
 
 
 			try:
-				if round(lastagame, 2) == round(prediction, 2):
+				if round(lastgame, 2) == round(prediction, 2):
 					uiprint("Won previous game.", "good")
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You have won while betting {betamount}", f"You Won!", 0x83d687, f"")
