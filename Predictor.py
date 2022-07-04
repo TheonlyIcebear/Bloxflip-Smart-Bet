@@ -390,12 +390,17 @@ class main:
 
 
 			try:
+				if round(lastagame, 2) == round(prediction, 2):
+					uiprint("Won previous game.", "good")
+					if not self.webhook == None:
+						sendwebhookmsg(self.webhook, f"You have won while betting {betamount}", f"You Won!", 0x83d687, f"")
+					uiprint(f"Accuracy on last guess: 100%", "yellow")
 				if lastgame > prediction:
 					uiprint("Won previous game.", "good")
 
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You have won while betting {betamount}", f"You Won!", 0x83d687, f"")
-					uiprint(f"Accuracy on last guess: {abs(1-(abs(multiplier-lastgame))/lastgame)*100}", "yellow")
+					uiprint(f"Accuracy on last guess: {abs(1-(abs(multiplier-lastgame))/lastgame)*100}%", "yellow")
 					try:
 						threading.Thread(target=playsounds, args=('Assets\Win.mp3',)).start()
 					except:

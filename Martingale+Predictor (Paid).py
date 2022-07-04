@@ -420,13 +420,19 @@ class main:
 
 
 			try:
-				if lastgame >= prediction:
+				if round(lastagame, 2) == round(prediction, 2):
+					uiprint("Won previous game.", "good")
+					if not self.webhook == None:
+						sendwebhookmsg(self.webhook, f"You have won while betting {betamount}", f"You Won!", 0x83d687, f"")
+					uiprint(f"Accuracy on last guess: 100%", "yellow")
+					accuracy = 100
+				elif lastgame >= prediction:
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You have made {betamount*multiplier - betamount} robux", f"You Won!", 0x83d687, f"")
 					betamount = self.betamount
 					uiprint(f"Won previous game. lowering bet amount to {betamount}", "good")
 					accuracy = abs(1-(abs(multiplier-lastgame)/lastgame))*100
-					uiprint(f"Accuracy on previous guess: {abs(1-(abs(multiplier-lastgame)/lastgame))*100}", "yellow")
+					uiprint(f"Accuracy on previous guess: {accuracy}", "yellow")
 					self.updateBetAmount(betamount)
 					try:
 						threading.Thread(target=playsounds, args=('Assets\Won.mp3',)).start()
@@ -438,7 +444,7 @@ class main:
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You lost {betamount} robux\n You have {balance} left", f"You Lost!", 0xcc1c16, f"")
 					accuracy = (1-((abs(lastgame-multiplier))/multiplier))*100
-					uiprint(f"Accuracy on previous guess: {(1-((abs(lastgame-multiplier))/multiplier))*100}", "yellow")
+					uiprint(f"Accuracy on previous guess: {accuracy}", "yellow")
 					self.updateBetAmount(betamount)
 					try:
 						threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
