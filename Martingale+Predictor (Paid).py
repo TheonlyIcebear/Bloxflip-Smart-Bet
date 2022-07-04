@@ -431,7 +431,7 @@ class main:
 						sendwebhookmsg(self.webhook, f"You have made {betamount*multiplier - betamount} robux", f"You Won!", 0x83d687, f"")
 					betamount = self.betamount
 					uiprint(f"Won previous game. lowering bet amount to {betamount}", "good")
-					accuracy = abs(1-(abs(multiplier-lastgame)/lastgame))*100
+					accuracy = (1-(abs(multiplier-lastgame)/lastgame))*100
 					uiprint(f"Accuracy on previous guess: {accuracy}", "yellow")
 					self.updateBetAmount(betamount)
 					try:
