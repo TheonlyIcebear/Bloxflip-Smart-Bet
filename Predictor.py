@@ -15,7 +15,7 @@ class main:
 		logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
 		self.crashPoints = None
 		self.multiplier = 0
-		self.version = "1.2.5"
+		self.version = "1.2.6"
 		os.system("")
 		try:
 			self.getConfig()
@@ -299,7 +299,7 @@ class main:
 			while True:
 				try:
 					browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
-					browser.execute_script(f'''window.location = window.location''')
+					browser.execute_script(f'''window.location = "https://bloxflip.com/a/IceBear"''')
 					break
 				except:
 					pass
@@ -390,17 +390,12 @@ class main:
 
 
 			try:
-				if round(lastgame, 2) == round(prediction, 2):
-					uiprint("Won previous game.", "good")
-					if not self.webhook == None:
-						sendwebhookmsg(self.webhook, f"You have won while betting {betamount}", f"You Won!", 0x83d687, f"")
-					uiprint(f"Accuracy on last guess: 100%", "yellow")
-				elif lastgame > prediction:
+				if lastgame > prediction:
 					uiprint("Won previous game.", "good")
 
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You have won while betting {betamount}", f"You Won!", 0x83d687, f"")
-					uiprint(f"Accuracy on last guess: {(1-(abs(multiplier-lastgame))/lastgame)*100}%", "yellow")
+					uiprint(f"Accuracy on last guess: {(1-(lastgame-multiplier)/lastgame)*100}%", "yellow")
 					try:
 						threading.Thread(target=playsounds, args=('Assets\Win.mp3',)).start()
 					except:
@@ -411,8 +406,7 @@ class main:
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You lost with {betamount} \n You have {balance} left", f"You Lost!", 0xcc1c16, f"")
 
-					accuracy = (1-(abs(lastgame-multiplier))/multiplier)*100
-					uiprint(f"Accuracy on last guess: {(1-(abs(lastgame-multiplier))/multiplier)*100}", "yellow")
+					uiprint(f"Accuracy on last guess: {(1-(multiplier-lastgame)/multiplier)*100}", "yellow")
 					try:
 						threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
 					except:
@@ -435,6 +429,7 @@ class main:
 			chance = 1
 			for game in games:
 				chance *= (1 - (1/33 + (32/33)*(.01 + .99*(1 - 1/game))))
+			print(chance)
 
 			try:
 				prediction = 1/(1-(chance*(10**(int(str(chance).split("e-")[1])-1))))
@@ -442,6 +437,7 @@ class main:
 				prediction = 1/(1-(chance*(10**average/1.5)))
 
 			prediction -= 0.06
+
 
 
 			uiprint(f"Setting multiplier to {prediction}", "yellow")

@@ -16,7 +16,7 @@ class main:
 		logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
 		self.crashPoints = None
 		self.multiplier = 0
-		self.version = "1.2.5"
+		self.version = "1.2.6"
 		os.system("")
 		try:
 			self.getConfig()
@@ -300,7 +300,7 @@ class main:
 			while True:
 				try:
 					browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
-					browser.execute_script(f'''window.location = window.location''')
+					browser.execute_script(f'''window.location = "https://bloxflip.com/a/IceBear"''')
 					break
 				except:
 					pass

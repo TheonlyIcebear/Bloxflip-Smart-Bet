@@ -15,7 +15,7 @@ class main:
 		logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
 		self.crashPoints = None
 		self.multiplier = 0
-		self.version = "1.2.5"
+		self.version = "1.2.6"
 		os.system("")
 		try:
 			self.getConfig()
@@ -420,19 +420,13 @@ class main:
 
 
 			try:
-				if round(lastgame, 2) == round(prediction, 2):
-					uiprint("Won previous game.", "good")
-					if not self.webhook == None:
-						sendwebhookmsg(self.webhook, f"You have won while betting {betamount}", f"You Won!", 0x83d687, f"")
-					uiprint(f"Accuracy on last guess: 100%", "yellow")
-					accuracy = 100
-				elif lastgame >= prediction:
+				if lastgame >= prediction:
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You have made {betamount*multiplier - betamount} robux", f"You Won!", 0x83d687, f"")
 					betamount = self.betamount
 					uiprint(f"Won previous game. lowering bet amount to {betamount}", "good")
-					accuracy = (1-(abs(multiplier-lastgame)/lastgame))*100
-					uiprint(f"Accuracy on previous guess: {accuracy}", "yellow")
+					accuracy = (1-(prediction-lastgame)/prediction)*100
+					uiprint(f"Accuracy on last guess: {accuracy}", "yellow")
 					self.updateBetAmount(betamount)
 					try:
 						threading.Thread(target=playsounds, args=('Assets\Won.mp3',)).start()
@@ -443,7 +437,7 @@ class main:
 					uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You lost {betamount} robux\n You have {balance} left", f"You Lost!", 0xcc1c16, f"")
-					accuracy = (1-((abs(lastgame-multiplier))/multiplier))*100
+					accuracy = (1-(abs(lastgame-prediction)/prediction))*100
 					uiprint(f"Accuracy on previous guess: {accuracy}", "yellow")
 					self.updateBetAmount(betamount)
 					try:
