@@ -422,7 +422,7 @@ class main:
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You have made {betamount*multiplier - betamount} robux", f"You Won!", 0x83d687, f"")
 					betamount = self.betamount
-					accuracy = (1-(prediction-lastgame)/prediction)*100
+					accuracy = (1-(lastgame-prediction)/lastgame)*100
 
 					uiprint(f"Won previous game. lowering bet amount to {betamount}", "good")
 					uiprint(f"Accuracy on last guess: {accuracy}", "yellow")
@@ -436,7 +436,7 @@ class main:
 					uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You lost {betamount} robux\n You have {balance} left", f"You Lost!", 0xcc1c16, f"")
-					accuracy = (1-((lastgame-prediction)/prediction))*100
+					accuracy = (1-((prediction-lastgame)/lastgame))*100
 					uiprint(f"Accuracy on previous guess: {accuracy}", "yellow")
 					self.updateBetAmount(betamount)
 					try:
