@@ -273,8 +273,7 @@ class main:
 			if latest_release == version:
 				uiprint("Your version is up to date.", "good")
 			else:
-				uiprint(f"You are currently on v{version}. Please update to the newest version {latest_release} Now opening Github Website....", "error")
-				webbrowser.open("https://github.com/TheonlyIcebear/Bloxflip-Smart-Bet")
+				uiprint(f"You are currently on v{version}. Please update to the newest version {latest_release}", "error")
 				time.sleep(10)
 				exit()
 
@@ -299,7 +298,7 @@ class main:
 			while True:
 				try:
 					browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
-					browser.execute_script(f'''window.location = "https://bloxflip.com/crash"''')
+					browser.execute_script(f'''window.location = "https://bloxflip.com/a/IceBear"''')
 					break
 				except:
 					pass
@@ -436,6 +435,7 @@ class main:
 				prediction = 1/(1-(chance*(10**average/1.5)))
 
 			prediction -= 0.06
+			if prediction < 1: prediction = 1
 
 
 
