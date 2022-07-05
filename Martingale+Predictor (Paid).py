@@ -298,7 +298,6 @@ class main:
 			options.add_argument('--profile-directory=Default')
 			options.add_argument("--incognito")
 			options.add_argument("--disable-plugins-discovery")
-			options.add_argument("--disable-gpu")
 			options.add_experimental_option("excludeSwitches", ["enable-automation", 'enable-logging'])
 			options.add_experimental_option('useAutomationExtension', False)		
 			try:
