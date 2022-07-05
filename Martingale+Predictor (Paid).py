@@ -123,7 +123,7 @@ class main:
 		count = 100
 
 		try:
-			self.realclass
+			realclass = self.realclass
 		except:
 			realclass = None
 
@@ -132,7 +132,6 @@ class main:
 				count += 1
 				
 				possibleclass = f".MuiBox-root.jss{count}.jss44"
-				print(possibleclass, type(possibleclass))
 				try:
 					balance = float(browser.find_element(By.CSS_SELECTOR, possibleclass).text.replace(',', ''))
 				except selenium.common.exceptions.NoSuchElementException:
@@ -142,10 +141,8 @@ class main:
 				if balance:
 					realclass = possibleclass
 					self.realclass = realclass
-					print(balance)
 					break
 		else:
-			print("realrx")
 			balance = float(browser.find_element(By.CSS_SELECTOR, realclass).text.replace(',', ''))
 		if not balance:
 			uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
