@@ -125,7 +125,7 @@ class main:
 		count = 100
 
 		try:
-			self.realclass
+			realclass = self.realclass
 		except:
 			realclass = None
 
@@ -154,6 +154,7 @@ class main:
 			browser.close()
 			exit()
 		return balance
+
 
 	def getConfig(self): # Get configuration from config.json file
 		uiprint = self.print
@@ -278,9 +279,17 @@ class main:
 
 			self.installDriver()
 			options = webdriver.ChromeOptions()
-			options.add_experimental_option('excludeSwitches', ['enable-logging'])
+			options.add_argument(f'user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36')
+			options.add_argument('--disable-extensions')
+			options.add_argument('--profile-directory=Default')
+			options.add_argument("--incognito")
+			options.add_argument("--disable-plugins-discovery")
+			options.add_argument("--headless")
+			options.add_argument("--disable-gpu")
+			options.add_experimental_option("excludeSwitches", ["enable-automation", 'enable-logging'])
+			options.add_experimental_option('useAutomationExtension', False)		
 			try:
-				self.browser = webdriver.Chrome("chromedriver.exe", chrome_options=options)
+				self.browser = webdriver.Chrome("chromedriver.exe", options=options)
 			except selenium.common.exceptions.SessionNotCreatedException:
 				try:
 					self.installDrier(100)
