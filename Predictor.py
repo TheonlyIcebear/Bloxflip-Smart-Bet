@@ -299,7 +299,7 @@ class main:
 			while True:
 				try:
 					browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
-					browser.execute_script(f'''window.location = "https://bloxflip.com/a/IceBear"''')
+					browser.execute_script(f'''window.location = "https://bloxflip.com/crash"''')
 					break
 				except:
 					pass
@@ -395,7 +395,7 @@ class main:
 
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You have won while betting {betamount}", f"You Won!", 0x83d687, f"")
-					uiprint(f"Accuracy on last guess: {(1-(lastgame-multiplier)/lastgame)*100}%", "yellow")
+					uiprint(f"Accuracy on last guess: {(1-(lastgame-prediction)/lastgame)*100}%", "yellow")
 					try:
 						threading.Thread(target=playsounds, args=('Assets\Win.mp3',)).start()
 					except:
@@ -405,8 +405,7 @@ class main:
 
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You lost with {betamount} \n You have {balance} left", f"You Lost!", 0xcc1c16, f"")
-
-					uiprint(f"Accuracy on last guess: {(1-(multiplier-lastgame)/multiplier)*100}", "yellow")
+					uiprint(f"Accuracy on last guess: {(1-(prediction-lastgame)/prediction)*100}%", "yellow")
 					try:
 						threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
 					except:
