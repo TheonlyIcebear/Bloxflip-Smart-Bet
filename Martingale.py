@@ -122,32 +122,33 @@ class main:
 		uiprint = self.print
 		balance = None
 		browser = self.browser
+		count = 100
 
-		classnames = [".MuiBox-root.jss227.jss44",
-					  ".MuiBox-root.jss220.jss44",
-					  ".MuiBox-root.jss102.jss44",
-					  ".MuiBox-root.jss226.jss44",
-					  ".MuiBox-root.jss221.jss44",
-					  ".MuiBox-root.jss271.jss44",
-					  ".MuiBox-root.jss359.jss44",
-					  ".MuiBox-root.jss221.jss44",
-					  ".MuiBox-root.jss233.jss44",
-					  ".MuiBox-root.jss226.jss44",
-					  ".MuiBox-root.jss247.jss44",
-					  ".MuiBox-root.jss240.jss44",
-					  ".MuiBox-root.jss218.jss44",
-					  ".MuiBox-root.jss1046.jss44",
-					  ".MuiBox-root.jss219.jss44",
-					  ".MuiBox-root.jss214.jss44"]
+		try:
+			self.realclass
+		except:
+			realclass = None
 
-					  
-		for possibleclass in classnames:
-			try:
-				balance = float(browser.find_element(By.CSS_SELECTOR, possibleclass).text.replace(',', ''))
-			except selenium.common.exceptions.NoSuchElementException:
-				pass
-			except ValueError:
-				pass
+		if not realclass:
+			for _ in range(10001):
+				count += 1
+				
+				possibleclass = f".MuiBox-root.jss{count}.jss44"
+				print(possibleclass, type(possibleclass))
+				try:
+					balance = float(browser.find_element(By.CSS_SELECTOR, possibleclass).text.replace(',', ''))
+				except selenium.common.exceptions.NoSuchElementException:
+					pass
+				except ValueError:
+					pass
+				if balance:
+					realclass = possibleclass
+					self.realclass = realclass
+					print(balance)
+					break
+		else:
+			print("realrx")
+			balance = float(browser.find_element(By.CSS_SELECTOR, realclass).text.replace(',', ''))
 		if not balance:
 			uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
 			time.sleep(1.7)
@@ -274,8 +275,7 @@ class main:
 			if latest_release == version:
 				uiprint("Your version is up to date.", "good")
 			else:
-				uiprint(f"You are currently on v{version}. Please update to the newest version {latest_release} Now opening Github Website....", "error")
-				webbrowser.open("https://github.com/TheonlyIcebear/Bloxflip-Smart-Bet")
+				uiprint(f"You are currently on v{version}. Please update to the newest version {latest_release}", "error")
 				time.sleep(10)
 				exit()
 
@@ -300,7 +300,7 @@ class main:
 			while True:
 				try:
 					browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
-					browser.execute_script(f'''window.location = "https://bloxflip.com/a/IceBear"''')
+					browser.execute_script(f'''window.location = "https://bloxflip.com/crash"''')
 					break
 				except:
 					pass

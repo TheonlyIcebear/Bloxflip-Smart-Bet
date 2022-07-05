@@ -1,6 +1,6 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning
 
-import subprocess, webbrowser, threading, selenium, requests, logging, base64, json, time, os
+import subprocess, threading, selenium, requests, logging, base64, json, time, os
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from win10toast import ToastNotifier
@@ -120,31 +120,33 @@ class main:
 		uiprint = self.print
 		balance = None
 		browser = self.browser
+		count = 100
 
-		classnames = [".MuiBox-root.jss227.jss44",
-					  ".MuiBox-root.jss220.jss44",
-					  ".MuiBox-root.jss102.jss44",
-					  ".MuiBox-root.jss226.jss44",
-					  ".MuiBox-root.jss221.jss44",
-					  ".MuiBox-root.jss271.jss44",
-					  ".MuiBox-root.jss359.jss44",
-					  ".MuiBox-root.jss221.jss44",
-					  ".MuiBox-root.jss233.jss44",
-					  ".MuiBox-root.jss226.jss44",
-					  ".MuiBox-root.jss247.jss44",
-					  ".MuiBox-root.jss240.jss44",
-					  ".MuiBox-root.jss218.jss44",
-					  ".MuiBox-root.jss1046.jss44",
-					  ".MuiBox-root.jss219.jss44",
-					  ".MuiBox-root.jss214.jss44"]
+		try:
+			self.realclass
+		except:
+			realclass = None
 
-		for possibleclass in classnames:
-			try:
-				balance = float(browser.find_element(By.CSS_SELECTOR, possibleclass).text.replace(',', ''))
-			except selenium.common.exceptions.NoSuchElementException:
-				pass
-			except ValueError:
-				pass
+		if not realclass:
+			for _ in range(10001):
+				count += 1
+				
+				possibleclass = f".MuiBox-root.jss{count}.jss44"
+				print(possibleclass, type(possibleclass))
+				try:
+					balance = float(browser.find_element(By.CSS_SELECTOR, possibleclass).text.replace(',', ''))
+				except selenium.common.exceptions.NoSuchElementException:
+					pass
+				except ValueError:
+					pass
+				if balance:
+					realclass = possibleclass
+					self.realclass = realclass
+					print(balance)
+					break
+		else:
+			print("realrx")
+			balance = float(browser.find_element(By.CSS_SELECTOR, realclass).text.replace(',', ''))
 		if not balance:
 			uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
 			time.sleep(1.7)
@@ -287,8 +289,7 @@ class main:
 			if latest_release == version:
 				uiprint("Your version is up to date.", "good")
 			else:
-				uiprint(f"You are currently on v{version}. Please update to the newest version {latest_release} Now opening Github Website....", "error")
-				webbrowser.open("https://github.com/TheonlyIcebear/Bloxflip-Smart-Bet")
+				uiprint(f"You are currently on v{version}. Please update to the newest version {latest_release}", "error")
 				time.sleep(10)
 				exit()
 
@@ -424,8 +425,9 @@ class main:
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You have made {betamount*multiplier - betamount} robux", f"You Won!", 0x83d687, f"")
 					betamount = self.betamount
-					uiprint(f"Won previous game. lowering bet amount to {betamount}", "good")
 					accuracy = (1-(prediction-lastgame)/prediction)*100
+
+					uiprint(f"Won previous game. lowering bet amount to {betamount}", "good")
 					uiprint(f"Accuracy on last guess: {accuracy}", "yellow")
 					self.updateBetAmount(betamount)
 					try:
@@ -437,7 +439,7 @@ class main:
 					uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You lost {betamount} robux\n You have {balance} left", f"You Lost!", 0xcc1c16, f"")
-					accuracy = (1-(abs(lastgame-prediction)/prediction))*100
+					accuracy = (1-((lastgame-prediction)/prediction))*100
 					uiprint(f"Accuracy on previous guess: {accuracy}", "yellow")
 					self.updateBetAmount(betamount)
 					try:
@@ -571,7 +573,7 @@ class main:
 				betamount = self.betamount
 				continue
 			
-			if round(multiplier, 2) <= 1:
+			if round(prediction, 2) <= 1:
 				uiprint("Cancelling bet this game. As the game will likely crash around 1x.")
 				continue
 

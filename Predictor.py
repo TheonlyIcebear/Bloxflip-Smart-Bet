@@ -122,31 +122,33 @@ class main:
 		uiprint = self.print
 		balance = None
 		browser = self.browser
+		count = 100
 
-		classnames = [".MuiBox-root.jss227.jss44",
-					  ".MuiBox-root.jss220.jss44",
-					  ".MuiBox-root.jss102.jss44",
-					  ".MuiBox-root.jss226.jss44",
-					  ".MuiBox-root.jss221.jss44",
-					  ".MuiBox-root.jss271.jss44",
-					  ".MuiBox-root.jss359.jss44",
-					  ".MuiBox-root.jss221.jss44",
-					  ".MuiBox-root.jss233.jss44",
-					  ".MuiBox-root.jss226.jss44",
-					  ".MuiBox-root.jss247.jss44",
-					  ".MuiBox-root.jss240.jss44",
-					  ".MuiBox-root.jss218.jss44",
-					  ".MuiBox-root.jss1046.jss44",
-					  ".MuiBox-root.jss219.jss44",
-					  ".MuiBox-root.jss214.jss44"]
+		try:
+			self.realclass
+		except:
+			realclass = None
 
-		for possibleclass in classnames:
-			try:
-				balance = float(browser.find_element(By.CSS_SELECTOR, possibleclass).text.replace(',', ''))
-			except selenium.common.exceptions.NoSuchElementException:
-				pass
-			except ValueError:
-				pass
+		if not realclass:
+			for _ in range(10001):
+				count += 1
+				
+				possibleclass = f".MuiBox-root.jss{count}.jss44"
+				print(possibleclass, type(possibleclass))
+				try:
+					balance = float(browser.find_element(By.CSS_SELECTOR, possibleclass).text.replace(',', ''))
+				except selenium.common.exceptions.NoSuchElementException:
+					pass
+				except ValueError:
+					pass
+				if balance:
+					realclass = possibleclass
+					self.realclass = realclass
+					print(balance)
+					break
+		else:
+			print("realrx")
+			balance = float(browser.find_element(By.CSS_SELECTOR, realclass).text.replace(',', ''))
 		if not balance:
 			uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
 			time.sleep(1.7)
@@ -155,6 +157,7 @@ class main:
 			browser.close()
 			exit()
 		return balance
+
 
 
 	def getConfig(self): # Get configuration from config.json file
@@ -435,8 +438,6 @@ class main:
 				prediction = 1/(1-(chance*(10**average/1.5)))
 
 			prediction -= 0.06
-			if prediction < 1: prediction = 1
-
 
 
 			uiprint(f"Setting multiplier to {prediction}", "yellow")
@@ -484,7 +485,7 @@ class main:
 					browser.close()
 					exit()
 				
-				if round(multiplier, 2) <= 1:
+				if round(prediction, 2) <= 1:
 					uiprint("Cancelling bet this game. As the game will likely crash around 1x.")
 					continue
 
