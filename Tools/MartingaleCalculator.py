@@ -37,6 +37,7 @@ while True:
 
 	uiprint(f"You can lose {count} games in a row losing before getting cleaned.")
 	chance = (1.2-(1-((1/33 + (32/33)*(.01 + .99*(1 - 1/multiplier))) **count))**(200/count))*100
+	if chance > 100: chance = 100
 	uiprint(f"There's around a {round(chance, 2)}% chance of you getting cleaned in 200 games")
 	uiprint(f"Or about the same chance of a game crashing at {round(100/chance, 2)}")
 	
