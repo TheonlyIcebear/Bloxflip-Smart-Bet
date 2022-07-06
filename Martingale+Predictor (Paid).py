@@ -574,7 +574,7 @@ class main:
 				uiprint("Cancelling bet this game. As the game will likely crash around 1x.")
 				continue
 
-			uiprint(f"Placing bet with {betamount} Robux on {prediction}x multiplier")
+			uiprint(f"Placing bet with {betamount} Robux on {round(prediction,2)}x multiplier")
 			if self.webhook == None:
 				pass
 			else:
