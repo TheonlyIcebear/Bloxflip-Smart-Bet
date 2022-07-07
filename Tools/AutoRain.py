@@ -184,7 +184,6 @@ class main:
 		options.add_argument(f'user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36')
 		options.add_argument('--disable-extensions')
 		options.add_argument('--profile-directory=Default')
-		options.add_argument("--incognito")
 		options.add_argument("--disable-plugins-discovery")
 		options.add_experimental_option("excludeSwitches", ["enable-automation", 'enable-logging'])
 		options.add_experimental_option('useAutomationExtension', False)		
@@ -225,7 +224,6 @@ class main:
 				scraper = cloudscraper.create_scraper()
 				r = scraper.get('https://rest-bf.blox.land/chat/history').json()
 				check = r['rain']
-				print(check)
 				if check['active'] == True:
 					getduration = check['duration']
 					convert = (getduration/(1000*60))%60
