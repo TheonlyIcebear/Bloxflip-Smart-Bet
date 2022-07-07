@@ -1,7 +1,8 @@
 {
-	"ping": "<@1234567890>",
-  	"webhook": "https://discord.com/api/webhooks/xxxxxxxxxxxx/xxxxxxxxxxxxxxxxxxxxx",
+	"minimum_amount": 500,
 	"webhook_enabled": true,
+	"webhook": "https://discord.com/api/webhooks/xxxxxxxxxxx/xxxxxxxxxxxxxxxxxxxxx",
+	"webhook_ping": "<@1234567890>",
 	"notifications_enabled": true,
 	"authorization": ""
 }
