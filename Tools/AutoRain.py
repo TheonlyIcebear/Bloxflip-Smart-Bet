@@ -2,10 +2,8 @@
 
 import cloudscraper, subprocess, threading, selenium, requests, logging, base64, json, time, os
 from discord_webhook import DiscordWebhook, DiscordEmbed
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from win10toast import ToastNotifier
-from playsound import playsound
 from selenium import webdriver
 from termcolor import cprint
 from zipfile import *
@@ -17,7 +15,7 @@ class main:
 		logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
 		self.crashPoints = None
 		self.multiplier = 0
-		self.version = "1.0.0"
+		self.version = "1.2.6"
 		os.system("")
 		try:
 			self.getConfig()
@@ -54,17 +52,17 @@ class main:
 			if message:
 				cprint(message, "yellow")
 		elif option == "yellow":
-			cprint("AUTOBET", "yellow", end="")
+			cprint("AUTOJOIN", "yellow", end="")
 			print(" ] ", end="")
 			if message:
 				cprint(message, "yellow")
 		elif option == "good":
-			cprint("AUTOBET", "green", end="")
+			cprint("AUTOJOIN", "green", end="")
 			print(" ] ", end="")
 			if message:
 				cprint(message, "green")
 		elif option == "bad":
-			cprint("AUTOBET", "red", end="")
+			cprint("AUTOJOIN", "red", end="")
 			print(" ] ", end="")
 			if message:
 				cprint(message, "red")
