@@ -1,4 +1,4 @@
-# Bloxflip Smart Bet
+# Bloxflip Smart Bet 🧠
 **Join the discord and create a ticket if you wan't help with a bug**: https://discord.gg/GdXvMZG3 <br>
 **You can message me at**: Ice Bear#0167
 
