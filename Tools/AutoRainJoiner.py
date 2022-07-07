@@ -255,7 +255,7 @@ class main:
 			sent = time.strftime("%d/%m/%Y %H:%M:%S", time.localtime(int(time.time())))
 			uiprint(f"Bloxflip Rain!", "green")
 			uiprint(f"Rain amount: {prize} R$", "yellow")
-			uiptint(f"Expiration: {duration} minutes", "yellow")
+			uiprint(f"Expiration: {duration} minutes", "yellow")
 			uiprint(f"Host: {host}", "yellow")
 			uiprint(f"Timestamp: {sent}", "yellow")
 			if notifications: 
