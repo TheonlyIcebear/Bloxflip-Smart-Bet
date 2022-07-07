@@ -37,10 +37,10 @@ class main:
 	def print(self, message="", option=None): # print the ui's text with
 		print("[ ", end="")
 		if not option:
-			cprint("AUTOJOIN", "cyan", end="")
+			cprint("AUTORAIN", "magenta", end="")
 			print(" ] ", end="")
 			if message:
-				cprint(message, "cyan")
+				cprint(message, "magenta")
 		elif option == "error":
 			cprint("ERROR", "red", end="")
 			print(" ] ", end="")
@@ -52,17 +52,17 @@ class main:
 			if message:
 				cprint(message, "yellow")
 		elif option == "yellow":
-			cprint("AUTOJOIN", "yellow", end="")
+			cprint("AUTORAIN", "yellow", end="")
 			print(" ] ", end="")
 			if message:
 				cprint(message, "yellow")
 		elif option == "good":
-			cprint("AUTOJOIN", "green", end="")
+			cprint("AUTORAIN", "green", end="")
 			print(" ] ", end="")
 			if message:
 				cprint(message, "green")
 		elif option == "bad":
-			cprint("AUTOJOIN", "red", end="")
+			cprint("AUTORAIN", "red", end="")
 			print(" ] ", end="")
 			if message:
 				cprint(message, "red")
@@ -168,13 +168,13 @@ class main:
 				time.sleep(1.6)
 				exit()
 
-		print("[ ", end="")
+		print("[", end="")
 		cprint(base64.b64decode(b'IENSRURJVFMg').decode('utf-8'), "cyan", end="")
-		print(" ] ", end="")
+		print("] ", end="")
 		print(base64.b64decode(b'V2ViaG9vayBhbmQgTm90aWZjYXRpb24gY29kZSBieSBhbXByb2NvZGUgKGh0dHBzOi8vZ2l0aHViLmNvbS9hbXByb2NvZGUvQmxveGZsaXAtcmFpbi1ub3RpZmllcik=').decode('utf-8'))
-		print("[ ", end="")
+		print("[", end="")
 		cprint(base64.b64decode(b'IENSRURJVFMg').decode('utf-8'), "cyan", end="")
-		print(" ] ", end="")
+		print("] ", end="")
 		print(base64.b64decode(b'QXV0byBKb2luZXIgYnkgSWNlIEJlYXIjMDE2Nw==').decode('utf-8'))
 		time.sleep(3)
 		self.clear()
@@ -185,6 +185,7 @@ class main:
 		options.add_argument('--disable-extensions')
 		options.add_argument('--profile-directory=Default')
 		options.add_argument("--disable-plugins-discovery")
+		options.add_argument("--incognito")
 		options.add_experimental_option("excludeSwitches", ["enable-automation", 'enable-logging'])
 		options.add_experimental_option('useAutomationExtension', False)		
 		try:
@@ -200,11 +201,11 @@ class main:
 
 
 		browser = self.browser
-		browser.get("https://bloxflip.com/crash") # Open bloxflip
+		browser.get("https://bloxflip.com/IceBear") # Open bloxflip
 		while True:
 			try:
 				browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
-				browser.execute_script(f'''window.location = "https://bloxflip.com/a/IceBear"''')
+				browser.execute_script(f'''window.location = "https://bloxflip.com/IceBear"''')
 				break
 			except:
 				pass
@@ -285,7 +286,10 @@ class main:
 					webhook.remove_embed(0)
 				except:
 					pass
-			browser.find_element(By.XPATH, "//span[contains(text(),'Join')]").click()
+			try:
+				browser.find_element(By.XPATH, "//span[contains(text(),'Join')]").click()
+			except Exception as e:
+				uiprint(e, "error")
 
 
 if __name__ == "__main__":
