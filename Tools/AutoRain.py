@@ -37,10 +37,10 @@ class main:
 	def print(self, message="", option=None): # print the ui's text with
 		print("[ ", end="")
 		if not option:
-			cprint("AUTOBET", "magenta", end="")
+			cprint("AUTOJOIN", "cyan", end="")
 			print(" ] ", end="")
 			if message:
-				cprint(message, "magenta")
+				cprint(message, "cyan")
 		elif option == "error":
 			cprint("ERROR", "red", end="")
 			print(" ] ", end="")
@@ -221,8 +221,7 @@ class main:
 
 		while True:	
 			try:
-				scraper = cloudscraper.create_scraper()
-				r = scraper.get('https://rest-bf.blox.land/chat/history').json()
+				r = browser.execute_script("""return fetch('https://rest-bf.blox.land/chat/history').then(res => res.json());""")
 				check = r['rain']
 				if check['active'] == True:
 					getduration = check['duration']
@@ -237,7 +236,7 @@ class main:
 			except Exception as e:
 				print(e)
 				pass
-			time.sleep(5)
+			time.sleep(40)
 
 
 	def JoinRains(self):
