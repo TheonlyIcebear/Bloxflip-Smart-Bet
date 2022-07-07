@@ -232,7 +232,7 @@ class main:
 					waiting = (convert*60+10)
 					grabprize = str(check['prize'])[:-2]
 					prize = (format(int(grabprize),","))
-					if not prize >= minimum_amount:
+					if not float(prize) >= minimum_amount:
 						yield check
 					time.sleep(waiting)
 			except Exception as e:
