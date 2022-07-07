@@ -225,6 +225,7 @@ class main:
 				scraper = cloudscraper.create_scraper()
 				r = scraper.get('https://rest-bf.blox.land/chat/history').json()
 				check = r['rain']
+				print(check)
 				if check['active'] == True:
 					getduration = check['duration']
 					convert = (getduration/(1000*60))%60
@@ -232,7 +233,7 @@ class main:
 					waiting = (convert*60+10)
 					grabprize = str(check['prize'])[:-2]
 					prize = (format(int(grabprize),","))
-					if not float(prize) >= minimum_amount:
+					if float(prize.replace(',', "")) >= minimum_amount:
 						yield check
 					time.sleep(waiting)
 			except Exception as e:
