@@ -163,13 +163,13 @@ class main:
 				time.sleep(1.6)
 				exit()
 
-		print("[", end="")
+		print("[ ", end="")
 		cprint(base64.b64decode(b'IENSRURJVFMg').decode('utf-8'), "cyan", end="")
-		print("]", end="")
+		print(" ] ", end="")
 		print(base64.b64decode(b'V2ViaG9vayBhbmQgTm90aWZjYXRpb24gY29kZSBieSBhbXByb2NvZGUgKGh0dHBzOi8vZ2l0aHViLmNvbS9hbXByb2NvZGUvQmxveGZsaXAtcmFpbi1ub3RpZmllcik=').decode('utf-8'))
-		print("[", end="")
+		print("[ ", end="")
 		cprint(base64.b64decode(b'IENSRURJVFMg').decode('utf-8'), "cyan", end="")
-		print("]", end="")
+		print(" ] ", end="")
 		print(base64.b64decode(b'QXV0byBKb2luZXIgYnkgSWNlIEJlYXIjMDE2Nw==').decode('utf-8'))
 		time.sleep(3)
 		self.clear()
@@ -219,7 +219,6 @@ class main:
 				scraper = cloudscraper.create_scraper()
 				r = scraper.get('https://rest-bf.blox.land/chat/history').json()
 				check = r['rain']
-				print(check)
 				if check['active'] == True:
 					getduration = check['duration']
 					convert = (getduration/(1000*60))%60
