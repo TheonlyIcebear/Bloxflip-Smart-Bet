@@ -131,7 +131,7 @@ class main:
 
 
 			try:
-				self.ping = config["ping"]
+				self.ping = config["webhook_ping"]
 			except:
 				uiprint("Invalid ping inside JSON file. Must be valid string", "error")
 				time.sleep(1.6)
@@ -158,6 +158,13 @@ class main:
 				self.notifications = config["notifications_enabled"]
 			except:
 				uiprint("Invalid notifications_enabled boolean inside JSON file. Must be true or false", "error")
+				time.sleep(1.6)
+				exit()
+
+			try:
+				self.notifications = float(config["minimum_amount"])
+			except:
+				uiprint("Invalid minimum_amount boolean inside JSON file. Must a valid number", "error")
 				time.sleep(1.6)
 				exit()
 
@@ -206,6 +213,7 @@ class main:
 		
 
 	def CurrentRains(self):
+		minimum_amount = self.minimum_amount
 		browser = self.browser
 		uiprint = self.print
 		sent = False
@@ -222,7 +230,10 @@ class main:
 					convert = (getduration/(1000*60))%60
 					duration = (int(convert))
 					waiting = (convert*60+10)
-					yield check
+					grabprize = str(check['prize'])[:-2]
+					prize = (format(int(grabprize),","))
+					if not prize >= minimum_amount:
+						yield check
 					time.sleep(waiting)
 			except Exception as e:
 				print(e)
