@@ -3,7 +3,7 @@
 **You can message me at**: Ice Bear#0167
 
 A program that uses strategies and probability maths to choose the best times to bet on BloxFlip's crash gamemode https://bloxflip.com/a/IceBear. <br>
-**THIS DOES NOT PREDICT 100% WHEN ITS GOING TO CRASH**:
+**THIS DOES NOT PREDICT 100% WHEN ITS GOING TO CRASH**: <br>
 Instead either it uses a betting strategy or compares the previous crash games to see if it'd be a good idea to bet or to find a good multiplier  <br>
 
 # Configuration and set up ⚙
