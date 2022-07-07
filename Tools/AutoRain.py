@@ -162,7 +162,7 @@ class main:
 				exit()
 
 			try:
-				self.notifications = float(config["minimum_amount"])
+				self.minimum_amount = float(config["minimum_amount"])
 			except:
 				uiprint("Invalid minimum_amount boolean inside JSON file. Must a valid number", "error")
 				time.sleep(1.6)
