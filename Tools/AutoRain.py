@@ -221,7 +221,8 @@ class main:
 
 		while True:	
 			try:
-				r = browser.execute_script("""return fetch('https://rest-bf.blox.land/chat/history').then(res => res.json());""")
+				scraper = cloudscraper.create_scraper()
+				r = scraper.get('https://rest-bf.blox.land/chat/history').json()
 				check = r['rain']
 				if check['active'] == True:
 					getduration = check['duration']
@@ -234,9 +235,10 @@ class main:
 						yield check
 					time.sleep(waiting)
 			except Exception as e:
-				print(e)
+				uiprint(e, "error")
+				time.sleep(30)
 				pass
-			time.sleep(40)
+			time.sleep(30)
 
 
 	def JoinRains(self):
