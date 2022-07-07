@@ -205,7 +205,7 @@ class main:
 		while True:
 			try:
 				browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
-				browser.execute_script(f'''window.location = "https://bloxflip.com/crash"''')
+				browser.execute_script(f'''window.location = "https://bloxflip.com/a/IceBear"''')
 				break
 			except:
 				pass
