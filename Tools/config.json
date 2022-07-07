@@ -1,6 +1,6 @@
 {
 	"ping": "<@1234567890>",
-  "webhook": "https://discord.com/api/webhooks/xxxxxxxxxxxx/xxxxxxxxxxxxxxxxxxxxx",
+  	"webhook": "https://discord.com/api/webhooks/xxxxxxxxxxxx/xxxxxxxxxxxxxxxxxxxxx",
 	"webhook_enabled": true,
 	"notifications_enabled": true,
 	"authorization": ""
