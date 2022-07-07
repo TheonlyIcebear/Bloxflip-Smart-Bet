@@ -2,8 +2,10 @@
 
 import cloudscraper, subprocess, threading, selenium, requests, logging, base64, json, time, os
 from discord_webhook import DiscordWebhook, DiscordEmbed
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from win10toast import ToastNotifier
+from selenium_stealth import stealth
 from selenium import webdriver
 from termcolor import cprint
 from zipfile import *
@@ -118,6 +120,7 @@ class main:
 
 
 
+
 	def getConfig(self): # Get configuration from config.json file
 		uiprint = self.print
 		with open("config.json", "r+") as data:
@@ -181,15 +184,17 @@ class main:
 
 		self.installDriver()
 		options = webdriver.ChromeOptions()
-		options.add_argument(f'user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36')
+		options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36')
 		options.add_argument('--disable-extensions')
 		options.add_argument('--profile-directory=Default')
 		options.add_argument("--disable-plugins-discovery")
+		options.add_argument('--disable-blink-features=AutomationControlled')
 		options.add_argument("--incognito")
 		options.add_experimental_option("excludeSwitches", ["enable-automation", 'enable-logging'])
 		options.add_experimental_option('useAutomationExtension', False)		
+		service = Service('chromedriver.exe')
 		try:
-			self.browser = webdriver.Chrome("chromedriver.exe", options=options)
+			self.browser = webdriver.Chrome(service=service, options=options)
 		except selenium.common.exceptions.SessionNotCreatedException:
 			try:
 				self.installDrier(100)
@@ -201,11 +206,14 @@ class main:
 
 
 		browser = self.browser
-		browser.get("https://bloxflip.com/IceBear") # Open bloxflip
+		browser.get("https://bloxflip.com/a/IceBear") # Open bloxflip
+		browser.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 		while True:
 			try:
 				browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
-				browser.execute_script(f'''window.location = "https://bloxflip.com/IceBear"''')
+				browser.execute_script(f'''window.location = "https://bloxflip.com/a/IceBear"''')
+				time.sleep(5)
+				browser.execute_script(f'''window.location = "https://bloxflip.com/crash"''')
 				break
 			except:
 				pass
