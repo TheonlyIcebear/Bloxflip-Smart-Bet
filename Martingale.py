@@ -16,6 +16,7 @@ class main:
 		logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
 		self.crashPoints = None
 		self.multiplier = 0
+		self.version = "1.2.6"
 		os.system("")
 		try:
 			self.getConfig()
@@ -40,39 +41,51 @@ class main:
 			cprint("AUTOBET", "magenta", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "magenta")
+				cprint(message, "magenta")
 		elif option == "error":
 			cprint("ERROR", "red", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "red")
+				cprint(message, "red")
 		elif option == "warning":
 			cprint("WARNING", "yellow", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "yellow")
+				cprint(message, "yellow")
 		elif option == "yellow":
 			cprint("AUTOBET", "yellow", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "yellow")
+				cprint(message, "yellow")
 		elif option == "good":
 			cprint("AUTOBET", "green", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "green")
+				cprint(message, "green")
 		elif option == "bad":
 			cprint("AUTOBET", "red", end="")
 			print(" ] ", end="")
 			if message:
-			  cprint(message, "red")
+				cprint(message, "red")
 
+
+	def sendwbmsg(self,url,message,title,color,content):
+		if "https://" in url:
+			data = {
+				"content": content,
+				"username": "Smart Bet",
+				"embeds": [
+									{
+										"description" : message,
+										"title" : title,
+										"color" : color
+									}
+								]
+			}
+			r = requests.post(url, json=data)
 
 	def clear(self): # Clear the console
-		if os.name == 'nt':
-		  os.system("cls")
-		else:
-		  os.system("clear")
+		os.system('cls' if os.name == 'nt' else 'clear')
 
 
 	def installDriver(self, version=None):
@@ -109,28 +122,30 @@ class main:
 		uiprint = self.print
 		balance = None
 		browser = self.browser
+		count = 100
 
-		classnames = [".MuiBox-root.jss227.jss44", 
-					  ".MuiBox-root.jss220.jss44", 
-					  ".MuiBox-root.jss102.jss44", 
-					  ".MuiBox-root.jss226.jss44", 
-					  ".MuiBox-root.jss221.jss44", 
-					  ".MuiBox-root.jss271.jss44", 
-					  ".MuiBox-root.jss359.jss44", 
-					  ".MuiBox-root.jss221.jss44",
-					  ".MuiBox-root.jss233.jss44",
-					  ".MuiBox-root.jss226.jss44",
-					  ".MuiBox-root.jss247.jss44",
-					  ".MuiBox-root.jss240.jss44",
-					  ".MuiBox-root.jss214.jss44"]
-					  
-		for possibleclass in classnames:
-			try:
-				balance = float(browser.find_element(By.CSS_SELECTOR, possibleclass).text.replace(',', ''))
-			except selenium.common.exceptions.NoSuchElementException:
-				pass
-			except ValueError:
-				pass
+		try:
+			realclass = self.realclass
+		except:
+			realclass = None
+
+		if not realclass:
+			for _ in range(10001):
+				count += 1
+				
+				possibleclass = f".MuiBox-root.jss{count}.jss44"
+				try:
+					balance = float(browser.find_element(By.CSS_SELECTOR, possibleclass).text.replace(',', ''))
+				except selenium.common.exceptions.NoSuchElementException:
+					pass
+				except ValueError:
+					pass
+				if balance:
+					realclass = possibleclass
+					self.realclass = realclass
+					break
+		else:
+			balance = float(browser.find_element(By.CSS_SELECTOR, realclass).text.replace(',', ''))
 		if not balance:
 			uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
 			time.sleep(1.7)
@@ -251,14 +266,31 @@ class main:
 				exit()
 
 
+			version = self.version
+			data = {"type": "paid"}
+			latest_release = requests.get("https://predictor.repl.co/latest_release").text
+			if latest_release == version:
+				uiprint("Your version is up to date.", "good")
+			else:
+				uiprint(f"You are currently on v{version}. Please update to the newest version {latest_release}", "error")
+				time.sleep(10)
+				exit()
+
+
 			self.installDriver()
 			options = webdriver.ChromeOptions()
-			options.add_experimental_option('excludeSwitches', ['enable-logging'])
+			options.add_argument(f'user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36')
+			options.add_argument('--disable-extensions')
+			options.add_argument('--profile-directory=Default')
+			options.add_argument("--incognito")
+			options.add_argument("--disable-plugins-discovery")
+			options.add_experimental_option("excludeSwitches", ["enable-automation", 'enable-logging'])
+			options.add_experimental_option('useAutomationExtension', False)		
 			try:
-				self.browser = webdriver.Chrome("chromedriver.exe", chrome_options=options)
+				self.browser = webdriver.Chrome("chromedriver.exe", options=options)
 			except selenium.common.exceptions.SessionNotCreatedException:
 				try:
-					self.installDrier(100)
+					self.installDriver(100)
 				except:
 					uiprint("Chromedriver version not compatible with current chrome version installed. Update your chrome to continue.", "error")
 					uiprint("If your not sure how to update just uninstall then reinstall chrome", "yellow")
@@ -268,9 +300,14 @@ class main:
 
 			browser = self.browser
 			browser.get("https://bloxflip.com/crash") # Open bloxflip
-			browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
-			browser.execute_script(f'''window.location = window.location''')
-			time.sleep(1.5)
+			while True:
+				try:
+					browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
+					browser.execute_script(f'''window.location = "https://bloxflip.com/a/IceBear"''')
+					break
+				except:
+					pass
+			time.sleep(3.2)
 
 			self.getBalance()
 			elements = browser.find_elements(By.CSS_SELECTOR, '.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
@@ -288,32 +325,22 @@ class main:
 			elements[1].send_keys(f"{self.multiplier}")
 
 
-	def ChrashPoints(self):		
-		browser = webdriver.Chrome('chromedriver.exe')
-		browser.get("https://rest-bf.blox.land/games/crash")
-
+	def ChrashPoints(self):
+		browser = self.browser
 		average = self.average
 		history = None
 		uiprint = self.print
 		sent = False
 		
+		
+
 		while True:
-			browser.refresh()
-			data = browser.page_source.replace('<html><head><meta name="color-scheme" content="light dark"></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">', "").replace("</pre></body></html>", "")
-			try:
-				games = json.loads(data)
-			except json.decoder.JSONDecodeError:
-				uiprint("Blocked by ddos protection. Solve the captcha to continue.", "error")
-			while True:
-				try:
-					games = json.loads(data)
-					break
-				except json.decoder.JSONDecodeError:
-					pass
+			games = browser.execute_script("""return fetch('https://rest-bf.blox.land/games/crash').then(res => res.json());""")
 			if not history == games["history"]:
 				history = games["history"]
 				yield [games["history"][0]["crashPoint"], [float(crashpoint["crashPoint"]) for crashpoint in history[:average]]]
 			time.sleep(0.01)
+
 
 	def updateBetAmount(self, amount):
 		browser = self.browser
@@ -333,6 +360,7 @@ class main:
 		uiprint("Betting started. Press Ctrl + C to exit")
 
 
+		sendwebhookmsg = self.sendwbmsg
 		multiplier = self.multiplier
 		playsounds = self.playsounds
 		betamount = self.betamount
@@ -439,18 +467,9 @@ class main:
 
 			uiprint(f"Placing bet with {betamount} Robux on {multiplier}x multiplier")
 
-			data = {
-				"content" : "",
-				"username" : "Smart Bet",
-				"embeds": [
-								{
-									"description" : f"Betting {betamount} Robux at {prediction}x\n{balance-betamount} Robux Left",
-									"title" : f"Betting {betamount} Robux ",
-									"color" : 0x903cde
-								}
-							]
-			}
-			requests.post(webhook, json=data)
+			if not self.webhook == None:
+					sendwebhookmsg(self.webhook, f"Betting {betamount} Robux at {round(multiplier,2)}x\n{round(balance-betamount,2)} Robux Left", f"Betting {betamount} Robux ", 0x903cde, f"")
+					sendwebhookmsg(self.webhook,f"Average Crash : {round(avg,2)}\nMultiplier Set to : {multiplier}\n Accuracy on last crash : {round((1-(abs(multiplier-lastgame)/lastgame))*100, 2)}%","Round Predictions", 0xaf5ebd, f"")
 
 			if lastgame:
 				lastgame = game[0]
@@ -459,18 +478,8 @@ class main:
 					self.updateBetAmount(betamount)
 					uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
 
-					data = {
-						"content" : "",
-						"username" : "Smart Bet",
-						"embeds": [
-										{
-											"description" : f"You lost with {betamount}\nYou have {balance} Left",
-											"title" : "You lost",
-											"color" : 0xcc1c16
-										}
-									]
-					}
-					requests.post(webhook, json=data)
+					if not self.webhook == None:
+						sendwebhookmsg(self.webhook, f"You lost with {betamount} \n You have {balance} left", f"You Lost!", 0xcc1c16, f"")
 
 					try:
 						threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
@@ -481,18 +490,8 @@ class main:
 					self.updateBetAmount(betamount)
 					uiprint(f"Won game. Lowering bet amount to {betamount}", "good")
 
-					data = {
-						"content" : "",
-						"username" : "Smart Bet",
-						"embeds": [
-										{
-											"description": f"You have won with {betamount}\nYou have {balance} now",
-											"title" : "You Won!",
-											"color" : 0x83d687
-										}
-									]
-					}
-					requests.post(webhook, json=data)
+					if not self.webhook == None:
+						sendwebhookmsg(self.webhook, f"You have won while betting {betamount}", f"You Won!", 0x83d687, f"")
 
 					try:
 						threading.Thread(target=playsounds, args=('Assets\Win.mp3',)).start()

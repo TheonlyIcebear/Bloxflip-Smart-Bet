@@ -15,6 +15,7 @@ class main:
 		logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
 		self.crashPoints = None
 		self.multiplier = 0
+		self.version = "1.2.6"
 		os.system("")
 		try:
 			self.getConfig()
@@ -67,18 +68,19 @@ class main:
 				cprint(message, "red")
 
 	def sendwbmsg(self,url,message,title,color,content):
-		data = {
-			"content": content,
-			"username": "Smart Bet",
-			"embeds": [
-								{
-									"description" : message,
-									"title" : title,
-									"color" : color
-								}
-							]
-		}
-		r = requests.post(url, json=data)
+		if "https://" in url:
+			data = {
+				"content": content,
+				"username": "Smart Bet",
+				"embeds": [
+									{
+										"description" : message,
+										"title" : title,
+										"color" : color
+									}
+								]
+			}
+			r = requests.post(url, json=data)
 
 	def clear(self): # Clear the console
 		os.system('cls' if os.name == 'nt' else 'clear')
@@ -118,28 +120,30 @@ class main:
 		uiprint = self.print
 		balance = None
 		browser = self.browser
+		count = 100
 
-		classnames = [".MuiBox-root.jss227.jss44", 
-					  ".MuiBox-root.jss220.jss44", 
-					  ".MuiBox-root.jss102.jss44", 
-					  ".MuiBox-root.jss226.jss44", 
-					  ".MuiBox-root.jss221.jss44", 
-					  ".MuiBox-root.jss271.jss44", 
-					  ".MuiBox-root.jss359.jss44", 
-					  ".MuiBox-root.jss221.jss44",
-					  ".MuiBox-root.jss233.jss44",
-					  ".MuiBox-root.jss226.jss44",
-					  ".MuiBox-root.jss247.jss44",
-					  ".MuiBox-root.jss240.jss44",
-					  ".MuiBox-root.jss214.jss44"]
+		try:
+			realclass = self.realclass
+		except:
+			realclass = None
 
-		for possibleclass in classnames:
-			try:
-				balance = float(browser.find_element(By.CSS_SELECTOR, possibleclass).text.replace(',', ''))
-			except selenium.common.exceptions.NoSuchElementException:
-				pass
-			except ValueError:
-				pass
+		if not realclass:
+			for _ in range(10001):
+				count += 1
+				
+				possibleclass = f".MuiBox-root.jss{count}.jss44"
+				try:
+					balance = float(browser.find_element(By.CSS_SELECTOR, possibleclass).text.replace(',', ''))
+				except selenium.common.exceptions.NoSuchElementException:
+					pass
+				except ValueError:
+					pass
+				if balance:
+					realclass = possibleclass
+					self.realclass = realclass
+					break
+		else:
+			balance = float(browser.find_element(By.CSS_SELECTOR, realclass).text.replace(',', ''))
 		if not balance:
 			uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
 			time.sleep(1.7)
@@ -214,15 +218,12 @@ class main:
 
 
 			try:
-				if config['webhook'] == "":
+				self.webhook = config["webhook"]
+				if not "https://" in self.webhook:
+					uiprint("Invalid webhook inside JSON file file. Make sure you put the https:// with it.", "warning")
 					self.webhook = None
-				else:
-					if "https://" in self.webhook:
-						pass
-					else:
-						uiprint("Invalid webhook inside JSON file file. Make sure you put the https:// with it.")
 			except:
-				uiprint("Invalid webhook inside JSON file. Make sure it's a valid string", "error")
+				uiprint("Invalid webhook boolean inside JSON file. Make sure it's a valid string", "error")
 				time.sleep(1.6)
 				exit()
 
@@ -279,21 +280,31 @@ class main:
 				exit()
 
 
+			version = self.version
+			data = {"type": "paid"}
+			latest_release = requests.get("https://predictor.repl.co/latest_release").text
+			if latest_release == version:
+				uiprint("Your version is up to date.", "good")
+			else:
+				uiprint(f"You are currently on v{version}. Please update to the newest version {latest_release}", "error")
+				time.sleep(10)
+				exit()
+
+
 			self.installDriver()
 			options = webdriver.ChromeOptions()
 			options.add_argument(f'user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36')
 			options.add_argument('--disable-extensions')
 			options.add_argument('--profile-directory=Default')
 			options.add_argument("--incognito")
-			options.add_argument("--disable-plugins-discovery");
-			options.add_argument("--start-maximized")
+			options.add_argument("--disable-plugins-discovery")
 			options.add_experimental_option("excludeSwitches", ["enable-automation", 'enable-logging'])
 			options.add_experimental_option('useAutomationExtension', False)		
 			try:
 				self.browser = webdriver.Chrome("chromedriver.exe", options=options)
 			except selenium.common.exceptions.SessionNotCreatedException:
 				try:
-					self.installDrier(100)
+					self.installDriver(100)
 				except:
 					uiprint("Chromedriver version not compatible with current chrome version installed. Update your chrome to continue.", "error")
 					uiprint("If your not sure how to update just uninstall then reinstall chrome", "yellow")
@@ -302,10 +313,16 @@ class main:
 
 
 			browser = self.browser
-			browser.get("https://bloxflip.com/crash") # Open bloxflip
-			browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
-			browser.execute_script(f'''window.location = window.location''')
-			time.sleep(1.5)
+			browser.get("https://bloxflip.com/a/IceBear") # Open bloxflip
+			while True:
+				try:
+					browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
+					browser.execute_script(f'''window.location = "https://bloxflip.com/a/IceBear"''')
+					browser.execute_script(f'''window.location = "https://bloxflip.com/crash"''')
+					break
+				except:
+					pass
+			time.sleep(3.2)
 
 			self.getBalance()
 			elements = browser.find_elements(By.CSS_SELECTOR, '.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
@@ -324,19 +341,7 @@ class main:
 
 
 	def ChrashPoints(self):
-		options = webdriver.ChromeOptions()
-		options.add_argument(f'user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36')
-		options.add_argument('--disable-extensions')
-		options.add_argument('--profile-directory=Default')
-		options.add_argument("--incognito")
-		options.add_argument("--disable-plugins-discovery");
-		options.add_argument("--start-maximized")
-		options.add_experimental_option("excludeSwitches", ["enable-automation", 'enable-logging'])
-		options.add_experimental_option('useAutomationExtension', False)		
-		browser = webdriver.Chrome('chromedriver.exe', options=options)
-		browser.get("https://rest-bf.blox.land/games/crash")
-
-
+		browser = self.browser
 		average = self.average
 		history = None
 		uiprint = self.print
@@ -345,22 +350,12 @@ class main:
 		
 
 		while True:
-			browser.refresh()
-			data = browser.page_source.replace('<html><head><meta name="color-scheme" content="light dark"></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">', "").replace("</pre></body></html>", "")
-			try:
-				games = json.loads(data)
-			except json.decoder.JSONDecodeError:
-				uiprint("Blocked by ddos protection. Solve the captcha to continue.", "error")
-			while True:
-				try:
-					games = json.loads(data)
-					break
-				except json.decoder.JSONDecodeError:
-					pass
+			games = browser.execute_script("""return fetch('https://rest-bf.blox.land/games/crash').then(res => res.json());""")
 			if not history == games["history"]:
 				history = games["history"]
 				yield [games["history"][0]["crashPoint"], [float(crashpoint["crashPoint"]) for crashpoint in history[:average]]]
 			time.sleep(0.01)
+
 
 
 	def playsounds(self, file):
@@ -394,10 +389,10 @@ class main:
 		uiprint("Betting started. Press Ctrl + C to exit")
 
 
+		sendwebhookmsg = self.sendwbmsg
 		multiplier = self.multiplier
 		playsounds = self.playsounds
 		betamount = self.betamount
-		sednwebhookmsg = self.sendwbmsg
 		stoploss = self.stoploss
 		browser = self.browser
 		average = self.average
@@ -417,34 +412,21 @@ class main:
 			balance = self.getBalance()
 
 			games = game[1]
+			accuracy = None
 			lastgame = game[0]
 			avg = sum(games)/len(games)
 			uiprint(f"Average Crashpoint: {avg}")
 
 
 			try:
-				print(abs(multiplier-lastgame))
-				if lastgame > prediction:
+				if lastgame >= prediction:
+					if not self.webhook == None:
+						sendwebhookmsg(self.webhook, f"You have made {betamount*multiplier - betamount} robux", f"You Won!", 0x83d687, f"")
 					betamount = self.betamount
-					uiprint(f"Won previous game. lowering bet amount to {betamount}", "good")
-					#data = {
-					#	"content" : "",
-					#	"username" : "Smart Bet",
-					#	"embeds": [
-					#					{
-					#						"description": f"You have won with {betamount}\nYou have {balance} now",
-					#						"title" : "You Won!",
-					#						"color" : 0x83d687
-					#					}
-					#				]
-					#}
-					#requests.post(webhook, json=data)
-					if self.webhook == None:
-						pass
-					else:
-						sednwebhookmsg(self.webhook, f"You have won while betting {betamount}", f"You Won!", 0x83d687, f"")
+					accuracy = (1-(lastgame-prediction)/lastgame)*100
 
-					uiprint(f"Accuracy on previous guess: {(1-(abs(multiplier-lastgame)/lastgame))*100}", "yellow")
+					uiprint(f"Won previous game. lowering bet amount to {betamount}", "good")
+					uiprint(f"Accuracy on last guess: {accuracy}", "yellow")
 					self.updateBetAmount(betamount)
 					try:
 						threading.Thread(target=playsounds, args=('Assets\Won.mp3',)).start()
@@ -453,24 +435,10 @@ class main:
 				else:
 					betamount *= 2
 					uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
-					#data = {
-					#	"content" : "",
-					#	"username" : "Smart Bet",
-					#	"embeds": [
-					#					{
-					#						"description" : f"You lost with {betamount}\nYou have {balance} Left",
-					##						"title" : "You lost",
-					#						"color" : 0xcc1c16
-					#					}
-					#				]
-					#}
-					#requests.post(webhook, json=data)
-					if self.webhook == None:
-						pass
-					else:
-						sednwebhookmsg(self.webhook, f"You lost with {betamount} \n You have {balance} left", f"You Lost!", 0xcc1c16, f"")
-
-					uiprint(f"Accuracy on previous guess: {(1-((abs(lastgame-multiplier))/multiplier))*100}", "yellow")
+					if not self.webhook == None:
+						sendwebhookmsg(self.webhook, f"You lost {betamount} robux\n You have {balance} left", f"You Lost!", 0xcc1c16, f"")
+					accuracy = (1-((prediction-lastgame)/lastgame))*100
+					uiprint(f"Accuracy on previous guess: {accuracy}", "yellow")
 					self.updateBetAmount(betamount)
 					try:
 						threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
@@ -493,7 +461,7 @@ class main:
 
 			chance = 1
 			for game in games:
-				chance = chance * ((100/game)/100)
+				chance *= (1 - (1/33 + (32/33)*(.01 + .99*(1 - 1/game))))
 			
 			while True:
 				request = requests.get("https://predictor.repl.co/multiplier", 
@@ -519,10 +487,12 @@ class main:
 					uiprint("Internal server error. Trying again 1.5 seconds...", "error")
 					time.sleep(1.5)
 
+			if prediction < multiplier:
+				uiprint(f"Game will likely crash around {prediction}. Ignoring and betting on {multiplier} to ensure profit.")
+				prediction = multiplier
 
 
-
-			uiprint(f"Setting multiplier to {prediction}", "yellow")
+			uiprint(f"Setting multiplier to {multiplier}", "yellow")
 			self.updateMultiplier(round(prediction, 2) )
 
 			
@@ -601,29 +571,16 @@ class main:
 				betamount = self.betamount
 				continue
 			
-			if round(multiplier, 2) <= 1:
+			if round(prediction, 2) <= 1:
 				uiprint("Cancelling bet this game. As the game will likely crash around 1x.")
 				continue
 
 			uiprint(f"Placing bet with {betamount} Robux on {prediction}x multiplier")
-			#data = {
-			#	"content" : "",
-			#	"username" : "Smart Bet",
-			#	"embeds": [
-			#					{
-			#						"description" : f"Betting {betamount} Robux at {prediction}x\n{balance-betamount} Robux Left",
-			#						"title" : f"Betting {betamount} Robux ",
-			#						"color" : 0x903cde
-			#					}
-			#				]
-			#}
-			#requests.post(webhook, json=data)
-			#def sendwbmsg(self,url,message,title,color,content):s
 			if self.webhook == None:
 				pass
 			else:
-				sednwebhookmsg(self.webhook, f"Betting {betamount} Robux at {round(prediction,2)}x\n{round(balance-betamount,2)} Robux Left", f"Betting {betamount} Robux ", 0x903cde, f"")
-				sednwebhookmsg(self.webhook,f"Average Crash : {round(avg,2)}\nMultiplier Set to : {multiplier}\n Accuracy on last crash : {round((1-(abs(multiplier-lastgame)/lastgame))*100, 2)}%","Round Predictions", 0xaf5ebd, f"")
+				sendwebhookmsg(self.webhook, f"Betting {betamount} Robux at {round(prediction,2)}x\n{round(balance-betamount,2)} Robux Left", f"Betting {betamount} Robux ", 0x903cde, f"")
+				sendwebhookmsg(self.webhook,f"Average Crash : {round(avg,2)}\nMultiplier Set to : {multiplier}\n Accuracy on last crash : {accuracy}%","Round Predictions", 0xaf5ebd, f"")
 			try:
 				browser.find_element(By.CSS_SELECTOR, ".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
 			except:
