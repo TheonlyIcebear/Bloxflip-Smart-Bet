@@ -1,5 +1,6 @@
 # Bloxflip-rain-notifier
 
+<<<<<<< HEAD
 ## Update v1.4:
 - No more chromedriver 🎉
 - Much faster
@@ -7,6 +8,8 @@
 
 **If this update breaks, please revert back to v1.3.3 and open an issue**
 
+=======
+>>>>>>> 4269d9b5a7f16395f80d8fdf83e9f15108c40582
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## Information:
