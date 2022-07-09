@@ -119,13 +119,6 @@ class main:
 		uiprint = self.print
 		with open("config.json", "r+") as data:
 			config = json.load(data)
-			try:
-				self.auth = config["authorization"]
-			except:
-				uiprint("Invalid authorization inside JSON file. Enter your new authorization from BloxFlip", "error")
-				time.sleep(1.6)
-				exit()
-
 
 			try:
 				self.ping = config["webhook_ping"]
@@ -215,7 +208,10 @@ class main:
 
 		realclass = None
 		uiprint("Program started. Press Ctrl + C to exit")
-		test = pyautogui.locateCenterOnScreen('assets/Test.png')
+		test = pyautogui.locateCenterOnScreen('assets/Test.png', confidence=0.8)
+		print(test)
+		pyautogui.moveTo(test)
+		pyautogui.click()
 		if not test:
 			uiprint("Make sure bloxflip is open or the program won't work!", "warning")
 		
@@ -254,10 +250,11 @@ class main:
 				except:
 					pass
 			uiprint("Joining rain...")
-			start = pyautogui.locateCenterOnScreen('assets/Join.png')
+			start = pyautogui.locateCenterOnScreen('assets/Join.png', confidence = 0.7)
 			if not start:
-				uiprint("Join rain button not found. Make sure bloxflip is open!", "error")
-				continue
+				uiprint("Join rain button not found. Opening bloxflip now...", "warning")
+				subprocess.call("start https://bloxflip.com",shell=True)
+			print(start)
 			pyautogui.moveTo(start)
 			pyautogui.click()
 			uiprint("Joined rain successfully!", "good")
