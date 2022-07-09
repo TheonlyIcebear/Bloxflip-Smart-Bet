@@ -399,7 +399,8 @@ class main:
 
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You have won while betting {betamount}", f"You Won!", 0x83d687, f"")
-					uiprint(f"Accuracy on last guess: {(1-(lastgame-prediction)/lastgame)*100}%", "yellow")
+					accuracy = (1-(lastgame-prediction)/lastgame)*100
+					uiprint(f"Accuracy on last guess: {accuracy}%", "yellow")
 					try:
 						threading.Thread(target=playsounds, args=('Assets\Win.mp3',)).start()
 					except:
@@ -409,7 +410,8 @@ class main:
 
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You lost with {betamount} \n You have {balance} left", f"You Lost!", 0xcc1c16, f"")
-					uiprint(f"Accuracy on last guess: {(1-(prediction-lastgame)/prediction)*100}%", "yellow")
+					accuracy = (1-(prediction-lastgame)/prediction)*100
+					uiprint(f"Accuracy on last guess: {accuracy}%", "yellow")
 					try:
 						threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
 					except:
