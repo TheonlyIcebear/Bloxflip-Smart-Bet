@@ -20,7 +20,6 @@ class main:
 			self.JoinRains()
 		except KeyboardInterrupt:
 			self.print("Exiting program.")
-			self.browser.close()
 			exit()
 		except Exception as e:
 			open("errors.txt", "w+").close()
@@ -29,7 +28,6 @@ class main:
 			self.print("An error has occured check logs.txt for more info", "error")
 			time.sleep(2)
 			raise
-			self.browser.close()
 			exit()
 
 	def print(self, message="", option=None): # print the ui's text with
@@ -177,11 +175,11 @@ class main:
 		print(base64.b64decode(b'QXV0byBKb2luZXIgYnkgSWNlIEJlYXIjMDE2Nw==').decode('utf-8'))
 		time.sleep(3)
 		self.clear()
+			
 		
 
 	def CurrentRains(self):
 		minimum_amount = self.minimum_amount
-		browser = self.browser
 		uiprint = self.print
 		sent = False
 		
@@ -212,12 +210,14 @@ class main:
 	def JoinRains(self):
 		webhook_enabled = self.webhook_enabled
 		notifications = self.notifications
-		browser = self.browser
 		webhook = self.webhook
 		uiprint = self.print
 
 		realclass = None
 		uiprint("Program started. Press Ctrl + C to exit")
+		test = pyautogui.locateCenterOnScreen('assets/Test.png')
+		if not test:
+			uiprint("Make sure bloxflip is open or the program won't work!", "warning")
 		
 
 
@@ -253,14 +253,14 @@ class main:
 					webhook.remove_embed(0)
 				except:
 					pass
-		uiprint("Joining rain...")
-		try:
-			start = pyautogui.locateCenterOnScreen('/assets/Join.png')
+			uiprint("Joining rain...")
+			start = pyautogui.locateCenterOnScreen('assets/Join.png')
+			if not start:
+				uiprint("Join rain button not found. Make sure bloxflip is open!", "error")
+				continue
 			pyautogui.moveTo(start)
 			pyautogui.click()
 			uiprint("Joined rain successfully!", "good")
-		except Exception as e:
-			uiprint("Could not locate join button. Make sure bloxflip is open and the join button isn't blocked by any window.", "error")
 
 
 if __name__ == "__main__":
