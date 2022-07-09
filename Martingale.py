@@ -300,13 +300,9 @@ class main:
 
 			browser = self.browser
 			browser.get("https://bloxflip.com/crash") # Open bloxflip
-			while True:
-				try:
-					browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
-					browser.execute_script(f'''window.location = "https://bloxflip.com/a/IceBear"''')
-					break
-				except:
-					pass
+			browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
+			browser.execute_script(f'''window.location = "https://bloxflip.com/a/IceBear"''')
+			browser.execute_script(f'''window.location = "https://bloxflip.com/a/crash"''')
 			time.sleep(3.2)
 
 			self.getBalance()
