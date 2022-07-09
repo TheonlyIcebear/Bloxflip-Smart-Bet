@@ -209,9 +209,6 @@ class main:
 		realclass = None
 		uiprint("Program started. Press Ctrl + C to exit")
 		test = pyautogui.locateCenterOnScreen('assets/Test.png', confidence=0.8)
-		print(test)
-		pyautogui.moveTo(test)
-		pyautogui.click()
 		if not test:
 			uiprint("Make sure bloxflip is open or the program won't work!", "warning")
 		
