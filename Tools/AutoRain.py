@@ -245,7 +245,7 @@ class main:
 					embed.set_timestamp()
 					embed.set_thumbnail(url=thumburl)
 					webhook.add_embed(embed)
-					# webhook.execute()
+					webhook.execute()
 					webhook.remove_embed(0)
 				except:
 					pass
