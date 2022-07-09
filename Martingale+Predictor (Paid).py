@@ -313,20 +313,12 @@ class main:
 
 
 			browser = self.browser
-<<<<<<< HEAD
-			browser.get("https://bloxflip.com/a/IceBear") # Open bloxflip
+			browser.get("https://bloxflip.com/a/bloxsmartbet") # Open bloxflip
 			while True:
 				try:
 					browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
 					browser.execute_script(f'''window.location = "https://bloxflip.com/a/IceBear"''')
 					browser.execute_script(f'''window.location = "https://bloxflip.com/crash"''')
-=======
-			browser.get("https://bloxflip.com/crash") # Open bloxflip
-			while True:
-				try:
-					browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
-					browser.execute_script(f'''window.location = window.location''')
->>>>>>> 4269d9b5a7f16395f80d8fdf83e9f15108c40582
 					break
 				except:
 					pass
