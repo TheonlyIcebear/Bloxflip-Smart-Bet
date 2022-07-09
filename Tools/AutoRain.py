@@ -208,11 +208,8 @@ class main:
 
 		realclass = None
 		uiprint("Program started. Press Ctrl + C to exit")
-		test = pyautogui.locateCenterOnScreen('assets/Test.png', confidence=0.8)
-		if not test:
-			uiprint("Make sure bloxflip is open or the program won't work!", "warning")
 		
-
+		
 
 		for check in self.CurrentRains():
 			grabprize = str(check['prize'])[:-2]
@@ -254,9 +251,9 @@ class main:
 				time.sleep(5)
 				start = pyautogui.locateCenterOnScreen('assets/Join.png', confidence = 0.7)
 			print(start)
-			pyautogui.moveTo(start)
+			pyautogui.moveTo(start,0.5)
 			pyautogui.click()
-			pyautogui.moveTo(0,0)
+			pyautogui.moveTo(700,700)
 			uiprint("Joined rain successfully!", "good")
 
 
