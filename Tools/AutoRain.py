@@ -245,7 +245,7 @@ class main:
 					embed.set_timestamp()
 					embed.set_thumbnail(url=thumburl)
 					webhook.add_embed(embed)
-					webhook.execute()
+					# webhook.execute()
 					webhook.remove_embed(0)
 				except:
 					pass
@@ -257,6 +257,7 @@ class main:
 			print(start)
 			pyautogui.moveTo(start)
 			pyautogui.click()
+			pyautogui.moveTo(0,0)
 			uiprint("Joined rain successfully!", "good")
 
 
