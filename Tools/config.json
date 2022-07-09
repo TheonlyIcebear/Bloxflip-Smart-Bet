@@ -3,6 +3,5 @@
 	"webhook_enabled": true,
 	"webhook": "https://discord.com/api/webhooks/xxxxxxxxxxx/xxxxxxxxxxxxxxxxxxxxx",
 	"webhook_ping": "<@1234567890>",
-	"notifications_enabled": true,
-	"authorization": ""
+	"notifications_enabled": true
 }
