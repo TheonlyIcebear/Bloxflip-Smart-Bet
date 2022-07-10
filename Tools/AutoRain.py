@@ -209,7 +209,7 @@ class main:
 		realclass = None
 		uiprint("Program started. Press Ctrl + C to exit")
 		
-		
+
 
 		for check in self.CurrentRains():
 			grabprize = str(check['prize'])[:-2]
@@ -250,11 +250,13 @@ class main:
 				subprocess.call("start https://bloxflip.com",shell=True)
 				time.sleep(5)
 				start = pyautogui.locateCenterOnScreen('assets/Join.png', confidence = 0.7)
-			print(start)
-			pyautogui.moveTo(start,0.5)
-			pyautogui.click()
-			pyautogui.moveTo(700,700)
-			uiprint("Joined rain successfully!", "good")
+			if start:
+				pyautogui.moveTo(*start,0.5)
+				pyautogui.click()
+				pyautogui.moveTo(700,700, 5)
+				uiprint("Joined rain successfully!", "good")
+			else:
+				uiprint("Failed to locate button even after site opened.", "error")
 
 
 if __name__ == "__main__":
