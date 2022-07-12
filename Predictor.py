@@ -419,7 +419,6 @@ class main:
 			for game in games:
 				chance *= (1 - (1/33 + (32/33)*(.01 + .99*(1 - 1/game))))
 
-			print(chance, 1/(1-chance))
 
 			prediction = (1/(1-chance)+avg)/2
 
@@ -479,7 +478,7 @@ class main:
 					sendwebhookmsg(self.webhook,f"Average Crash : {round(avg,2)}\nMultiplier Set to : {multiplier}\n Accuracy on last crash : {accuracy}%","Round Predictions", 0xaf5ebd, f"")
 				
 				try:
-					browser.find_elements(By.XPATH, "//span[contains(text(),'Place Bet')]")
+					browser.find_element(By.XPATH, "//span[contains(text(),'Place Bet')]").click()
 				except:
 					pass
 if __name__ == "__main__":
