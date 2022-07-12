@@ -353,7 +353,7 @@ class main:
 			games = browser.execute_script("""return fetch('https://rest-bf.blox.land/games/crash').then(res => res.json());""")
 			if not history == games["history"]:
 				history = games["history"]
-				yield [games["history"][0]["crashPoint"], [float(crashpoint["crashPoint"]) for crashpoint in history[:average]]]
+				yield [games["history"][0]["crashPoint"], [float(crashpoint["crashPoint"]) for crashpoint in history[-2:]]]
 			time.sleep(0.01)
 
 
@@ -466,7 +466,7 @@ class main:
 			while True:
 				request = requests.get("https://predictor.repl.co/multiplier", 
 										data={"key": key, 
-											  "average": average,
+											  "average": avg,
 											  "multiplier": self.multiplier, 
 											  "chance": chance
 										}

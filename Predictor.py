@@ -1,6 +1,6 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning
 
-import subprocess, threading, selenium, requests, logging, base64, json, time, os
+import cloudscraper, subprocess, threading, selenium, requests, logging, base64, json, time, os
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from win10toast import ToastNotifier
@@ -22,7 +22,7 @@ class main:
 			self.sendBets()
 		except KeyboardInterrupt:
 			self.print("Exiting program.")
-			self.browser.close()
+			# self.browser.quit()
 			exit()
 		except Exception as e:
 			open("errors.txt", "w+").close()
@@ -31,7 +31,7 @@ class main:
 			self.print("An error has occured check logs.txt for more info", "error")
 			time.sleep(2)
 			raise
-			self.browser.close()
+			# self.browser.close()
 			exit()
 
 	def print(self, message="", option=None): # print the ui's text with
@@ -122,35 +122,16 @@ class main:
 		uiprint = self.print
 		balance = None
 		browser = self.browser
-		count = 100
 
-		try:
-			realclass = self.realclass
-		except:
-			realclass = None
-
-		if not realclass:
-			for _ in range(10001):
-				count += 1
-				
-				possibleclass = f".MuiBox-root.jss{count}.jss44"
-				try:
-					balance = float(browser.find_element(By.CSS_SELECTOR, possibleclass).text.replace(',', ''))
-				except selenium.common.exceptions.NoSuchElementException:
-					pass
-				except ValueError:
-					pass
-				if balance:
-					realclass = possibleclass
-					self.realclass = realclass
-					break
-		else:
-			balance = float(browser.find_element(By.CSS_SELECTOR, realclass).text.replace(',', ''))
-		if not balance:
+		scraper = cloudscraper.create_scraper()
+		try: 
+			balance = scraper.get("https://rest-bf.blox.land/user", headers={
+						"x-auth-token": self.auth
+				}).json()["user"]["wallet"]
+		except Exception as e:
+			print(e)
 			uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
 			time.sleep(1.7)
-			while True:
-				pass
 			browser.close()
 			exit()
 		return balance
@@ -307,16 +288,14 @@ class main:
 				browser.execute_script(f'''window.location = "https://bloxflip.com/crash"''')
 			except:
 				pass
-			time.sleep(3.2)
+			time.sleep(5)
 
 			self.getBalance()
 			elements = browser.find_elements(By.CSS_SELECTOR, '.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
-			if not elements:
-				uiprint("Blocked by DDoS protection. Solve the captcha on the chrome window to continue.")
+
+
 			while not elements:
 				elements = browser.find_elements(By.CSS_SELECTOR, '.MuiInputBase-input.MuiFilledInput-input.MuiInputBase-inputAdornedStart.MuiFilledInput-inputAdornedStart')
-
-
 			elements[0].send_keys(f"{Keys.BACKSPACE}")
 			elements[0].send_keys(f"{self.betamount}")
 
@@ -338,7 +317,7 @@ class main:
 			games = browser.execute_script("""return fetch('https://rest-bf.blox.land/games/crash').then(res => res.json());""")
 			if not history == games["history"]:
 				history = games["history"]
-				yield [games["history"][0]["crashPoint"], [float(crashpoint["crashPoint"]) for crashpoint in history[:average]]]
+				yield [games["history"][0]["crashPoint"], [float(crashpoint["crashPoint"]) for crashpoint in history[-2:]]]
 			time.sleep(0.01)
 
 	def updateBetAmount(self, amount):
@@ -427,6 +406,11 @@ class main:
 				uiprint(f"No data for accuracy calculations", "error")
 
 			try:
+				accuracy
+			except:
+				accuracy = None
+
+			try:
 				games[0]
 			except:
 				continue
@@ -434,14 +418,10 @@ class main:
 			chance = 1
 			for game in games:
 				chance *= (1 - (1/33 + (32/33)*(.01 + .99*(1 - 1/game))))
-			print(chance)
 
-			try:
-				prediction = 1/(1-(chance*(10**(int(str(chance).split("e-")[1])-1))))
-			except:
-				prediction = 1/(1-(chance*(10**average/1.5)))
+			print(chance, 1/(1-chance))
 
-			prediction -= 0.06
+			prediction = (1/(1-chance)+avg)/2
 
 
 			uiprint(f"Setting multiplier to {prediction}", "yellow")
@@ -499,11 +479,8 @@ class main:
 					sendwebhookmsg(self.webhook,f"Average Crash : {round(avg,2)}\nMultiplier Set to : {multiplier}\n Accuracy on last crash : {accuracy}%","Round Predictions", 0xaf5ebd, f"")
 				
 				try:
-					browser.find_element(By.CSS_SELECTOR, ".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss142.MuiButton-containedPrimary").click()
+					browser.find_elements(By.XPATH, "//span[contains(text(),'Place Bet')]")
 				except:
-					try:
-						browser.find_element(By.CSS_SELECTOR, ".MuiButtonBase-root.MuiButton-root.MuiButton-contained.jss143.MuiButton-containedPrimary").click()
-					except:
-						pass
+					pass
 if __name__ == "__main__":
 	main()
