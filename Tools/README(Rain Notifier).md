@@ -1,22 +1,10 @@
-# Bloxflip-rain-notifier
-
-<<<<<<< HEAD
-## Update v1.4:
-- No more chromedriver 🎉
-- Much faster
-- Run on heroku or replit.com 24/7!
-
-**If this update breaks, please revert back to v1.3.3 and open an issue**
-
-=======
->>>>>>> 4269d9b5a7f16395f80d8fdf83e9f15108c40582
+# Bloxflip-Auto-Rain-Joiner
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## Information:
-- When there is a rain at [bloxflip](https://bloxflip.com) this program will notify you about the rain with some information about it
-- This is ORIGINAL! It is not skidded, leaked, cracked, dumped e.t.c. (kinda sad i have to say this 😂)
+- When there is a rain at [bloxflip](https://bloxflip.com/a/IceBear) this program will notify you about the rain with some information about it
+- **Notification and Webhook related code by amprocode**! I coded everything else though (They also made this README.md)
 - If you want to use it check license so you know your limits
-- Virustotal for exe: https://www.virustotal.com/gui/file/9d3f79bcc45fabef48d2bf286e8f990db6f281b69a980e85414128d299c98bfb
 - If you dont trust it, its literally open source
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -34,12 +22,12 @@
 Default config.json file:
 ```json
 {
-  "minimum_amount": 500,
-  "refresh_rate": 30,
-  "windows_notification": "True",
-  "webhook_enabled": "False",
-  "webhook_ping": "<@1234567890987654>",
-  "webhook": "https://discord.com/api/webhooks/xxxxxxxx/xxxxxxxxxxxxxx"
+	"minimum_amount": 500,
+	"webhook_enabled": true,
+	"webhook": "https://discord.com/api/webhooks/xxxxxxxxxxx/xxxxxxxxxxxxxxxxxxxxx",
+	"webhook_ping": "<@1234567890>",
+	"notifications_enabled": true,
+	"authorization": ""
 }
 ```
 ### minimum_amount:
@@ -47,15 +35,9 @@ Minimum rain amount intended for the program required to send you a notification
 
 Example: If you set it to 1000 it will only notify you of rains that are bigger then or equal to 1000 R$
 
-### refresh_rate:
-How often you want it to check if there is a rain currently happening (in seconds)
 
-⚠️ WARNING ⚠️
-- Recommended to not go below 15 seconds because you dont want your potato PC to crash
-- Experiment with this feature, see what works for you
-
-### windows_notification:
-If set to "True" then a popup on the bottom right on your screen will display showing you information about the current rain
+### notifications_enabled:
+If set to "true" then a popup on the bottom right on your screen will display showing you information about the current rain
 
 Here is an example:
 
@@ -92,6 +74,3 @@ If you set webhook_enabled to "True" input your webhook into here to it can actu
 Example of webhook:
 
 ![image](https://user-images.githubusercontent.com/79641603/161392598-616dda5d-adb5-4ff4-9b60-d46ea8581128.png)
-
-## Current Issues:
-- None

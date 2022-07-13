@@ -1,19 +1,8 @@
-<<<<<<< HEAD
-{
-  "minimum_amount": 500,
-  "refresh_rate": 30,
-  "windows_notification": "True",
-  "webhook_enabled": "True",
-  "webhook_ping": "<@1234567890>",
-  "webhook": "https://discord.com/api/webhooks/xxxxxxxxxxxxxxx/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-}
-=======
 {
 	"minimum_amount": 500,
+	"auto_join": true,
 	"webhook_enabled": true,
 	"webhook": "https://discord.com/api/webhooks/xxxxxxxxxxx/xxxxxxxxxxxxxxxxxxxxx",
 	"webhook_ping": "<@1234567890>",
-	"notifications_enabled": true,
-	"authorization": ""
+	"notifications_enabled": true
 }
->>>>>>> 4269d9b5a7f16395f80d8fdf83e9f15108c40582

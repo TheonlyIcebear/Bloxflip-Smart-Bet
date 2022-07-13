@@ -1,12 +1,8 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning
 
-import cloudscraper, subprocess, threading, selenium, requests, logging, base64, json, time, os
+import cloudscraper, subprocess, pyautogui, threading, requests, logging, base64, json, time, os
 from discord_webhook import DiscordWebhook, DiscordEmbed
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
 from win10toast import ToastNotifier
-from selenium_stealth import stealth
-from selenium import webdriver
 from termcolor import cprint
 from zipfile import *
 from sys import exit
@@ -24,7 +20,6 @@ class main:
 			self.JoinRains()
 		except KeyboardInterrupt:
 			self.print("Exiting program.")
-			self.browser.close()
 			exit()
 		except Exception as e:
 			open("errors.txt", "w+").close()
@@ -33,7 +28,6 @@ class main:
 			self.print("An error has occured check logs.txt for more info", "error")
 			time.sleep(2)
 			raise
-			self.browser.close()
 			exit()
 
 	def print(self, message="", option=None): # print the ui's text with
@@ -125,13 +119,6 @@ class main:
 		uiprint = self.print
 		with open("config.json", "r+") as data:
 			config = json.load(data)
-			try:
-				self.auth = config["authorization"]
-			except:
-				uiprint("Invalid authorization inside JSON file. Enter your new authorization from BloxFlip", "error")
-				time.sleep(1.6)
-				exit()
-
 
 			try:
 				self.ping = config["webhook_ping"]
@@ -181,47 +168,11 @@ class main:
 		print(base64.b64decode(b'QXV0byBKb2luZXIgYnkgSWNlIEJlYXIjMDE2Nw==').decode('utf-8'))
 		time.sleep(3)
 		self.clear()
-
-		self.installDriver()
-		options = webdriver.ChromeOptions()
-		options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36')
-		options.add_argument('--disable-extensions')
-		options.add_argument('--profile-directory=Default')
-		options.add_argument("--disable-plugins-discovery")
-		options.add_argument('--disable-blink-features=AutomationControlled')
-		options.add_argument('--incognito')
-		options.add_experimental_option("excludeSwitches", ["enable-automation", 'enable-logging'])
-		options.add_experimental_option('useAutomationExtension', False)		
-		service = Service('chromedriver.exe')
-		try:
-			self.browser = webdriver.Chrome(service=service, options=options)
-		except selenium.common.exceptions.SessionNotCreatedException:
-			try:
-				self.installDriver(100)
-			except:
-				uiprint("Chromedriver version not compatible with current chrome version installed. Update your chrome to continue.", "error")
-				uiprint("If your not sure how to update just uninstall then reinstall chrome", "yellow")
-				time.sleep(5)
-				exit()
-
-
-		browser = self.browser
-		time.sleep(5)
-		browser.get("https://bloxflip.com/a/IceBear") # Open bloxflip
-		browser.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
-		try:
-			browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
-			browser.execute_script(f'''window.location = "https://bloxflip.com/a/IceBear"''')
-			time.sleep(1)
-			browser.execute_script(f'''window.location = "https://bloxflip.com/crash"''')
-		except:
-			pass
-
+			
 		
 
 	def CurrentRains(self):
 		minimum_amount = self.minimum_amount
-		browser = self.browser
 		uiprint = self.print
 		sent = False
 		
@@ -252,7 +203,6 @@ class main:
 	def JoinRains(self):
 		webhook_enabled = self.webhook_enabled
 		notifications = self.notifications
-		browser = self.browser
 		webhook = self.webhook
 		uiprint = self.print
 
@@ -293,19 +243,20 @@ class main:
 					webhook.remove_embed(0)
 				except:
 					pass
-		try:
-			browser.get("https://bloxflip.com/a/IceBear")
-			browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
-			browser.execute_script(f'''window.location = "https://bloxflip.com/crash"''')
-			time.sleep(3)
-			browser.find_element(By.XPATH, "//span[contains(text(),'Join')]").click()
-			time.sleep(10)
-			browser.execute_script(f'''window.location = "https://bloxflip.com/crash"''')
-			time.sleep(3)
-			browser.find_element(By.XPATH, "//span[contains(text(),'Join')]").click()
-			browser.quit()
-		except Exception as e:
-			uiprint(e, "error")
+			uiprint("Joining rain...")
+			start = pyautogui.locateCenterOnScreen('assets/Join.png', confidence = 0.7)
+			if not start:
+				uiprint("Join rain button not found. Opening bloxflip now...", "warning")
+				subprocess.call("start https://bloxflip.com",shell=True)
+				time.sleep(5)
+				start = pyautogui.locateCenterOnScreen('assets/Join.png', confidence = 0.7)
+			if start:
+				pyautogui.moveTo(*start,0.5)
+				pyautogui.click()
+				pyautogui.moveTo(700,700, 5)
+				uiprint("Joined rain successfully!", "good")
+			else:
+				uiprint("Failed to locate button even after site opened.", "error")
 
 
 if __name__ == "__main__":
