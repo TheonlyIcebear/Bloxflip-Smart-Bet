@@ -1,6 +1,6 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning
 
-import subprocess, threading, selenium, requests, logging, base64, json, time, os
+import cloudscraper, subprocess, threading, selenium, requests, logging, base64, json, time, os
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from win10toast import ToastNotifier
@@ -16,7 +16,7 @@ class main:
 		logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
 		self.crashPoints = None
 		self.multiplier = 0
-		self.version = "1.2.6"
+		self.version = "1.2.7"
 		os.system("")
 		try:
 			self.getConfig()
