@@ -120,38 +120,19 @@ class main:
 		uiprint = self.print
 		balance = None
 		browser = self.browser
-		count = 100
 
-		try:
-			realclass = self.realclass
-		except:
-			realclass = None
-
-		if not realclass:
-			for _ in range(10001):
-				count += 1
-				
-				possibleclass = f".MuiBox-root.jss{count}.jss44"
-				try:
-					balance = float(browser.find_element(By.CSS_SELECTOR, possibleclass).text.replace(',', ''))
-				except selenium.common.exceptions.NoSuchElementException:
-					pass
-				except ValueError:
-					pass
-				if balance:
-					realclass = possibleclass
-					self.realclass = realclass
-					break
-		else:
-			balance = float(browser.find_element(By.CSS_SELECTOR, realclass).text.replace(',', ''))
-		if not balance:
+		scraper = cloudscraper.create_scraper()
+		try: 
+			balance = scraper.get("https://rest-bf.blox.land/user", headers={
+						"x-auth-token": self.auth
+				}).json()["user"]["wallet"]
+		except Exception as e:
+			print(e)
 			uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
 			time.sleep(1.7)
-			while True:
-				pass
 			browser.close()
 			exit()
-		return balance
+		return round(balance, 2)
 
 
 	def getConfig(self): # Get configuration from config.json file

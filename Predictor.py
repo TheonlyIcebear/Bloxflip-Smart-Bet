@@ -134,7 +134,7 @@ class main:
 			time.sleep(1.7)
 			browser.close()
 			exit()
-		return balance
+		return round(balance, 2)
 
 
 
