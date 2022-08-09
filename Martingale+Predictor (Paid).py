@@ -493,7 +493,7 @@ class main:
 										)
 
 					if request.status_code == 403:
-						uiprint("Invalid key! To buy a valid key create a ticket on the discord. https://discord.gg/HhwNFRaC", "error")
+						uiprint("Invalid key! To buy a valid key create a ticket on the discord. https://discord.gg/blox", "error")
 						input("Press enter to exit >> ")
 						browser.close()
 						exit()

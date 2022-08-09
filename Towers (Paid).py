@@ -24,7 +24,6 @@ class main:
 			self.sendBets()
 		except KeyboardInterrupt:
 			self.print("Exiting program.")
-			# self.browser.close()
 			exit()
 		except Exception as e:
 			open("errors.txt", "w+").close()
@@ -118,7 +117,6 @@ class main:
 	def getBalance(self):
 		uiprint = self.print
 		balance = None
-		# browser = self.browser
 
 		scraper = cloudscraper.create_scraper()
 		try: 
@@ -128,8 +126,7 @@ class main:
 		except Exception as e:
 			print(e)
 			uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
-			time.sleep(1.7)
-			# browser.close()
+			time.sleep(1.7
 			exit()
 		return round(balance, 2)
 
@@ -271,17 +268,7 @@ class main:
 				uiprint(f"You are currently on v{version}. Please update to the newest version {latest_release}", "error")
 				time.sleep(10)
 				exit()
-
-
-			# self.installDriver()
-			# options = webdriver.ChromeOptions()
-			# options.add_argument(f'user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36')
-			# options.add_argument('--disable-extensions')
-			# options.add_argument('--profile-directory=Default')
-			# options.add_argument("--incognito")
-			# options.add_argument("--disable-plugins-discovery")
-			# options.add_experimental_option("excludeSwitches", ["enable-automation", 'enable-logging'])
-			# options.add_experimental_option('useAutomationExtension', False)		
+	
 			request = requests.get("https://bfpredictor.repl.co/towers", 
 										data={
 											"key": self.key
@@ -291,61 +278,14 @@ class main:
 			if request.status_code == 403:
 				uiprint("Invalid key! To buy a valid key create a ticket on the discord. https://discord.gg/HhwNFRaC", "error")
 				input("Press enter to exit >> ")
-				# browser.close()
 				exit()
 
-			# try:
-			# 	self.browser = webdriver.Chrome("chromedriver.exe", options=options)
-			# except selenium.common.exceptions.SessionNotCreatedException as e:
-			# 	try:
-			# 		print(e)
-			# 		self.installDriver(103)
-			# 		self.browser = webdriver.Chrome("chromedriver.exe", options=options)
-			# 	except:
-			# 		uiprint("Chromedriver version not compatible with current chrome version installed. Update your chrome to continue.", "error")
-			# 		uiprint("If your not sure how to update just uninstall then reinstall chrome", "yellow")
-			# 		time.sleep(5)
-			# 		exit()
-
-			# browser = self.browser
-			# browser.get("https://bloxflip.com/a/SmartBet") # Open browser
-			# while True:
-			# 	try:
-			# 		browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
-			# 		browser.execute_script(f'''window.location = "https://bloxflip.com/a/SmartBet"''')
-			# 		browser.execute_script(f'''window.location = "https://bloxflip.com/towers"''')
-			# 		break
-			# 	except Exception as e:
-			# 		Exception(e)
-			# time.sleep(3.8)
-
-			# notLoggedIn = self.browser.find_elements(By.XPATH, '//*[@id="__next"]/div[1]/header/div/div/button')[0].text
-			# if notLoggedIn:
-			# 	self.print("Please put a valid authorization token in the config.json file. Exiting program.", "error")
-			# 	browser.quit()
-			# 	exit()
-
-			# elements = browser.find_elements(By.CSS_SELECTOR, '.input_input__uGeT_.input_inputWithCurrency__sAiOQ')
-			# if not elements:
-			# 	uiprint("Blocked by DDoS protection. Solve the captcha on the chrome window to continue.")
-			# while not elements:
-			# 	elements = browser.find_elements(By.CSS_SELECTOR, '.input_input__uGeT_.input_inputWithCurrency__sAiOQ')
-
-			# try:
-			# 	for _ in range(10):
-			# 		elements[0].send_keys(f"{Keys.BACKSPACE}")
-			# 	elements[0].send_keys(f"{self.betamount}",Keys.BACKSPACE)
-			# except:
-			# 	uiprint("Tower game aready in progress. End the game then try again", "error")
-			# 	time.sleep(3)
-			# 	exit()
 
 	def playsounds(self, file):
 		if self.sound:
 			playsound(file)
 
 	def TowerGames(self):
-		browser = self.browser
 		average = self.average
 		history = None
 		uiprint = self.print
@@ -380,7 +320,6 @@ class main:
 		getBalance = self.getBalance
 		betamount = self.betamount
 		stoploss = self.stoploss
-		# browser = self.browser
 		average = self.average
 		restart = self.restart
 		webhook = self.webhook
@@ -472,7 +411,7 @@ class main:
 					betamount = self.betamount
 				else:
 					input("Press enter to exit >> ")
-					# browser.close()
+
 					exit()
 			elif balance > stop:
 				uiprint("Auto Stop goal reached. Betting has stopped.", "good")
@@ -500,7 +439,6 @@ class main:
 				 	   threaded=True
 				 	   )
 				input("Press enter to exit >> ")
-				# browser.close()
 				exit()
 
 			elif balance-betamount < stoploss:
@@ -547,7 +485,6 @@ class main:
 			uiprint(f"Placing bet with {betamount} Robux")
 			
 
-			# rows = browser.find_element(By.CSS_SELECTOR, ".towers_towersGameInner__teKsK").find_elements(By.XPATH, "./*")
 			time.sleep(2.5)
 			exploded = False
 			for level in range(levels):
@@ -559,9 +496,8 @@ class main:
 										)
 
 					if request.status_code == 403:
-						uiprint("Invalid key! To buy a valid key create a ticket on the discord. https://discord.gg/HhwNFRaC", "error")
+						uiprint("Invalid key! To buy a valid key create a ticket on the discord. https://discord.gg/blox", "error")
 						input("Press enter to exit >> ")
-						# browser.close()
 						exit()
 					elif request.status_code == 500:
 						uiprint("Internal server error. Trying again 1.5 seconds...", "error")
