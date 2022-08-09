@@ -1,5 +1,10 @@
+# tool is dont predict %100, pls stop spam in discord channel
+----------------------------------------------------------------------
+
+
+
 # Bloxflip Smart Bet 🧠
-**Join the discord and create a ticket if you wan't help with a bug**: https://discord.gg/m3Q8eM32x7 <br>
+**Join the discord and create a ticket if you wan't help with a bug**: https://discord.gg/b3g5UszgAs <br>
 **You can message me at**: Ice Bear#0167
 
 A program that uses strategies and probability maths to choose the best times to bet on BloxFlip's crash gamemode https://bloxflip.com/a/IceBear. <br>
@@ -38,7 +43,7 @@ pip install -r requirements.txt
 If the program randomly closes with no message check for errors.txt inside the same folder as the python file. <br>
 Then create a issue on this github by going to (https://github.com/TheonlyIcebear/Bloxflip-Smart-Bet/issues/new) <br>
 Simply title the issue and put the text inside errors.txt
-You can also join the discord and create a ticket for real time support. https://discord.gg/ZmZTZSFt
+You can also join the discord and create a ticket for real time support. https://discord.gg/b3g5UszgAs
 # Supporting me 🤲
 Consider donating please as I make all my tools free 
 Roblox Gamepass: https://www.roblox.com/game-pass/20395764/Donate#!/sales <br>
