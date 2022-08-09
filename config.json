@@ -1,8 +1,9 @@
 {
 	"multiplier": 2.5,
-	"tower_levels": 2,
+	"game_levels": 2,
+	"mines": 10,
 	"games_averaged": 5,
-	"bet_amount":1,
+	"bet_amount":5,
 	"auto_bet": true,
 	"play_sounds": false,
 	"predict_crash": true,
