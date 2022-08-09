@@ -17,7 +17,7 @@ class main:
 		logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
 		self.crashPoints = None
 		self.multiplier = 0
-		self.version = "1.2.7"
+		self.version = "1.2.8"
 		os.system("")
 		try:
 			self.getConfig()
@@ -124,10 +124,10 @@ class main:
 						"x-auth-token": self.auth
 				}).json()["user"]["wallet"]
 		except Exception as e:
-			print(e)
 			uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
-			time.sleep(1.7
+			time.sleep(1.7)
 			exit()
+
 		return round(balance, 2)
 
 	def getConfig(self): # Get configuration from config.json file
