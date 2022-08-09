@@ -17,7 +17,7 @@ class main:
 		logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
 		self.crashPoints = None
 		self.multiplier = 0
-		self.version = "1.2.8"
+		self.version = "1.2.7"
 		os.system("")
 		try:
 			self.getConfig()
