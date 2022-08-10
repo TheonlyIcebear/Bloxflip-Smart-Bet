@@ -147,7 +147,7 @@ class main:
 		with open("config.json", "r+") as data:
 			config = json.load(data)
 			try:
-				self.levels = int(config["tower_levels"])
+				self.levels = int(config["game_levels"])
 				if self.levels < 2:
 					uiprint("Levels must be above 2 to make profit.", "error")
 					time.sleep(3)
