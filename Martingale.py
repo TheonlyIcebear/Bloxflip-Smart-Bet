@@ -520,7 +520,7 @@ class main:
 				sendwebhookmsg(self.webhook, f"Betting {betamount} Robux at {multiplier}x\n{round(balance-betamount,2)} Robux Left", f"Betting {betamount} Robux ", 0x903cde, f"")
 
 			try:
-				browser.execute_script("arguments[0].click();", browser.find_element(By.CLASS_NAME, "button_button__eJwei button_primary__mdLFG gameBetSubmit"))
+				browser.execute_script("arguments[0].click();", browser.find_element(By.CLASS_NAME, "button_button__eJwei.button_primary__mdLFG.gameBetSubmit"))
 			except Exception as e:
 				print(e)
 				try:
