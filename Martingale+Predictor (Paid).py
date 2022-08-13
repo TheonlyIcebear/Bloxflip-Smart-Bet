@@ -617,12 +617,12 @@ class main:
 				sendwebhookmsg(self.webhook, f"Betting {betamount} Robux at {round(prediction,2)}x\n{round(balance-betamount,2)} Robux Left", f"Betting {betamount} Robux ", 0x903cde, f"")
 				sendwebhookmsg(self.webhook,f"Average Crash : {round(avg,2)}\nMultiplier Set to : {multiplier}\n Accuracy on last crash : {accuracy}%","Round Predictions", 0xaf5ebd, f"")
 			try:
-				browser.execute_script("arguments[0].click();", browser.find_element(By.CSS_SELECTOR, ".button_button__eJwei.button_primary__mdLFG.gameBetSubmit"))
-			except:
+				browser.execute_script("arguments[0].click();", browser.find_element(By.CLASS_NAME, "button_button__eJwei.button_primary__mdLFG.gameBetSubmit"))
+			except Exception as e:
+				print(e)
 				try:
-					browser.find_element(By.CSS_SELECTOR, ".button_button__eJwei.button_primary__mdLFG.gameBetSubmit").click()
+					browser.find_element(By.CSS_SELECTOR, ".button.button_button__eJwei.button_primary__mdLFG.gameBetSubmit").click()
 				except:
 					pass
-
 if __name__ == "__main__":
 	main()
