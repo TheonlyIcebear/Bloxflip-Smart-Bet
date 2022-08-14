@@ -1,6 +1,6 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning 
 
-import subprocess, threading, selenium, requests, logging, base64, json, time, os
+import cloudscraper, subprocess, threading, selenium, requests, logging, base64, json, time, os
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from websocket import create_connection
