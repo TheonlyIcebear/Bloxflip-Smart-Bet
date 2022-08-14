@@ -469,6 +469,8 @@ class main:
 			if self.webhook:
 				sendwebhookmsg(self.webhook, f"Betting {betamount} Robux at {multiplier}x\n{round(balance-betamount,2)} Robux Left", f"Betting {betamount} Robux ", 0x903cde, f"")
 
+
+			time.sleep(2.7)
 			try:
 				json = str({"autoCashoutPoint":int(round(multiplier, 2)*100),"betAmount":betamount}).replace(" ", "").replace("'", '"')
 				ws.send(f'42/crash,["join-game",{json}]')
