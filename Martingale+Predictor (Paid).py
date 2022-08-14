@@ -548,6 +548,8 @@ class main:
 				ws = self.Connect()
 				ws.send("40/crash,")
 				ws.send(f'42/crash,["auth","{self.auth}"]')
+				time.sleep(0.5)
+				ws.send(f'42/crash,["join-game",{json}]')
 
 
 if __name__ == "__main__":
