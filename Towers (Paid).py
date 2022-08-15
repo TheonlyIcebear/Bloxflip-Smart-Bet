@@ -17,7 +17,7 @@ class main:
 		logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
 		self.crashPoints = None
 		self.multiplier = 0
-		self.version = "1.2.8"
+		self.version = "1.3"
 		os.system("")
 		try:
 			self.getConfig()
@@ -258,6 +258,7 @@ class main:
 				uiprint("Invalid auto_restart boolean inside JSON file. Must be true or false", "error")
 				time.sleep(1.6)
 				exit()
+			self.hwid = current_machine_id = str(subprocess.check_output('wmic csproduct get uuid'), 'utf-8').split('\n')[1].strip()
 
 			version = self.version
 			data = {"type": "paid"}
@@ -271,7 +272,8 @@ class main:
 	
 			request = requests.get("https://bfpredictor.repl.co/towers", 
 										data={
-											"key": self.key
+											"key": self.key,
+											"hwid": self.hwid
 										}
 									)
 
@@ -491,7 +493,8 @@ class main:
 				while True:
 					request = requests.get("https://bfpredictor.repl.co/towers", 
 											data={
-												"key": key
+												"key": key,
+												"hwid": self.hwid
 											}
 										)
 
