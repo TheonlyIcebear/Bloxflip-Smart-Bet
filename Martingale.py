@@ -459,7 +459,6 @@ class main:
 			try:
 				json = str({"autoCashoutPoint":int(multiplier*100),"betAmount":int(betamount)}).replace("'", '"').replace(" ", "")
 				ws.send(f'42/crash,["join-game",{str(json)}]')
-				print(f'42/crash,["join-game",{str(json)}]')
 			except Exception as e:
 				uiprint("Failed to join crash game! Reconnecting to server...")
 				time.sleep(0.5)
