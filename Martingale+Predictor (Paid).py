@@ -338,6 +338,7 @@ class main:
 		lastgame = None
 		bet = self.bet
 		key = self.key
+		ws = self.ws
 		winning = 0
 		losing = 0
 
@@ -530,9 +531,12 @@ class main:
 			if self.webhook:
 				sendwebhookmsg(self.webhook, f"Betting {betamount} Robux at {round(prediction,2)}x\n{round(balance-betamount,2)} Robux Left", f"Betting {betamount} Robux ", 0x903cde, f"")
 				sendwebhookmsg(self.webhook,f"Average Crash : {round(avg,2)}\nMultiplier Set to : {multiplier}\n Accuracy on last crash : {accuracy}%","Round Predictions", 0xaf5ebd, f"")
+
+
+			time.sleep(2)
 			try:
-				json = {"autoCashoutPoint":int(prediction),"betAmount":int(betamount)}
-				ws.send(f'42/crash,["join-game","{str(json)}"]')
+				json = str({"autoCashoutPoint":int(prediction*100),"betAmount":int(betamount)}).replace("'", '"').replace(" ", "")
+				ws.send(f'42/crash,["join-game",{str(json)}]')
 			except:
 				uiprint("Failed to join crash game! Reconnecting to server...")
 				time.sleep(0.5)
