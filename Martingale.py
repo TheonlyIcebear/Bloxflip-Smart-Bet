@@ -454,7 +454,7 @@ class main:
 				sendwebhookmsg(self.webhook, f"Betting {betamount} Robux at {round(multiplier,2)}x\n{round(balance-betamount,2)} Robux Left", f"Betting {betamount} Robux ", 0x903cde, f"")
 				sendwebhookmsg(self.webhook,f"Average Crash : {round(avg,2)}\nMultiplier Set to : {multiplier}\n Accuracy on last crash : {accuracy}%","Round multipliers", 0xaf5ebd, f"")
 
-			time.sleep(2)
+			time.sleep(3)
 
 			try:
 				json = str({"autoCashoutPoint":int(multiplier*100),"betAmount":int(betamount)}).replace("'", '"').replace(" ", "")

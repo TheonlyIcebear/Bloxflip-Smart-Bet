@@ -533,9 +533,10 @@ class main:
 				sendwebhookmsg(self.webhook,f"Average Crash : {round(avg,2)}\nMultiplier Set to : {multiplier}\n Accuracy on last crash : {accuracy}%","Round Predictions", 0xaf5ebd, f"")
 
 
-			time.sleep(2)
+			time.sleep(3)
 			try:
 				json = str({"autoCashoutPoint":int(prediction*100),"betAmount":int(betamount)}).replace("'", '"').replace(" ", "")
+				print(json)
 				ws.send(f'42/crash,["join-game",{str(json)}]')
 			except:
 				uiprint("Failed to join crash game! Reconnecting to server...")
