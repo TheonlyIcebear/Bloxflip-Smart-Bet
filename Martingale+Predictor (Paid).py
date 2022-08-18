@@ -374,18 +374,18 @@ class main:
 
 
 			for game in games:
-					if game > 2:
-						streak[0] += 1
-					else:
-						streak[1] += 1
-
-				if streak[0] > streak[1]:
-					uiprint("Winning streak detected.", "good")
+				if game > 2:
+					streak[0] += 1
 				else:
-					uiprint("Losing streak detected", "bad")
-					if skip:
-						uiprint("Skipping this round.", "warning")
-						continue
+					streak[1] += 1
+
+			if streak[0] > streak[1]:
+				uiprint("Winning streak detected.", "good")
+			else:
+				uiprint("Losing streak detected", "bad")
+				if skip:
+					uiprint("Skipping this round.", "warning")
+					continue
 
 
 			try:
