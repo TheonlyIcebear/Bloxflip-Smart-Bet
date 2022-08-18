@@ -94,7 +94,6 @@ class main:
 						"x-auth-token": self.auth
 				}).json()["user"]["wallet"]
 		except Exception as e:
-			print(e)
 			uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
 			time.sleep(1.7)
 			exit()

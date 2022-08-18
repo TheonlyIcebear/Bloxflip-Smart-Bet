@@ -117,7 +117,6 @@ class main:
 						"x-auth-token": self.auth
 				}).json()["user"]["wallet"]
 		except Exception as e:
-			print(e)
 			uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
 			time.sleep(1.7)
 			exit()
@@ -439,8 +438,6 @@ class main:
 						uiprint("Skipping this round.", "warning")
 						continue
 
-				print(streak, games)
-
 				while True:
 					request = requests.get("https://bfpredictor.repl.co/multiplier", 
 											data={"key": key, 
@@ -563,7 +560,6 @@ class main:
 
 				try:
 					json = str({"autoCashoutPoint":int(prediction*100),"betAmount":int(betamount)}).replace("'", '"').replace(" ", "")
-					print(json)
 					ws.send(f'42/crash,["join-game",{str(json)}]')
 				except:
 					uiprint("Failed to join crash game! Reconnecting to server...")
