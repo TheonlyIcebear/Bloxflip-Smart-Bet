@@ -6,7 +6,7 @@
 	"bet_amount": 1,
 	"auto_bet": true,
 	"martingale": true,
-	"skip_losing_streaks": false,
+	"skip_losing_streaks": true,
 	"play_sounds": false,
 	"predict_crash": true,
 	"webhook": "https://discord.com/api/webhooks/",
