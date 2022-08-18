@@ -180,6 +180,14 @@ class main:
 
 
 			try:
+				self.martingale = config["martingale"]
+			except:
+				uiprint("Invalid play_sounds boolean inside JSON file. Must be true or false", "error")
+				time.sleep(1.6)
+				exit()
+
+
+			try:
 				self.sound = config["play_sounds"]
 			except:
 				uiprint("Invalid play_sounds boolean inside JSON file. Must be true or false", "error")
@@ -193,7 +201,7 @@ class main:
 					uiprint("Invalid webhook inside JSON file file. Make sure you put the https:// with it.", "warning")
 					self.webhook = None
 			except:
-				uiprint("Invalid webhook boolean inside JSON file. Make sure it's a valid string", "error")
+				uiprint("Invalid webhook string inside JSON file. Make sure it's a valid string", "error")
 				time.sleep(1.6)
 				exit()
 
@@ -209,6 +217,14 @@ class main:
 				self.maxbet =  float(config["max_betamount"])
 			except:
 				uiprint("Invalid max_betamount amount inside JSON file. Must be a valid number", "error")
+				time.sleep(1.6)
+				exit()
+
+
+			try:
+				self.skip =  config["skip_losing_streaks"]
+			except:
+				uiprint("Invalid skip_losing_streaks boolean inside JSON file. Must be true or false", "error")
 				time.sleep(1.6)
 				exit()
 
@@ -305,6 +321,7 @@ class main:
 		sendwebhookmsg = self.sendwbmsg
 		multiplier = self.multiplier
 		playsounds = self.playsounds
+		martingale = self.martingale
 		betamount = self.betamount
 		stoploss = self.stoploss
 		average = self.average
@@ -312,6 +329,7 @@ class main:
 		webhook = self.webhook
 		maxbet = self.maxbet
 		stop = self.stop
+		skip = self.skip
 		lastgame = None
 		bet = self.bet
 		key = self.key
@@ -324,7 +342,7 @@ class main:
 			uiprint("Game Starting...")
 			balance = self.getBalance()
 
-			games = game[1][-5:]
+			games = game[1][::-1][-5:]
 			accuracy = None
 			lastgame = game[0]
 			avg = sum(games)/len(games)
@@ -369,6 +387,20 @@ class main:
 				games[0]
 			except:
 				continue
+
+			for game in games:
+				if game > 2:
+					streak[0] += 1
+				else:
+					streak[1] += 1
+
+			if streak[0] > streak[1]:
+				uiprint("Winning streak detected.", "good")
+			else:
+				uiprint("Losing streak detected", "bad")
+				if skip:
+					uiprint("Skipping this round.", "warning")
+					continue
 
 			
 			uiprint(f"Your balance is {balance}")

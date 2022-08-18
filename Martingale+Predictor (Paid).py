@@ -203,6 +203,14 @@ class main:
 
 
 			try:
+				self.martingale = config["martingale"]
+			except:
+				uiprint("Invalid play_sounds boolean inside JSON file. Must be true or false", "error")
+				time.sleep(1.6)
+				exit()
+
+
+			try:
 				self.sound = config["play_sounds"]
 			except:
 				uiprint("Invalid play_sounds boolean inside JSON file. Must be true or false", "error")
@@ -216,7 +224,7 @@ class main:
 					uiprint("Invalid webhook inside JSON file file. Make sure you put the https:// with it.", "warning")
 					self.webhook = None
 			except:
-				uiprint("Invalid webhook boolean inside JSON file. Make sure it's a valid string", "error")
+				uiprint("Invalid webhook string inside JSON file. Make sure it's a valid string", "error")
 				time.sleep(1.6)
 				exit()
 
@@ -232,6 +240,14 @@ class main:
 				self.maxbet =  float(config["max_betamount"])
 			except:
 				uiprint("Invalid max_betamount amount inside JSON file. Must be a valid number", "error")
+				time.sleep(1.6)
+				exit()
+
+
+			try:
+				self.skip =  config["skip_losing_streaks"]
+			except:
+				uiprint("Invalid skip_losing_streaks boolean inside JSON file. Must be true or false", "error")
 				time.sleep(1.6)
 				exit()
 
@@ -328,6 +344,7 @@ class main:
 		sendwebhookmsg = self.sendwbmsg
 		multiplier = self.multiplier
 		playsounds = self.playsounds
+		martingale = self.martingale
 		betamount = self.betamount
 		stoploss = self.stoploss
 		average = self.average
@@ -335,6 +352,7 @@ class main:
 		webhook = self.webhook
 		maxbet = self.maxbet
 		stop = self.stop
+		skip = self.skip
 		lastgame = None
 		bet = self.bet
 		key = self.key
@@ -348,7 +366,7 @@ class main:
 			uiprint("Game Starting...")
 			balance = self.getBalance()
 
-			games = game[1][-5:]
+			games = game[1][::-1][-5:]
 			accuracy = None
 			lastgame = game[0]
 			avg = sum(games)/len(games)
@@ -360,10 +378,11 @@ class main:
 				if lastgame >= prediction:
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You have made {betamount*multiplier - betamount} robux", f"You Won!", 0x83d687, f"")
-					betamount = self.betamount
 					accuracy = (1-(lastgame-prediction)/lastgame)*100
 
-					uiprint(f"Won previous game. lowering bet amount to {betamount}", "good")
+					if martingale:
+						betamount = self.betamount
+						uiprint(f"Won previous game. lowering bet amount to {betamount}", "good")
 					if not disablePredictor:
 						uiprint(f"Accuracy on last guess: {accuracy}", "yellow")
 					
@@ -373,8 +392,9 @@ class main:
 					except:
 						pass
 				else:
-					betamount *= 2
-					uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
+					if martingale:
+						betamount *= 2
+						uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You lost {betamount} robux\n You have {balance} left", f"You Lost!", 0xcc1c16, f"")
 					accuracy = (1-((prediction-lastgame)/lastgame))*100
@@ -415,6 +435,11 @@ class main:
 					uiprint("Winning streak detected.", "good")
 				else:
 					uiprint("Losing streak detected", "bad")
+					if skip:
+						uiprint("Skipping this round.", "warning")
+						continue
+
+				print(streak, games)
 
 				while True:
 					request = requests.get("https://bfpredictor.repl.co/multiplier", 
@@ -527,22 +552,25 @@ class main:
 				uiprint("Cancelling bet this game. As the game will likely crash around 1x.")
 				continue
 
-			uiprint(f"Placing bet with {betamount} Robux on {prediction}x multiplier")
-			if self.webhook:
-				sendwebhookmsg(self.webhook, f"Betting {betamount} Robux at {round(prediction,2)}x\n{round(balance-betamount,2)} Robux Left", f"Betting {betamount} Robux ", 0x903cde, f"")
-				sendwebhookmsg(self.webhook,f"Average Crash : {round(avg,2)}\nMultiplier Set to : {multiplier}\n Accuracy on last crash : {accuracy}%","Round Predictions", 0xaf5ebd, f"")
+			if bet:
+				uiprint(f"Placing bet with {betamount} Robux on {prediction}x multiplier")
+				if self.webhook:
+					sendwebhookmsg(self.webhook, f"Betting {betamount} Robux at {round(prediction,2)}x\n{round(balance-betamount,2)} Robux Left", f"Betting {betamount} Robux ", 0x903cde, f"")
+					sendwebhookmsg(self.webhook,f"Average Crash : {round(avg,2)}\nMultiplier Set to : {multiplier}\n Accuracy on last crash : {accuracy}%","Round Predictions", 0xaf5ebd, f"")
 
 
-			time.sleep(3)
-			try:
-				json = str({"autoCashoutPoint":int(prediction*100),"betAmount":int(betamount)}).replace("'", '"').replace(" ", "")
-				print(json)
-				ws.send(f'42/crash,["join-game",{str(json)}]')
-			except:
-				uiprint("Failed to join crash game! Reconnecting to server...")
-				time.sleep(0.5)
-				ws = self.Connect()
-				ws.send("40/crash,")
-				ws.send(f'42/crash,["auth","{self.auth}"]')
+				time.sleep(3)
+
+				try:
+					json = str({"autoCashoutPoint":int(prediction*100),"betAmount":int(betamount)}).replace("'", '"').replace(" ", "")
+					print(json)
+					ws.send(f'42/crash,["join-game",{str(json)}]')
+				except:
+					uiprint("Failed to join crash game! Reconnecting to server...")
+					time.sleep(0.5)
+					ws = self.Connect()
+					ws.send("40/crash,")
+					ws.send(f'42/crash,["auth","{self.auth}"]')
+
 if __name__ == "__main__":
 	main()
