@@ -349,6 +349,21 @@ class main:
 			uiprint(f"Average Crashpoint: {avg}")
 
 
+
+			for game in games:
+				if game > 2:
+					streak[0] += 1
+				else:
+					streak[1] += 1
+
+			if streak[0] > streak[1]:
+				uiprint("Winning streak detected.", "good")
+			else:
+				uiprint("Losing streak detected", "bad")
+				if skip:
+					uiprint("Skipping this round.", "warning")
+					continue
+					
 			try:
 				if lastgame >= multiplier:
 					if not self.webhook == None:
@@ -387,19 +402,6 @@ class main:
 			except:
 				continue
 
-			for game in games:
-				if game > 2:
-					streak[0] += 1
-				else:
-					streak[1] += 1
-
-			if streak[0] > streak[1]:
-				uiprint("Winning streak detected.", "good")
-			else:
-				uiprint("Losing streak detected", "bad")
-				if skip:
-					uiprint("Skipping this round.", "warning")
-					continue
 
 			
 			uiprint(f"Your balance is {balance}")
