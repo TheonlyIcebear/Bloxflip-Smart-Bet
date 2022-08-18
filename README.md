@@ -1,8 +1,3 @@
-# tool is dont predict %100, pls stop spam in discord channel
-----------------------------------------------------------------------
-
-
-
 # Bloxflip Smart Bet 🧠
 **Join the discord and create a ticket if you wan't help with a bug**: https://discord.gg/b3g5UszgAs <br>
 **You can message me at**: Ice Bear#0167
