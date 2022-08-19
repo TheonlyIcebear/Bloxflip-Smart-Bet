@@ -363,7 +363,7 @@ class main:
 				if skip:
 					uiprint("Skipping this round.", "warning")
 					continue
-					
+
 			try:
 				if lastgame >= multiplier:
 					if not self.webhook == None:
@@ -490,7 +490,7 @@ class main:
 			time.sleep(3)
 
 			try:
-				json = str({"autoCashoutPoint":int(multiplier*100),"betAmount":int(betamount)}).replace("'", '"').replace(" ", "")
+				json = str({"autoCashoutPoint":int(multiplier*100),"betAmount":betamount}).replace("'", '"').replace(" ", "")
 				ws.send(f'42/crash,["join-game",{str(json)}]')
 			except Exception as e:
 				uiprint("Failed to join crash game! Reconnecting to server...")
