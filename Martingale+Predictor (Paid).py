@@ -365,12 +365,27 @@ class main:
 			uiprint("Game Starting...")
 			balance = self.getBalance()
 
-			games = game[1][::-1][-5:]
+			games = game[1][::-1][-average:]
 			accuracy = None
 			lastgame = game[0]
 			avg = sum(games)/len(games)
-			streak = [0, 0]
+			streak = [1, 0]
 			uiprint(f"Average Crashpoint: {avg}")
+
+
+			for game in games:
+				if game > 2:
+					streak[0] += 1
+				else:
+					streak[1] += 1
+
+			if streak[0] > streak[1]:
+				uiprint("Winning streak detected.", "good")
+			else:
+				uiprint("Losing streak detected", "bad")
+				if skip:
+					uiprint("Skipping this round.", "warning")
+					continue
 
 
 			try:
@@ -423,20 +438,6 @@ class main:
 				chance = 1
 				for game in games:
 					chance *= (1 - (1/33 + (32/33)*(.01 + .99*(1 - 1/game))))
-
-				for game in games:
-					if game > 2:
-						streak[0] += 1
-					else:
-						streak[1] += 1
-
-				if streak[0] > streak[1]:
-					uiprint("Winning streak detected.", "good")
-				else:
-					uiprint("Losing streak detected", "bad")
-					if skip:
-						uiprint("Skipping this round.", "warning")
-						continue
 
 				while True:
 					request = requests.get("https://bfpredictor.repl.co/multiplier", 
@@ -559,7 +560,7 @@ class main:
 				time.sleep(3)
 
 				try:
-					json = str({"autoCashoutPoint":int(prediction*100),"betAmount":int(betamount)}).replace("'", '"').replace(" ", "")
+					json = str({"autoCashoutPoint":int(prediction*100),"betAmount":betamount}).replace("'", '"').replace(" ", "")
 					ws.send(f'42/crash,["join-game",{str(json)}]')
 				except:
 					uiprint("Failed to join crash game! Reconnecting to server...")
