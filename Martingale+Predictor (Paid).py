@@ -138,7 +138,7 @@ class main:
 										"Sec-WebSocket-Extensions": "permessage-deflate",
 										"Sec-WebSocket-Key": str(base64.b64encode(randbytes(16)).decode('utf-8')),
 										"Connection": "keep-alive, Upgrade",
-										"Cookie": "__cf_bm=WoUFKeTQiMRLXB5aR.UFvLBf2q_SMYHBnbvwJFvDgE8-1661186135-0-AcY2/D73Onhl7VuTjq6mlnrilKErIw4zWcaYVU/jLd2Nxl52YNlSWMPQvC0/7c89d3ljCZBAxu7MhGEeQxlR+bw=; path=/; expires=Mon, 22-Aug-22 17:05:35 GMT; domain=.blox.land; HttpOnly; Secure; SameSite=None",
+										"Cookie": "__cf_bm=WoUFKeTQiMRLXB5aR.UFvLBf2q_SMYHBnbvwJFvDgE8-1661186135-0-AcY2/D73Onhl7VuTjq6mlnrilKErIw4zWcaYVU/jLd2Nxl52YNlSWMPQvC0/7c89d3ljCZBAxu7MhGEeQxlR+bw=; path=/; expires=Mon, 25-Dec-27 17:05:35 GMT; domain=.blox.land; HttpOnly; Secure; SameSite=None",
 										"Sec-Fetch-Dest": "websocket",
 										"Sec-Fetch-Mode": "websocket",
 										"Sec-Fetch-Site": "cross-site",
@@ -336,7 +336,6 @@ class main:
 					})
 				games.json()
 			except:
-				print(games.text)
 				continue
 			games = games.json()
 
