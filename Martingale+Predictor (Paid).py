@@ -136,9 +136,9 @@ class main:
 										"Sec-WebSocket-Version": "13",
 										"Origin": "https://www.piesocket.com",
 										"Sec-WebSocket-Extensions": "permessage-deflate",
-										"Sec-WebSocket-Key": "0x5NztKGVafNhIXjearNdg==",
+										"Sec-WebSocket-Key": str(base64.b64encode(randbytes(16)).decode('utf-8')),
 										"Connection": "keep-alive, Upgrade",
-										"Cookie": "__cf_bm=ComSjv13ofeTtsViP9yl1fVTzsI5kLCe8b8kpjryL3w-1661179543-0-AfCyU54aWjHCN3GJYeGwDYKTEDJ6SdfUMWxACjQAFOigqGLKo2pdHlbEYFl6N49QAKNXb4Aiq0fBeu8HNOD5lNE=",
+										"Cookie": "__cf_bm=WoUFKeTQiMRLXB5aR.UFvLBf2q_SMYHBnbvwJFvDgE8-1661186135-0-AcY2/D73Onhl7VuTjq6mlnrilKErIw4zWcaYVU/jLd2Nxl52YNlSWMPQvC0/7c89d3ljCZBAxu7MhGEeQxlR+bw=; path=/; expires=Mon, 22-Aug-22 17:05:35 GMT; domain=.blox.land; HttpOnly; Secure; SameSite=None",
 										"Sec-Fetch-Dest": "websocket",
 										"Sec-Fetch-Mode": "websocket",
 										"Sec-Fetch-Site": "cross-site",
@@ -331,29 +331,14 @@ class main:
 
 		while True:
 			try:
-				games = scraper.get("https://rest-bf.blox.land/games/crash", 
-								header={
-										"GET": "/socket.io/?EIO=3&transport=websocket HTTP/1.1",
-										"Host": "sio-bf.blox.land",
-										"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:103.0) Gecko/20100101 Firefox/103.0",
-										"Accept": "*/*",
-										"Accept-Language": "en-US,en;q=0.5",
-										"Accept-Encoding": "gzip, deflate, br",
-										"Sec-WebSocket-Version": "13",
-										"Origin": "https://www.piesocket.com",
-										"Sec-WebSocket-Extensions": "permessage-deflate",
-										"Sec-WebSocket-Key": "0x5NztKGVafNhIXjearNdg==",
-										"Connection": "keep-alive, Upgrade",
-										"Cookie": "__cf_bm=ComSjv13ofeTtsViP9yl1fVTzsI5kLCe8b8kpjryL3w-1661179543-0-AfCyU54aWjHCN3GJYeGwDYKTEDJ6SdfUMWxACjQAFOigqGLKo2pdHlbEYFl6N49QAKNXb4Aiq0fBeu8HNOD5lNE=",
-										"Sec-Fetch-Dest": "websocket",
-										"Sec-Fetch-Mode": "websocket",
-										"Sec-Fetch-Site": "cross-site",
-										"Pragma": "no-cache",
-										"Cache-Control": "no-cache",
-										"Upgrade": "websocket"
-				}).json()
+				games = scraper.get("https://rest-bf.blox.land/games/crash", headers={
+						"x-auth-token": self.auth
+					})
+				games.json()
 			except:
+				print(games.text)
 				continue
+			games = games.json()
 
 			if not history == games["history"]:
 				history = games["history"]

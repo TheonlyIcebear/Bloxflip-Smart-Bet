@@ -93,6 +93,7 @@ class main:
 			balance = scraper.get("https://rest-bf.blox.land/user", headers={
 						"x-auth-token": self.auth
 				}).json()["user"]["wallet"]
+			print(balance)
 		except Exception as e:
 			uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
 			time.sleep(1.7)
@@ -305,35 +306,20 @@ class main:
 		scraper = cloudscraper.create_scraper()
 
 		while True:
+			print("ok")
 			try:
-				games = scraper.get("https://rest-bf.blox.land/games/crash", 
-								header={
-										"GET": "/socket.io/?EIO=3&transport=websocket HTTP/1.1",
-										"Host": "sio-bf.blox.land",
-										"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:103.0) Gecko/20100101 Firefox/103.0",
-										"Accept": "*/*",
-										"Accept-Language": "en-US,en;q=0.5",
-										"Accept-Encoding": "gzip, deflate, br",
-										"Sec-WebSocket-Version": "13",
-										"Origin": "https://www.piesocket.com",
-										"Sec-WebSocket-Extensions": "permessage-deflate",
-										"Sec-WebSocket-Key": "0x5NztKGVafNhIXjearNdg==",
-										"Connection": "keep-alive, Upgrade",
-										"Cookie": "__cf_bm=ComSjv13ofeTtsViP9yl1fVTzsI5kLCe8b8kpjryL3w-1661179543-0-AfCyU54aWjHCN3GJYeGwDYKTEDJ6SdfUMWxACjQAFOigqGLKo2pdHlbEYFl6N49QAKNXb4Aiq0fBeu8HNOD5lNE=",
-										"Sec-Fetch-Dest": "websocket",
-										"Sec-Fetch-Mode": "websocket",
-										"Sec-Fetch-Site": "cross-site",
-										"Pragma": "no-cache",
-										"Cache-Control": "no-cache",
-										"Upgrade": "websocket"
-				}).json()
+				games = scraper.get("https://rest-bf.blox.land/games/crash")
+				print(games.text)
+				games = games.json()
 			except:
+				print(games.text)
 				continue
+			print(games.text)
 
 			if not history == games["history"]:
 				history = games["history"]
 				yield [games["history"][0]["crashPoint"], [float(crashpoint["crashPoint"]) for crashpoint in history]]
-			time.sleep(0.01)
+			time.sleep(0.2)
 
 	def playsounds(self, file):
 		if self.sound:
@@ -343,6 +329,8 @@ class main:
 	def sendBets(self): # Actually compare the user's chances of winning and place the bets
 		uiprint = self.print
 		uiprint("Betting started. Press Ctrl + C to exit")
+		exit()
+		print("Ok")
 
 		disablePredictor = self.disablePredictor
 		sendwebhookmsg = self.sendwbmsg
@@ -364,7 +352,7 @@ class main:
 		winning = 0
 		losing = 0
 
-
+		print("ok")
 		for game in self.ChrashPoints():
 			uiprint("Game Starting...")
 			balance = self.getBalance()
