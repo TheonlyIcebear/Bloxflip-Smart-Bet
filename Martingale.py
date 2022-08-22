@@ -342,6 +342,7 @@ class main:
 			balance = self.getBalance()
 
 			games = game[1][::-1][-average:]
+			pause = True
 			accuracy = None
 			lastgame = game[0]
 			avg = sum(games)/len(games)
@@ -356,20 +357,15 @@ class main:
 				else:
 					streak[1] += 1
 
-			if streak[0] > streak[1]:
-				uiprint("Winning streak detected.", "good")
-			else:
-				uiprint("Losing streak detected", "bad")
-				if skip:
-					uiprint("Skipping this round.", "warning")
-					continue
-
 			try:
 				if lastgame >= multiplier:
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You have made {betamount*multiplier - betamount} robux", f"You Won!", 0x83d687, f"")
-					betamount = self.betamount
-					uiprint(f"Won previous game. lowering bet amount to {betamount}", "good")
+						
+					if not pause:
+						betamount = self.betamount
+						uiprint(f"Won previous game. lowering bet amount to {betamount}", "good")
+					pause = False
 					
 						
 					try:
@@ -377,8 +373,10 @@ class main:
 					except:
 						pass
 				else:
-					betamount *= 2
-					uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
+					if not pause:
+						betamount *= 2
+						uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
+					pause = False
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You lost {betamount} robux\n You have {balance} left", f"You Lost!", 0xcc1c16, f"")
 
@@ -401,6 +399,15 @@ class main:
 				games[0]
 			except:
 				continue
+
+			if streak[0] > streak[1]:
+				uiprint("Winning streak detected.", "good")
+			else:
+				uiprint("Losing streak detected", "bad")
+				if skip:
+					uiprint("Skipping this round.", "warning")
+					pause = True
+					continue
 
 
 			

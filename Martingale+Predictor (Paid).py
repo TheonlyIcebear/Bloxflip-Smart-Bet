@@ -366,9 +366,10 @@ class main:
 			balance = self.getBalance()
 
 			games = game[1][::-1][-average:]
+			pause = True
 			accuracy = None
 			lastgame = game[0]
-			avg = sum(games)/len(games)
+			avg = sum(games[-3:])/len(games[-3:])
 			streak = [1, 0]
 			uiprint(f"Average Crashpoint: {avg}")
 
@@ -379,24 +380,16 @@ class main:
 				else:
 					streak[1] += 1
 
-			if streak[0] > streak[1]:
-				uiprint("Winning streak detected.", "good")
-			else:
-				uiprint("Losing streak detected", "bad")
-				if skip:
-					uiprint("Skipping this round.", "warning")
-					continue
-
-
 			try:
 				if lastgame >= prediction:
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You have made {betamount*multiplier - betamount} robux", f"You Won!", 0x83d687, f"")
 					accuracy = (1-(lastgame-prediction)/lastgame)*100
 
-					if martingale:
+					if martingale and not pause:
 						betamount = self.betamount
 						uiprint(f"Won previous game. lowering bet amount to {betamount}", "good")
+					pause = False
 					if not disablePredictor:
 						uiprint(f"Accuracy on last guess: {accuracy}", "yellow")
 					
@@ -406,9 +399,10 @@ class main:
 					except:
 						pass
 				else:
-					if martingale:
+					if martingale and not pause:
 						betamount *= 2
 						uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
+					pause = True
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You lost {betamount} robux\n You have {balance} left", f"You Lost!", 0xcc1c16, f"")
 					accuracy = (1-((prediction-lastgame)/lastgame))*100
@@ -429,6 +423,15 @@ class main:
 			except NameError:
 				uiprint(f"No data for accuracy calculations", "error")
 
+
+			if streak[0] > streak[1]:
+					uiprint("Winning streak detected.", "good")
+			else:
+				uiprint("Losing streak detected", "bad")
+				if skip:
+					uiprint("Skipping this round.", "warning")
+					continue
+
 			try:
 				games[0]
 			except:
@@ -436,7 +439,7 @@ class main:
 			
 			if not disablePredictor:
 				chance = 1
-				for game in games:
+				for game in games[-2:]:
 					chance *= (1 - (1/33 + (32/33)*(.01 + .99*(1 - 1/game))))
 
 				while True:
@@ -467,6 +470,7 @@ class main:
 				if prediction < 2:
 					uiprint(f"Game will likely crash around {prediction}. Ignoring and betting on 2 to ensure profit.")
 					prediction = 2
+
 
 				uiprint(f"Setting multiplier to {prediction}", "yellow")
 
@@ -562,8 +566,8 @@ class main:
 				try:
 					json = str({"autoCashoutPoint":int(prediction*100),"betAmount":betamount}).replace("'", '"').replace(" ", "")
 					ws.send(f'42/crash,["join-game",{str(json)}]')
-				except:
-					uiprint("Failed to join crash game! Reconnecting to server...")
+				except Exception as e:
+					uiprint(f"Failed to join crash game! Reconnecting to server... {e}")
 					time.sleep(0.5)
 					ws = self.Connect()
 					ws.send("40/crash,")
