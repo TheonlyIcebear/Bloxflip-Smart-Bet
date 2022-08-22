@@ -100,20 +100,28 @@ class main:
 		return round(balance, 2)
 
 	def Connect(self):
-		return create_connection("wss://sio-bf.blox.land/socket.io/?EIO=3&transport=websocket", header={
-												"Accept-Encoding": "gzip, deflate, br",
-												"Accept-Language": "en-US,en;q=0.9",
-												"Cache-Control": "no-cache",
-												"Connection": "Upgrade",
-												"Host": "sio-bf.blox.land",
-												"Origin": "https://bloxflip.com",
-												"Pragma": "no-cache",
-												"Sec-WebSocket-Extensions": "permessage-deflate; client_max_window_bits",
-												"Sec-WebSocket-Key": "dTCC7XK7OBweEv1kVAUycQ==",
-												"Sec-WebSocket-Version": "13",
-												"Upgrade": "websocket",
-												"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
-										})
+		return create_connection("wss://sio-bf.blox.land/socket.io/?EIO=3&transport=websocket",
+								suppress_origin=True, 
+								header={
+										"GET": "/socket.io/?EIO=3&transport=websocket HTTP/1.1",
+										"Host": "sio-bf.blox.land",
+										"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:103.0) Gecko/20100101 Firefox/103.0",
+										"Accept": "*/*",
+										"Accept-Language": "en-US,en;q=0.5",
+										"Accept-Encoding": "gzip, deflate, br",
+										"Sec-WebSocket-Version": "13",
+										"Origin": "https://www.piesocket.com",
+										"Sec-WebSocket-Extensions": "permessage-deflate",
+										"Sec-WebSocket-Key": "0x5NztKGVafNhIXjearNdg==",
+										"Connection": "keep-alive, Upgrade",
+										"Cookie": "__cf_bm=ComSjv13ofeTtsViP9yl1fVTzsI5kLCe8b8kpjryL3w-1661179543-0-AfCyU54aWjHCN3GJYeGwDYKTEDJ6SdfUMWxACjQAFOigqGLKo2pdHlbEYFl6N49QAKNXb4Aiq0fBeu8HNOD5lNE=",
+										"Sec-Fetch-Dest": "websocket",
+										"Sec-Fetch-Mode": "websocket",
+										"Sec-Fetch-Site": "cross-site",
+										"Pragma": "no-cache",
+										"Cache-Control": "no-cache",
+										"Upgrade": "websocket"
+				})
 
 	def getConfig(self): # Get configuration from config.json file
 		uiprint = self.print
@@ -298,7 +306,27 @@ class main:
 
 		while True:
 			try:
-				games = scraper.get("https://rest-bf.blox.land/games/crash").json()
+				games = scraper.get("https://rest-bf.blox.land/games/crash", 
+								header={
+										"GET": "/socket.io/?EIO=3&transport=websocket HTTP/1.1",
+										"Host": "sio-bf.blox.land",
+										"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:103.0) Gecko/20100101 Firefox/103.0",
+										"Accept": "*/*",
+										"Accept-Language": "en-US,en;q=0.5",
+										"Accept-Encoding": "gzip, deflate, br",
+										"Sec-WebSocket-Version": "13",
+										"Origin": "https://www.piesocket.com",
+										"Sec-WebSocket-Extensions": "permessage-deflate",
+										"Sec-WebSocket-Key": "0x5NztKGVafNhIXjearNdg==",
+										"Connection": "keep-alive, Upgrade",
+										"Cookie": "__cf_bm=ComSjv13ofeTtsViP9yl1fVTzsI5kLCe8b8kpjryL3w-1661179543-0-AfCyU54aWjHCN3GJYeGwDYKTEDJ6SdfUMWxACjQAFOigqGLKo2pdHlbEYFl6N49QAKNXb4Aiq0fBeu8HNOD5lNE=",
+										"Sec-Fetch-Dest": "websocket",
+										"Sec-Fetch-Mode": "websocket",
+										"Sec-Fetch-Site": "cross-site",
+										"Pragma": "no-cache",
+										"Cache-Control": "no-cache",
+										"Upgrade": "websocket"
+				}).json()
 			except:
 				continue
 
