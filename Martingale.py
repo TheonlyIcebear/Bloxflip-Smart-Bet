@@ -300,7 +300,7 @@ class main:
 			try:
 				games = scraper.get("https://rest-bf.blox.land/games/crash").json()
 			except:
-				games = scraper.get("https://rest-bf.blox.land/games/crash").json()
+				continue
 
 			if not history == games["history"]:
 				history = games["history"]
