@@ -1,32 +1,11 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning 
 
-# DISCLAIMER :: imo bloxflip seems to have updated their way of generating the crashpoint so prediction will be less accurate and useful
-# --- the crash seems to be lower more often, but it also goes high (high as in about 5-20) more often than normal
-# --- high crashpoints also seem to come in batches less often
-
-# PATCH BY Oi#6369 | Discord
-
-# General --
-# 1 Option to disable updating to newest chrome drivers;
-# 2 Correctly logs in on new site;
-# 3 If you leave the crash page of bloxflip, the script won't crash anymore but redirect you back to crash;
-# 4 Option to disable the predictor;
-
-# New site --
-# - UPDATED CSS SELECTORS;
-# 1 Is able to correctly set bet amount upon starting;
-# 2 Correctly updates bet- and multiplier amount;
-# 3 Actually sends the bets on the new site;
-
-# Patches --
-# 1 Temporary fix for bloxflip API 403 (forbidden) error on getting balance using scraping. 
-# -- there is one downside to this, all your balance gets rounded up above something.5 and down below that so there will be no floating point values.
-# -- This makes playing at below 1 robux total balance basically impossible, keep this in mind
-
-import cloudscraper, subprocess, threading, websocket, requests, logging, base64, json, time, os
-from websocket import create_connection
+import cloudscraper, subprocess, threading, requests, logging, base64, json, time, os
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
 from win10toast import ToastNotifier
 from playsound import playsound
+from selenium import webdriver
 from random import randbytes
 from termcolor import cprint
 from zipfile import *
@@ -109,43 +88,35 @@ class main:
 
 
 	def getBalance(self):
+		notLoggedIn = self.browser.find_elements(By.XPATH, '//*[@id="__next"]/div[1]/header/div/div/button')[0].text
+		if notLoggedIn:
+			self.print("Please put a valid authorization token in the config.json file. Exiting program.", "error")
+			self.browser.close()
+
+	def installDriver(self, version=None):
 		uiprint = self.print
-		balance = None
+		if not version:
+			uiprint("Installing newest chrome driver...", "warning")
+			latest_version = requests.get("https://chromedriver.storage.googleapis.com/LATEST_RELEASE").text
+		else:
+			uiprint(f"Installing version {version} chrome driver...", "warning")
+			latest_version = requests.get(f"https://chromedriver.storage.googleapis.com/LATEST_RELEASE_{version}").text
+		download = requests.get(f"https://chromedriver.storage.googleapis.com/{latest_version}/chromedriver_win32.zip")
 
-		scraper = cloudscraper.create_scraper()
-		try: 
-			balance = scraper.get("https://rest-bf.blox.land/user", headers={
-						"x-auth-token": self.auth
-				}).json()["user"]["wallet"]
-		except Exception as e:
-			uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
-			time.sleep(1.7)
-			exit()
-		return round(balance, 2)
 
-	def Connect(self):
-		return create_connection("wss://sio-bf.blox.land/socket.io/?EIO=3&transport=websocket",
-								suppress_origin=True, 
-								header={
-										"GET": "/socket.io/?EIO=3&transport=websocket HTTP/1.1",
-										"Host": "sio-bf.blox.land",
-										"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:103.0) Gecko/20100101 Firefox/103.0",
-										"Accept": "*/*",
-										"Accept-Language": "en-US,en;q=0.5",
-										"Accept-Encoding": "gzip, deflate, br",
-										"Sec-WebSocket-Version": "13",
-										"Origin": "https://www.piesocket.com",
-										"Sec-WebSocket-Extensions": "permessage-deflate",
-										"Sec-WebSocket-Key": str(base64.b64encode(randbytes(16)).decode('utf-8')),
-										"Connection": "keep-alive, Upgrade",
-										"Cookie": "__cf_bm=WoUFKeTQiMRLXB5aR.UFvLBf2q_SMYHBnbvwJFvDgE8-1661186135-0-AcY2/D73Onhl7VuTjq6mlnrilKErIw4zWcaYVU/jLd2Nxl52YNlSWMPQvC0/7c89d3ljCZBAxu7MhGEeQxlR+bw=; path=/; expires=Mon, 25-Dec-27 17:05:35 GMT; domain=.blox.land; HttpOnly; Secure; SameSite=None",
-										"Sec-Fetch-Dest": "websocket",
-										"Sec-Fetch-Mode": "websocket",
-										"Sec-Fetch-Site": "cross-site",
-										"Pragma": "no-cache",
-										"Cache-Control": "no-cache",
-										"Upgrade": "websocket"
-				})
+
+		subprocess.call('taskkill /im "chromedriver.exe" /f')
+		try:
+			os.chmod('chromedriver.exe', 0o777)
+			os.remove("chromedriver.exe")
+		except:
+			pass
+		with open("chromedriver.zip", "wb") as zip:
+			zip.write(download.content)
+		with ZipFile("chromedriver.zip", "r") as zip:
+			zip.extract("chromedriver.exe")
+		os.remove("chromedriver.zip")
+		uiprint("Chrome driver installed.", "good")
 
 	def getConfig(self): # Get configuration from config.json file
 		uiprint = self.print
@@ -307,23 +278,56 @@ class main:
 				exit()
 
 
+			self.installDriver()
+			options = webdriver.ChromeOptions()
+			options.add_argument(f'user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36')
+			options.add_argument('--disable-extensions')
+			options.add_argument('--profile-directory=Default')
+			options.add_argument("--incognito")
+			options.add_argument("--disable-plugins-discovery")
+			options.add_experimental_option("excludeSwitches", ["enable-automation", 'enable-logging'])
+			options.add_experimental_option('useAutomationExtension', False)		
+			try:
+				self.browser = webdriver.Chrome("chromedriver.exe", options=options)
+			except selenium.common.exceptions.SessionNotCreatedException as e:
+				try:
+					print(e)
+					self.installDriver(103)
+					self.browser = webdriver.Chrome("chromedriver.exe", options=options)
+				except:
+					uiprint("Chromedriver version not compatible with current chrome version installed. Update your chrome to continue.", "error")
+					uiprint("If your not sure how to update just uninstall then reinstall chrome", "yellow")
+					time.sleep(5)
+					exit()
+
+			browser = self.browser
+			browser.get("https://bloxflip.com/a/BFSB") # Open browser
 			while True:
 				try:
-				 	self.ws = self.Connect()
-				 	break
+					browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
+					browser.execute_script(f'''window.location = "https://bloxflip.com/a/BFSB"''')
+					browser.execute_script(f'''window.location = "https://bloxflip.com/crash"''')
+					break
 				except Exception as e:
-				 	uiprint("Failed to connect to webserver. Retrying in 1.5 seconds...", "error")
-				 	print(e)
-				 	time.sleep(1.5)
+					Exception(e)
+			time.sleep(3.2)
 
-			ws = self.ws
 
-			ws.send("40/crash,")
-			ws.send(f'42/crash,["auth","{self.auth}"]')
+			notLoggedIn = self.browser.find_elements(By.XPATH, '//*[@id="__next"]/div[1]/header/div/div/button')[0].text
+			if notLoggedIn:
+				self.print("Please put a valid authorization token in the config.json file. Exiting program.", "error")
+				browser.quit()
+				exit()
+
+			elements = browser.find_elements(By.CSS_SELECTOR, '.input_input__uGeT_ input_inputWithCurrency__sAiOQ')
+
+			self.updateBetAmount(self.betamountet)
+			self.updateMultiplier(self.multiplier)
 
 
 	def ChrashPoints(self):
 		average = self.average
+		browser = self.browser
 		history = None
 		uiprint = self.print
 		sent = False
@@ -333,16 +337,29 @@ class main:
 			try:
 				games = scraper.get("https://rest-bf.blox.land/games/crash", headers={
 						"x-auth-token": self.auth
-					})
-				games.json()
+					}).json()
 			except:
-				continue
-			games = games.json()
+				games = browser.execute_script("""return fetch('https://rest-bf.blox.land/games/crash').then(res => res.json());""")
 
 			if not history == games["history"]:
 				history = games["history"]
 				yield [games["history"][0]["crashPoint"], [float(crashpoint["crashPoint"]) for crashpoint in history]]
 			time.sleep(0.01)
+
+	def updateBetAmount(self, amount):
+		browser = self.browser
+		element = browser.find_elements(By.CSS_SELECTOR, 'input.input_input__uGeT_.input_inputWithCurrency__sAiOQ')[0]
+		for _ in range(10):
+			element.send_keys(f"{Keys.BACKSPACE}")
+		element.send_keys(f"{amount}")
+
+	def updateMultiplier(self, multiplier):
+		browser = self.browser
+		element = browser.find_elements(By.CSS_SELECTOR, '.input_input__uGeT_')[1]
+		time.sleep(0.2)
+		for _ in range(10):
+			element.send_keys(f"{Keys.BACKSPACE}")
+		element.send_keys(f"{multiplier}")
 
 	def playsounds(self, file):
 		if self.sound:
@@ -369,7 +386,6 @@ class main:
 		lastgame = None
 		bet = self.bet
 		key = self.key
-		ws = self.ws
 		winning = 0
 		losing = 0
 
@@ -403,6 +419,7 @@ class main:
 					if martingale and not pause:
 						betamount = self.betamount
 						uiprint(f"Won previous game. lowering bet amount to {betamount}", "good")
+						self.updateBetAmount(betamount)
 					pause = False
 					if not disablePredictor:
 						uiprint(f"Accuracy on last guess: {accuracy}", "yellow")
@@ -416,6 +433,7 @@ class main:
 					if martingale and not pause:
 						betamount *= 2
 						uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
+						self.updateBetAmount(betamount)
 					pause = True
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You lost {betamount} robux\n You have {balance} left", f"You Lost!", 0xcc1c16, f"")
@@ -578,14 +596,12 @@ class main:
 				time.sleep(3)
 
 				try:
-					json = str({"autoCashoutPoint":int(prediction*100),"betAmount":betamount}).replace("'", '"').replace(" ", "")
-					ws.send(f'42/crash,["join-game",{str(json)}]')
-				except Exception as e:
-					uiprint(f"Failed to join crash game! Reconnecting to server... {e}")
-					time.sleep(0.5)
-					ws = self.Connect()
-					ws.send("40/crash,")
-					ws.send(f'42/crash,["auth","{self.auth}"]')
+					button = browser.find_element(By.CSS_SELECTOR, ".button_button__eJwei.button_primary__mdLFG.gameBetSubmit").click()
+				except:
+					try:
+						browser.find_element(By.CSS_SELECTOR, ".button_button__eJwei.button_primary__mdLFG.gameBetSubmit").click()
+					except:
+						pass
 
 if __name__ == "__main__":
 	main()
