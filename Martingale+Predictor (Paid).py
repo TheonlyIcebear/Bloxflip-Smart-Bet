@@ -4,6 +4,7 @@ import cloudscraper, subprocess, threading, requests, logging, base64, json, tim
 from websocket import create_connection
 from win10toast import ToastNotifier
 from playsound import playsound
+from random import randbytes
 from termcolor import cprint
 from zipfile import *
 from sys import exit
@@ -364,6 +365,7 @@ class main:
 		lastgame = None
 		bet = self.bet
 		key = self.key
+		pause = True
 		winning = 0
 		losing = 0
 
@@ -374,7 +376,6 @@ class main:
 			balance = self.getBalance()
 
 			games = game[1][::-1][-average:]
-			pause = True
 			accuracy = None
 			lastgame = game[0]
 			avg = sum(games[-3:])/len(games[-3:])
@@ -387,6 +388,7 @@ class main:
 					streak[0] += 1
 				else:
 					streak[1] += 1
+
 
 			try:
 				if lastgame >= prediction:
@@ -410,7 +412,7 @@ class main:
 					if martingale and not pause:
 						betamount *= 2
 						uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
-					pause = True
+					pause = False
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You lost {betamount} robux\n You have {balance} left", f"You Lost!", 0xcc1c16, f"")
 					accuracy = (1-((prediction-lastgame)/lastgame))*100
@@ -438,6 +440,7 @@ class main:
 				uiprint("Losing streak detected", "bad")
 				if skip:
 					uiprint("Skipping this round.", "warning")
+					pause = True
 					continue
 
 			try:

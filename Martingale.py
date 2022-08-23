@@ -4,6 +4,7 @@ import cloudscraper, subprocess, threading, requests, logging, base64, json, tim
 from websocket import create_connection
 from win10toast import ToastNotifier
 from playsound import playsound
+from random import randbytes
 from termcolor import cprint
 from zipfile import *
 from sys import exit
@@ -409,7 +410,7 @@ class main:
 						betamount *= 2
 						uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
 						self.updateBetAmount(betamount)
-					pause = True
+					pause = False
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You lost {betamount} robux\n You have {balance} left", f"You Lost!", 0xcc1c16, f"")
 					
