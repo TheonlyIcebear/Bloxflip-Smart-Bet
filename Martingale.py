@@ -93,6 +93,10 @@ class main:
 			self.print("Please put a valid authorization token in the config.json file. Exiting program.", "error")
 			self.browser.close()
 
+		element = self.browser.find_elements(By.XPATH, '//*[@id="__next"]/div[1]/header/div/div[1]/div/div/span/span')[0]
+		val = float(element.text.replace(",", ''))
+		return val
+
 	def installDriver(self, version=None):
 		uiprint = self.print
 		if not version:
@@ -313,21 +317,9 @@ class main:
 			time.sleep(3.2)
 
 
-			notLoggedIn = self.browser.find_elements(By.XPATH, '//*[@id="__next"]/div[1]/header/div/div/button')[0].text
-			if notLoggedIn:
-				self.print("Please put a valid authorization token in the config.json file. Exiting program.", "error")
-				browser.quit()
-				exit()
+			self.updateBetAmount(self.betamount)
+			self.updateMultiplier(self.multiplier)
 
-
-			for _ in range(10):
-				elements[0].send_keys(f"{Keys.BACKSPACE}")
-			elements[0].send_keys(f"{self.betamount}")
-
-
-			for _ in range(10):
-				elements[1].send_keys(f"{Keys.BACKSPACE}")
-			elements[1].send_keys(f"{self.multiplier}")
 
 
 	def ChrashPoints(self):

@@ -93,6 +93,10 @@ class main:
 			self.print("Please put a valid authorization token in the config.json file. Exiting program.", "error")
 			self.browser.close()
 
+		element = self.browser.find_elements(By.XPATH, '//*[@id="__next"]/div[1]/header/div/div[1]/div/div/span/span')[0]
+		val = float(element.text.replace(",", ''))
+		return val
+
 	def installDriver(self, version=None):
 		uiprint = self.print
 		if not version:
@@ -319,9 +323,8 @@ class main:
 				browser.quit()
 				exit()
 
-			elements = browser.find_elements(By.CSS_SELECTOR, '.input_input__uGeT_ input_inputWithCurrency__sAiOQ')
 
-			self.updateBetAmount(self.betamountet)
+			self.updateBetAmount(self.betamount)
 			self.updateMultiplier(self.multiplier)
 
 
