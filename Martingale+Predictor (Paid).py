@@ -365,6 +365,7 @@ class main:
 		lastgame = None
 		bet = self.bet
 		key = self.key
+		ws = self.ws
 		pause = True
 		winning = 0
 		losing = 0
@@ -379,7 +380,7 @@ class main:
 			accuracy = None
 			lastgame = game[0]
 			avg = sum(games[-3:])/len(games[-3:])
-			streak = [1, 0]
+			streak = [0, 0]
 			uiprint(f"Average Crashpoint: {avg}")
 
 
@@ -388,6 +389,8 @@ class main:
 					streak[0] += 1
 				else:
 					streak[1] += 1
+
+			print(streak)
 
 
 			try:
@@ -434,7 +437,7 @@ class main:
 				uiprint(f"No data for accuracy calculations", "error")
 
 
-			if streak[0] > streak[1]:
+			if streak[0] >= streak[1]:
 					uiprint("Winning streak detected.", "good")
 			else:
 				uiprint("Losing streak detected", "bad")
@@ -450,7 +453,7 @@ class main:
 			
 			if not disablePredictor:
 				chance = 1
-				for game in games[-2:]:
+				for game in games[:-3]:
 					chance *= (1 - (1/33 + (32/33)*(.01 + .99*(1 - 1/game))))
 
 				while True:
@@ -579,10 +582,14 @@ class main:
 					ws.send(f'42/crash,["join-game",{str(json)}]')
 				except Exception as e:
 					uiprint("Failed to join crash game! Reconnecting to server...")
-					time.sleep(0.5)
 					ws = self.Connect()
 					ws.send("40/crash,")
 					ws.send(f'42/crash,["auth","{self.auth}"]')
+					try:
+						json = str({"autoCashoutPoint":int(prediction*100),"betAmount":betamount}).replace("'", '"').replace(" ", "")
+						ws.send(f'42/crash,["join-game",{str(json)}]')
+					except:
+						pause = True
 
 if __name__ == "__main__":
 	main()

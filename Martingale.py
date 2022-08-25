@@ -365,6 +365,7 @@ class main:
 		lastgame = None
 		bet = self.bet
 		key = self.key
+		ws = self.ws
 		winning = 0
 		losing = 0
 
@@ -379,7 +380,7 @@ class main:
 			accuracy = None
 			lastgame = game[0]
 			avg = sum(games[-3:])/len(games[-3:])
-			streak = [1, 0]
+			streak = [0, 0]
 			uiprint(f"Average Crashpoint: {avg}")
 
 
