@@ -4,7 +4,6 @@ import cloudscraper, subprocess, threading, websocket, requests, logging, base64
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from websocket import create_connection
-from fake_useragent import UserAgent
 from win10toast import ToastNotifier
 from playsound import playsound
 from random import randbytes
