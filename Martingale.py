@@ -526,12 +526,13 @@ class main:
 				uiprint(f"No data for accuracy calculations", "error")
 
 
-			if streak[0] > streak[1]:
+			if streak[0] >= streak[1]:
 					uiprint("Winning streak detected.", "good")
 			else:
 				uiprint("Losing streak detected", "bad")
 				if skip:
 					uiprint("Skipping this round.", "warning")
+					pause = True
 					continue
 
 			try:
