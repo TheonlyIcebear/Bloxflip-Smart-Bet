@@ -19,7 +19,6 @@ class main:
 		self.crashPoints = None
 		self.multiplier = 0
 		self.version = "1.3"
-		self.ua = UserAgent()
 		os.system("")
 		try:
 			self.getConfig()
