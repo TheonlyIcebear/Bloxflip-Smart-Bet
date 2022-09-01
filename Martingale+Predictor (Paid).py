@@ -354,13 +354,13 @@ class main:
 		losing = 0
 
 		prediction = multiplier
+		pause = True
 
 		for game in self.ChrashPoints():
 			uiprint("Game Starting...")
 			balance = self.getBalance()
 
 			games = game[1][::-1][-average:]
-			pause = True
 			accuracy = None
 			lastgame = game[0]
 			avg = sum(games[-3:])/len(games[-3:])
@@ -376,6 +376,7 @@ class main:
 
 			try:
 				if lastgame >= prediction:
+					print(martingale, pause)
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You have made {betamount*multiplier - betamount} robux", f"You Won!", 0x83d687, f"")
 					accuracy = (1-(lastgame-prediction)/lastgame)*100
@@ -393,6 +394,7 @@ class main:
 					except:
 						pass
 				else:
+					print(martingale, pause)
 					if martingale and not pause:
 						betamount *= 2
 						uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
@@ -556,7 +558,7 @@ class main:
 					sendwebhookmsg(self.webhook,f"Average Crash : {round(avg,2)}\nMultiplier Set to : {multiplier}\n Accuracy on last crash : {accuracy}%","Round Predictions", 0xaf5ebd, f"")
 
 
-				time.sleep(3)
+				time.sleep(5)
 
 				try:
 					json = str({"autoCashoutPoint":int(prediction*100),"betAmount":betamount}).replace("'", '"').replace(" ", "")

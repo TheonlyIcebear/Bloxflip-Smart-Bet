@@ -463,13 +463,13 @@ class main:
 		losing = 0
 
 		prediction = multiplier
+		pause = True
 
 		for game in self.ChrashPoints():
 			uiprint("Game Starting...")
 			balance = self.getBalance()
 
 			games = game[1][::-1][-average:]
-			pause = True
 			accuracy = None
 			lastgame = game[0]
 			avg = sum(games[-3:])/len(games[-3:])
@@ -625,7 +625,7 @@ class main:
 					sendwebhookmsg(self.webhook,f"Average Crash : {round(avg,2)}\nMultiplier Set to : {multiplier}\n Accuracy on last crash : {accuracy}%","Round Predictions", 0xaf5ebd, f"")
 
 
-				time.sleep(3)
+				time.sleep(5)
 				if not selenium_based:
 					try:
 						json = str({"autoCashoutPoint":int(multiplier*100),"betAmount":betamount}).replace("'", '"').replace(" ", "")
