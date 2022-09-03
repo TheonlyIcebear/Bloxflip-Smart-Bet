@@ -613,7 +613,8 @@ class main:
 
 
 				uiprint(f"Setting multiplier to {prediction}", "yellow")
-				self.updateMultiplier(prediction)
+				if selenium_based:
+					self.updateMultiplier(prediction)
 
 
 			
