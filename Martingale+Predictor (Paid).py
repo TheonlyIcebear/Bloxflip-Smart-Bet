@@ -437,6 +437,8 @@ class main:
 		history = None
 		uiprint = self.print
 		sent = False
+		if self.selenium_based:
+			browser = self.browser
 
 
 		scraper = cloudscraper.create_scraper()
@@ -468,6 +470,7 @@ class main:
 		uiprint("Betting started. Press Ctrl + C to exit")
 
 		disablePredictor = self.disablePredictor
+		selenium_based = self.selenium_based
 		sendwebhookmsg = self.sendwbmsg
 		multiplier = self.multiplier
 		playsounds = self.playsounds
@@ -489,6 +492,9 @@ class main:
 
 		prediction = multiplier
 		pause = True
+
+		if selenium_based:
+			browser = self.browser
 
 		for game in self.ChrashPoints():
 			uiprint("Game Starting...")
@@ -544,7 +550,7 @@ class main:
 					except:
 						pass
 
-				if self.selenium_based:
+				if selenium_based:
 					self.updateBetAmount(betamount)
 				
 			except ValueError:
@@ -698,7 +704,7 @@ class main:
 
 				time.sleep(5)
 
-				if not self.selenium_based:
+				if not selenium_based:
 					try:
 						json = str({"autoCashoutPoint":int(prediction*100),"betAmount":betamount}).replace("'", '"').replace(" ", "")
 						ws.send(f'42/crash,["join-game",{str(json)}]')
