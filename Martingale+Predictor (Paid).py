@@ -445,8 +445,7 @@ class main:
 			try:
 				games = scraper.get("https://rest-bf.blox.land/games/crash", headers={
 						"x-auth-token": self.auth
-					})
-				games.json()
+					}).json()
 			except Exception as e:
 				print(e)
 				if self.selenium_based:
