@@ -544,7 +544,7 @@ class main:
 					except:
 						pass
 
-				if selenium_based:
+				if self.selenium_based:
 					self.updateBetAmount(betamount)
 				
 			except ValueError:
@@ -698,7 +698,7 @@ class main:
 
 				time.sleep(5)
 
-				if not selenium_based:
+				if not self.selenium_based:
 					try:
 						json = str({"autoCashoutPoint":int(prediction*100),"betAmount":betamount}).replace("'", '"').replace(" ", "")
 						ws.send(f'42/crash,["join-game",{str(json)}]')
