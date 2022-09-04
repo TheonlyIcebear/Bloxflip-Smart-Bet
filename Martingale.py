@@ -632,7 +632,7 @@ class main:
 						json = str({"autoCashoutPoint":int(multiplier*100),"betAmount":betamount}).replace("'", '"').replace(" ", "")
 						ws.send(f'42/crash,["join-game",{str(json)}]')
 					except Exception as e:
-						uiprint("Failed to join crash game! Reconnecting to server...")
+						uiprint("Failed to join crash game! Reconnecting to server...", "error")
 						time.sleep(0.5)
 						ws = self.Connect()
 						ws.send("40/crash,")
@@ -640,11 +640,8 @@ class main:
 				else:
 					try:
 						button = browser.find_element(By.CSS_SELECTOR, ".button_button__eJwei.button_primary__mdLFG.gameBetSubmit").click()
-					except:
-						try:
-							browser.find_element(By.CSS_SELECTOR, ".button_button__eJwei.button_primary__mdLFG.gameBetSubmit").click()
-						except:
-							pass
+					except Exception as e:
+						print()
 
 if __name__ == "__main__":
 	main()

@@ -133,7 +133,7 @@ class main:
 		element = browser.find_elements(By.CSS_SELECTOR, 'input.input_input__uGeT_.input_inputWithCurrency__sAiOQ')[0]
 		for _ in range(10):
 			element.send_keys(f"{Keys.BACKSPACE}")
-		element.send_keys(f"{amount}")
+		element.send_keys(f"{round(amount, 2)}")
 
 	def updateMultiplier(self, multiplier):
 		browser = self.browser
@@ -141,7 +141,7 @@ class main:
 		time.sleep(0.2)
 		for _ in range(10):
 			element.send_keys(f"{Keys.BACKSPACE}")
-		element.send_keys(f"{multiplier}")
+		element.send_keys(f"{round(multiplier, 2)}")
 
 
 	def Connect(self):
@@ -709,19 +709,17 @@ class main:
 						json = str({"autoCashoutPoint":int(prediction*100),"betAmount":betamount}).replace("'", '"').replace(" ", "")
 						ws.send(f'42/crash,["join-game",{str(json)}]')
 					except Exception as e:
-						uiprint("Failed to join crash game! Reconnecting to server...")
+						uiprint("Failed to join crash game! Reconnecting to server...", "error")
 						time.sleep(0.5)
 						ws = self.Connect()
 						ws.send("40/crash,")
 						ws.send(f'42/crash,["auth","{self.auth}"]')
 				else:
 					try:
-						button = browser.find_element(By.CSS_SELECTOR, ".button_button__eJwei.button_primary__mdLFG.gameBetSubmit").click()
-					except:
-						try:
-							browser.find_element(By.CSS_SELECTOR, ".button_button__eJwei.button_primary__mdLFG.gameBetSubmit").click()
-						except:
-							pass
+						browser.find_element(By.CSS_SELECTOR, ".button_button__eJwei.button_primary__mdLFG.gameBetSubmit").click()
+					except Exception as e:
+						uiprint("Failed to join crash game!", "error")
+						print(e)
 
 if __name__ == "__main__":
 	main()
