@@ -130,18 +130,39 @@ class main:
 
 	def updateBetAmount(self, amount):
 		browser = self.browser
-		element = browser.find_elements(By.CSS_SELECTOR, 'input.input_input__uGeT_.input_inputWithCurrency__sAiOQ')[0]
+		uiprint = self.print
+		try:
+			element = browser.find_elements(By.CSS_SELECTOR, 'input.input_input__uGeT_.input_inputWithCurrency__sAiOQ')[0]
+		except IndexError:
+			uiprint("Blocked by ddos protection sove the captcha to continue")
+			while True:
+				try:
+					element = browser.find_elements(By.CSS_SELECTOR, 'input.input_input__uGeT_.input_inputWithCurrency__sAiOQ')[0]
+					break
+				except IndexError:
+					pass
+
 		for _ in range(10):
 			element.send_keys(f"{Keys.BACKSPACE}")
-		element.send_keys(f"{round(amount, 2)}")
+		element.send_keys(f"{amount}")
 
 	def updateMultiplier(self, multiplier):
 		browser = self.browser
-		element = browser.find_elements(By.CSS_SELECTOR, '.input_input__uGeT_')[1]
+		uiprint = self.print
+		try:
+			element = browser.find_elements(By.CSS_SELECTOR, '.input_input__uGeT_')[1]
+		except IndexError:
+			uiprint("Blocked by ddos protection sove the captcha to continue")
+			while True:
+				try:
+					element = browser.find_elements(By.CSS_SELECTOR, '.input_input__uGeT_')[1]
+					break
+				except IndexError:
+					pass
 		time.sleep(0.2)
 		for _ in range(10):
 			element.send_keys(f"{Keys.BACKSPACE}")
-		element.send_keys(f"{round(multiplier, 2)}")
+		element.send_keys(f"{multiplier}")
 
 
 	def Connect(self):
