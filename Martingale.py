@@ -367,15 +367,15 @@ class main:
 			while True:
 				max_retry -= 1
 				try:
-				 	self.ws = self.Connect()
-				 	break
+					self.ws = self.Connect()
+					break
 				except Exception as e:
-				 	uiprint(f"Failed to connect to webserver. Retrying in 1.5 seconds, {max_retry} tries left.", "error")
-				 	if max_retry <= 0:
-				 			uiprint("Too many attempts, switching to selenium")
-				 			self.selenium_based = True
-				 			break
-				 	time.sleep(1.5)
+					uiprint(f"Failed to connect to webserver. Retrying in 1.5 seconds, {max_retry} tries left.", "error")
+					if max_retry <= 0:
+							uiprint("Too many attempts, switching to selenium")
+							self.selenium_based = True
+							break
+					time.sleep(1.5)
 
 
 			if not self.selenium_based:
@@ -458,7 +458,6 @@ class main:
 		lastgame = None
 		bet = self.bet
 		key = self.key
-		ws = self.ws
 		winning = 0
 		losing = 0
 
@@ -491,8 +490,7 @@ class main:
 					if martingale and not pause:
 						betamount = self.betamount
 						uiprint(f"Won previous game. lowering bet amount to {betamount}", "good")
-						if selenium_based:
-							self.updateBetAmount(betamount)
+						
 					pause = False
 					
 						
@@ -505,8 +503,7 @@ class main:
 						betamount *= 2
 						uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
 
-						if selenium_based:
-							self.updateBetAmount(betamount)
+						
 					pause = False
 					if not self.webhook == None:
 						sendwebhookmsg(self.webhook, f"You lost {betamount} robux\n You have {balance} left", f"You Lost!", 0xcc1c16, f"")
@@ -515,6 +512,9 @@ class main:
 						threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
 					except:
 						pass
+
+				if selenium_based:
+					self.updateBetAmount(betamount)
 				
 			except ValueError:
 				uiprint(f"No data for accuracy calculations", "error")
@@ -550,9 +550,9 @@ class main:
 				threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
 				ToastNotifier().show_toast("Bloxflip Smart Bet", 
 					   "Oh No! You've run out of robux to bet!", duration = 3,
-				 	   icon_path ="assets\\Bloxflip.ico",
-				 	   threaded=True
-				 	   )
+					   icon_path ="assets\\Bloxflip.ico",
+					   threaded=True
+					   )
 				if not balance < self.betamount and not restart:
 					input(f"Press enter to restart betting with {self.betamount} robux")
 					betamount = self.betamount
@@ -561,9 +561,9 @@ class main:
 					threading.Thread(target=playsounds, args=('Assets\Win.mp3',)).start()
 					ToastNotifier().show_toast("Bloxflip Smart Bet", 
 						   "Overwritten: Auto restart is enabled.", duration = 3,
-					 	   icon_path ="assets\\Bloxflip.ico",
-					 	   threaded=True
-					 	   )
+						   icon_path ="assets\\Bloxflip.ico",
+						   threaded=True
+						   )
 					betamount = self.betamount
 				else:
 					input("Press enter to exit >> ")
@@ -574,9 +574,9 @@ class main:
 				threading.Thread(target=playsounds, args=('Assets\Win.mp3',)).start()
 				ToastNotifier().show_toast("Bloxflip Smart Bet", 
 					   "Your auto stop goal has been reached!", duration = 3,
-				 	   icon_path ="assets\\Bloxflip.ico",
-				 	   threaded=True
-				 	   )
+					   icon_path ="assets\\Bloxflip.ico",
+					   threaded=True
+					   )
 				uiprint("If the program is reaching the goal instantly that likely means your balance is already above the auto_stop amount.", "warning")
 				uiprint("To fix this simply increase the number to a number higher than your current balance.", "warning")
 				input("Press enter to resume betting >> ")
@@ -591,9 +591,9 @@ class main:
 				threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
 				ToastNotifier().show_toast("Bloxflip Smart Bet", 
 					   "You've hit your stop loss!", duration = 3,
-				 	   icon_path ="assets\\Bloxflip.ico",
-				 	   threaded=True
-				 	   )
+					   icon_path ="assets\\Bloxflip.ico",
+					   threaded=True
+					   )
 				input("Press enter to exit >> ")
 				exit()
 
@@ -602,9 +602,9 @@ class main:
 				threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
 				ToastNotifier().show_toast("Bloxflip Smart Bet", 
 					   "You've almost hit your stop loss! Resetting bet amount", duration = 3,
-				 	   icon_path ="assets\\Bloxflip.ico",
-				 	   threaded=True
-				 	   )
+					   icon_path ="assets\\Bloxflip.ico",
+					   threaded=True
+					   )
 				betamount = self.betamount
 
 			if betamount > maxbet:
@@ -612,9 +612,9 @@ class main:
 				threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
 				ToastNotifier().show_toast("Bloxflip Smart Bet", 
 					   "You've hit your maxbet! Resetting bet amount", duration = 3,
-				 	   icon_path ="assets\\Bloxflip.ico",
-				 	   threaded=True
-				 	   )
+					   icon_path ="assets\\Bloxflip.ico",
+					   threaded=True
+					   )
 				betamount = self.betamount
 				continue
 
@@ -627,6 +627,7 @@ class main:
 
 				time.sleep(5)
 				if not selenium_based:
+					ws = self.ws
 					try:
 						json = str({"autoCashoutPoint":int(multiplier*100),"betAmount":betamount}).replace("'", '"').replace(" ", "")
 						ws.send(f'42/crash,["join-game",{str(json)}]')
