@@ -1,6 +1,6 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning 
 
-import cloudscraper, subprocess, threading, websocket, requests, random, logging, base64, json, time, ssl, os
+import cloudscraper, subprocess, selenium, threading, websocket, requests, random, logging, base64, json, time, ssl, os
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
