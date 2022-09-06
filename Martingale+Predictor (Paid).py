@@ -166,7 +166,7 @@ class main:
 
 
 	def Connect(self):
-		return create_connection("wss://sio-bf.blox.land/socket.io/?EIO=3&transport=websocket",
+		return create_connection("wss://ws.bloxflip.com/socket.io/?EIO=3&transport=websocket",
 								suppress_origin=True, 
 								header={
 										"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:103.0) Gecko/20100101 Firefox/103.0",
@@ -183,7 +183,8 @@ class main:
 										"Sec-Fetch-Site": "cross-site",
 										"Pragma": "no-cache",
 										"Cache-Control": "no-cache",
-										"Upgrade": "websocket"
+										"Upgrade": "websocket",
+										"x-auth-token": self.auth
 				}
 			)
 
