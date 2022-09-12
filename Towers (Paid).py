@@ -254,11 +254,9 @@ class main:
 				time.sleep(1.6)
 				exit()
 
-			check = requests.get("https://bfpredictor.repl.co/multiplier", 
-									headers={
-												"auth": self.auth
-											}
-										)
+			headers = {
+							"x-auth-token": self.auth
+						}
 
 
 			if not type(self.restart) == bool:
@@ -281,7 +279,7 @@ class main:
 										data={
 											"key": self.key,
 											"hwid": self.hwid
-										}
+										}, headers=headers
 									)
 
 			if request.status_code == 403:

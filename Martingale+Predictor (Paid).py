@@ -381,12 +381,6 @@ class main:
 				time.sleep(1.6)
 				exit()
 
-			check = requests.get("https://bfpredictor.repl.co/multiplier", 
-									headers={
-												"auth": self.auth
-											}
-										)
-
 
 			if not type(self.restart) == bool:
 				uiprint("Invalid auto_restart boolean inside JSON file. Must be true or false", "error")
@@ -403,6 +397,9 @@ class main:
 				time.sleep(10)
 				exit()
 
+			self.headers = {
+							"x-auth-token": self.auth
+						}
 
 			self.selenium_based = False
 			max_retry = 5
@@ -509,6 +506,7 @@ class main:
 		average = self.average
 		restart = self.restart
 		webhook = self.webhook
+		headers = self.headers
 		maxbet = self.maxbet
 		stop = self.stop
 		skip = self.skip
@@ -617,9 +615,7 @@ class main:
 												  "multiplier": self.multiplier, 
 												  "hwid": self.hwid,
 												  "chance": chance
-											}, headers={
-												"auth": self.auth
-											}
+											}, headers=headers
 										)
 
 					if request.status_code == 403:
