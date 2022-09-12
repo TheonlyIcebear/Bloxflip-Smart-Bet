@@ -610,6 +610,8 @@ class main:
 												  "multiplier": self.multiplier, 
 												  "hwid": self.hwid,
 												  "chance": chance
+											}, headers={
+												"auth": self.auth
 											}
 										)
 
@@ -622,7 +624,7 @@ class main:
 						uiprint("Internal server error. Trying again 1.5 seconds...", "error")
 						time.sleep(1.5)
 					elif request.status_code == 200:
-						prediction = float(request.text)
+						prediction = round(float(request.text), 2)
 						break
 					else:
 						uiprint("Internal server error. Trying again 1.5 seconds...", "error")

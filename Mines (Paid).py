@@ -507,6 +507,8 @@ class main:
 											data={
 												"key": key,
 												"hwid": self.hwid
+											}, headers={
+												"auth": self.auth
 											}
 										)
 
@@ -541,7 +543,7 @@ class main:
 						
 					if response.json()["msg"] == "You do not have an active mines game!":
 						exploded = True
-						continue
+						break
 				
 				time.sleep(0.3)
 
@@ -549,11 +551,11 @@ class main:
 					response.json()["exploded"]
 				except:
 					exploded = True
-					continue
+					break
 
 				if response.json()["exploded"] == True:
 					exploded = True
-					continue
+					break
 
 				uiprint(f"Successfully passed level {level+1}", "good")
 

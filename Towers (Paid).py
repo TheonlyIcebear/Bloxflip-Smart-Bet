@@ -495,6 +495,8 @@ class main:
 											data={
 												"key": key,
 												"hwid": self.hwid
+											}, headers={
+												"auth": self.auth
 											}
 										)
 
