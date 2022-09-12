@@ -21,7 +21,7 @@ class main:
 		logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
 		self.crashPoints = None
 		self.multiplier = 0
-		self.version = "1.3"
+		self.version = "1.31"
 		os.system("")
 		try:
 			threading.Thread(target=self.proxySwap).start()
