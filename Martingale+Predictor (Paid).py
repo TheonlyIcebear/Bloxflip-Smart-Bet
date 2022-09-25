@@ -615,7 +615,7 @@ class main:
 												  "multiplier": self.multiplier, 
 												  "hwid": self.hwid,
 												  "chance": chance
-											}, headers=headers
+											}
 										)
 
 					if request.status_code == 403:

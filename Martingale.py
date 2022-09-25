@@ -488,7 +488,6 @@ class main:
 		winning = 0
 		losing = 0
 
-		check = requests.get("https://bfpredictor.repl.co/multiplier", headers=headers)
 		prediction = multiplier
 		pause = True
 

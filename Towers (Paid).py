@@ -279,7 +279,7 @@ class main:
 										data={
 											"key": self.key,
 											"hwid": self.hwid
-										}, headers=headers
+										}
 									)
 
 			if request.status_code == 403:
