@@ -4,6 +4,8 @@
 	"mines": 10,
 	"games_averaged": 5,
 	"bet_amount": 1,
+	"chanceof_winning": 55,
+	"snipe_at": 0.2,
 	"auto_bet": true,
 	"martingale": true,
 	"skip_losing_streaks": true,
