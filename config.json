@@ -5,7 +5,7 @@
 	"games_averaged": 5,
 	"bet_amount": 1,
 	"chanceof_winning": 55,
-	"snipe_at": 0.2,
+	"snipe_at": 0.07,
 	"auto_bet": true,
 	"martingale": true,
 	"skip_losing_streaks": true,
