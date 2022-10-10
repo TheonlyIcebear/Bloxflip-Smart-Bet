@@ -485,10 +485,12 @@ class main:
 		lastgame = None
 		bet = self.bet
 		key = self.key
+		ws = self.ws
 		winning = 0
 		losing = 0
 
 		prediction = multiplier
+		failed = False
 		pause = True
 
 		for game in self.ChrashPoints():
@@ -510,38 +512,43 @@ class main:
 					streak[1] += 1
 
 			try:
-				if lastgame >= prediction:
-					if not self.webhook == None:
-						sendwebhookmsg(self.webhook, f"You have made {betamount*multiplier - betamount} robux", f"You Won!", 0x83d687, f"")
+				if not failed:
+					if lastgame >= prediction:
+						if not self.webhook == None:
+							sendwebhookmsg(self.webhook, f"You have made {betamount*multiplier - betamount} robux", f"You Won!", 0x83d687, f"")
 
-					if martingale and not pause:
-						betamount = self.betamount
-						uiprint(f"Won previous game. lowering bet amount to {betamount}", "good")
+						if martingale and not pause:
+							betamount = self.betamount
+							uiprint(f"Won previous game. lowering bet amount to {betamount}", "good")
+							
+						pause = False
 						
-					pause = False
-					
+							
+						try:
+							threading.Thread(target=playsounds, args=('Assets\Win.mp3',)).start()
+						except:
+							pass
+					else:
+						if martingale and not pause:
+							betamount *= 2
+							uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
+
+							
+						pause = False
+						if not self.webhook == None:
+							sendwebhookmsg(self.webhook, f"You lost {betamount} robux\n You have {balance} left", f"You Lost!", 0xcc1c16, f"")
 						
-					try:
-						threading.Thread(target=playsounds, args=('Assets\Win.mp3',)).start()
-					except:
-						pass
+						try:
+							threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
+						except:
+							pass
+
+					if selenium_based:
+						self.updateBetAmount(betamount)
+
 				else:
-					if martingale and not pause:
-						betamount *= 2
-						uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
-
-						
-					pause = False
-					if not self.webhook == None:
-						sendwebhookmsg(self.webhook, f"You lost {betamount} robux\n You have {balance} left", f"You Lost!", 0xcc1c16, f"")
-					
-					try:
-						threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
-					except:
-						pass
-
-				if selenium_based:
-					self.updateBetAmount(betamount)
+					uiprint(f"Failed to place bet last game retrying with {betamount}", "warning")
+					failed = False
 				
 			except ValueError:
 				uiprint(f"No data for accuracy calculations", "error")
@@ -654,21 +661,23 @@ class main:
 
 				time.sleep(5)
 				if not selenium_based:
-					ws = self.ws
 					try:
 						json = str({"autoCashoutPoint":int(multiplier*100),"betAmount":betamount}).replace("'", '"').replace(" ", "")
 						ws.send(f'42/crash,["join-game",{str(json)}]')
 					except Exception as e:
 						uiprint("Failed to join crash game! Reconnecting to server...", "error")
-						time.sleep(0.5)
 						ws = self.Connect()
 						ws.send("40/crash,")
 						ws.send(f'42/crash,["auth","{self.auth}"]')
+						failed = True
 				else:
 					try:
-						button = browser.find_element(By.CSS_SELECTOR, ".button_button__eJwei.button_primary__mdLFG.gameBetSubmit").click()
+						browser.find_element(By.CSS_SELECTOR, ".button_button__eJwei.button_primary__mdLFG.gameBetSubmit").click()
 					except Exception as e:
-						print()
+						failed = True
+						uiprint("Failed to join crash game!", "error")
+						print(e)
+
 
 if __name__ == "__main__":
 	main()
