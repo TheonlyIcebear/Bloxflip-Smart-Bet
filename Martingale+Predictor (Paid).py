@@ -513,7 +513,6 @@ class main:
 		lastgame = None
 		bet = self.bet
 		key = self.key
-		ws = self.ws
 		winning = 0
 		losing = 0
 
@@ -523,6 +522,8 @@ class main:
 
 		if selenium_based:
 			browser = self.browser
+		else:
+			ws = self.ws
 
 		for game in self.ChrashPoints():
 			uiprint("Game Starting...")
