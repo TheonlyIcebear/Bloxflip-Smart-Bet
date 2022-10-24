@@ -174,7 +174,7 @@ class main:
 										"Accept-Language": "en-US,en;q=0.5",
 										"Accept-Encoding": "gzip, deflate, br",
 										"Sec-WebSocket-Version": "13",
-										"Origin": "https://www.piesocket.com",
+										"Origin": "https://www.piesoket.com",
 										"Sec-WebSocket-Extensions": "permessage-deflate",
 										"Sec-WebSocket-Key": str(base64.b64encode(randbytes(16)).decode('utf-8')),
 										"Connection": "keep-alive, Upgrade",
@@ -185,7 +185,7 @@ class main:
 										"Cache-Control": "no-cache",
 										"Upgrade": "websocket",
 										"x-auth-token": self.auth
-				}
+				}, sslopt={"cert_reqs": ssl.CERT_NONE}
 			)
 
 	def installDriver(self, version=None):

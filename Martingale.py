@@ -172,7 +172,7 @@ class main:
 										"Cache-Control": "no-cache",
 										"Upgrade": "websocket",
 										"x-auth-token": self.auth
-				}
+				}, sslopt={"cert_reqs": ssl.CERT_NONE}
 			)
 
 	def installDriver(self, version=None):
