@@ -404,7 +404,7 @@ class main:
 											  "value": pot,
 											  "hwid": self.hwid,
 											  "chance": chance
-										}
+										}, headers=headers
 									)
 
 				print(request.text)
