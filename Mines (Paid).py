@@ -264,7 +264,7 @@ class main:
 				time.sleep(1.6)
 				exit()
 
-			headers = {
+			self.headers = {
 							"x-auth-token": self.auth
 						}
 
@@ -284,13 +284,6 @@ class main:
 				uiprint(f"You are currently on v{version}. Please update to the newest version {latest_release}", "error")
 				time.sleep(10)
 				exit()
-
-			request = requests.get("https://bfpredictor.repl.co/mines", 
-										data={
-											"key": self.key,
-											"hwid": self.hwid
-										}
-									)
 
 			if request.status_code == 403:
 				uiprint("Invalid key! To buy a valid key create a ticket on the discord. https://discord.gg/HhwNFRaC", "error")
@@ -340,6 +333,7 @@ class main:
 		average = self.average
 		restart = self.restart
 		webhook = self.webhook
+		headers = self.headers
 		levels = self.levels
 		maxbet = self.maxbet
 		mines = self.mines
@@ -355,10 +349,6 @@ class main:
 		scraper = cloudscraper.create_scraper()
 		oldbalance = getBalance()
 		balance = getBalance()
-
-		headers = {
-					"x-auth-token": auth,
-				}
 		
 
 
@@ -512,9 +502,7 @@ class main:
 											data={
 												"key": key,
 												"hwid": self.hwid
-											}, headers={
-												"auth": self.auth
-											}
+											}, headers=headers
 										)
 
 					if request.status_code == 403:
