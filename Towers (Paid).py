@@ -254,7 +254,7 @@ class main:
 				time.sleep(1.6)
 				exit()
 
-			headers = {
+			self.headers = {
 							"x-auth-token": self.auth
 						}
 
@@ -330,6 +330,7 @@ class main:
 		average = self.average
 		restart = self.restart
 		webhook = self.webhook
+		headers = self.headers
 		levels = self.levels
 		maxbet = self.maxbet
 		stop = self.stop
@@ -343,12 +344,7 @@ class main:
 
 		scraper = cloudscraper.create_scraper()
 		oldbalance = getBalance()
-		balance = getBalance()
-
-		headers = {
-					"x-auth-token": auth
-				}
-		
+		balance = getBalance()		
 
 
 		while True:
@@ -500,9 +496,7 @@ class main:
 											data={
 												"key": key,
 												"hwid": self.hwid
-											}, headers={
-												"auth": self.auth
-											}
+											}, headers=headers
 										)
 
 					if request.status_code == 403:
