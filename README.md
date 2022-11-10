@@ -21,12 +21,7 @@ localStorage.getItem('_DO_NOT_SHARE_BLOXFLIP_TOKEN')
 
 Setup tutorial by SteelyXs#1316: <br>
 [![Video](http://img.youtube.com/vi/9o7_NDLlyfE/0.jpg)](http://www.youtube.com/watch?v=9o7_NDLlyfE "| TUTORIAL | How to install Martingale (Bloxflip Smart Bet)")
-# Martingale vs StreakBased
-- The Martingale strategy is based on the fact that every time you lose the chance of you winning increases the next game. So when you lose if you just increase your bet amount by 2 or more the chances of you making profit the next game is higher and the more games you lose the higher chance you'll eventually end up with more than what you started up with. <br> <br>
 
-- The StreakBased strategy is similiar to the Martingale strategy in the sense that the games come in streaks of winning and losing because if a bunch of games end up crashing at low numbers then theirs a high chance the next group of games will chrash at higher numbers. So to get a good prediction of wether the next game is going to win or not you can look at the previous few games and see wether they've been winning or not. <br> <br>
-
-Based on my testing I can conclude that Martingale is more stable and **more profitable** then StreakBased
 # Usage ⚠
 To run the program make sure you have python installed and also pip. If you don't install python here https://www.python.org/downloads/. <br>
 Pip should be preinstalled but if it isn't go to  https://pip.pypa.io/en/stable/installation/ <br>
