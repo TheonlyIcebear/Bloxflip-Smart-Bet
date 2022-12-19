@@ -14,23 +14,21 @@ from zipfile import *
 from sys import exit
 
 
-
 class main:
 	def __init__(self):
-		requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 		logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
+		subprocess.call('start "" "assets\config.mrc"', shell=True)
 		self.crashPoints = None
 		self.multiplier = 0
-		self.version = "1.32"
+		self.version = "1.3.3"
 		os.system("")
 		try:
-			threading.Thread(target=self.proxySwap).start()
 			self.getConfig()
 			self.sendBets()
 		except KeyboardInterrupt:
 			self.print("Exiting program.")
 			
-			exit()
+			os._exit(0)
 		except Exception as e:
 			open("errors.txt", "w+").close()
 			now = time.localtime()
@@ -91,16 +89,6 @@ class main:
 		os.system('cls' if os.name == 'nt' else 'clear')
 
 
-	def proxySwap(self):
-		while True:
-			self.proxies = requests.get("https://api.proxyscrape.com/v2/?request=displayproxies&protocol=socks5&timeout=1000&country=US&ssl=all&anonymity=all").text.splitlines()
-			time.sleep(60)
-
-
-	def proxy(self):
-		return "socks5://"+random.choice(self.proxies)
-
-
 	def getBalance(self):
 		uiprint = self.print
 		balance = None
@@ -113,7 +101,7 @@ class main:
 		except Exception as e:
 			uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
 			time.sleep(1.7)
-			exit()
+			os._exit(0)
 		return round(balance, 2)
 
 
@@ -223,7 +211,7 @@ class main:
 				uiprint("Chromedriver version not compatible with current chrome version installed. Update your chrome to continue.", "error")
 				uiprint("If your not sure how to update just uninstall then reinstall chrome", "yellow")
 				time.sleep(5)
-				exit()
+				os._exit(0)
 
 
 	def getConfig(self): # Get configuration from config.json file
@@ -258,12 +246,12 @@ class main:
 			except KeyError as k:
 				uiprint(f"{k} is missing from JSON file. Redownload from the github", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 			except Exception as e:
 				uiprint("An error has occured", "error")
 				print(e)
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 
 			if not "https://" in self.webhook:
 				uiprint("Invalid webhook inside JSON file file. Make sure you put the https:// with it.", "warning")
@@ -273,7 +261,7 @@ class main:
 			if not type(self.restart) == bool:
 				uiprint("Invalid auto_restart boolean inside JSON file. Must be true or false", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 			self.hwid = current_machine_id = str(subprocess.check_output('wmic csproduct get uuid'), 'utf-8').split('\n')[1].strip()
 
 			version = self.version
@@ -283,7 +271,7 @@ class main:
 			else:
 				uiprint(f"You are currently on v{version}. Please update to the newest version {latest_release}", "error")
 				time.sleep(10)
-				exit()
+				os._exit(0)
 
 			self.headers = {
 							"x-auth-token": self.auth
@@ -300,22 +288,12 @@ class main:
 					if max_retry <= 0:
 							uiprint("Too many attempts, try again later.", "errors")
 							time.sleep(1.5)
-							exit()
+							os._exit(0)
 					time.sleep(1.5)
 
 			ws = self.ws
 			ws.send("40/jackpot,")
 			ws.send(f'42/jackpot,["auth","{self.auth}"]')
-
-
-	def proxySwap(self):
-		while True:
-			self.proxies = requests.get("https://api.proxyscrape.com/v2/?request=displayproxies&protocol=socks5&timeout=1000&country=US&ssl=all&anonymity=all").text.splitlines()
-			time.sleep(60)
-
-
-	def proxy(self):
-		return "socks5://"+random.choice(self.proxies)
 
 
 	def Jackpots(self):
@@ -339,13 +317,14 @@ class main:
 					print(e)
 
 				if len(current["players"]) == 2:
+					uiprint("Preparing to snipe...", "yellow")
 					time.sleep(1)
 					reset = True
 					start = time.time()
-					timeleft = round((32-(time.time()-start))+elapsed, 2)
+					timeleft = round((31.5-(time.time()-start))+elapsed, 2)
 
 			else:
-				timeleft = round((32-(time.time()-start))+elapsed, 2)
+				timeleft = round((31.5-(time.time()-start))+elapsed, 2)
 
 
 			try:
@@ -359,9 +338,12 @@ class main:
 					current = scraper.get("https://api.bloxflip.com/games/jackpot", headers={
 							"x-auth-token": self.auth
 						}).json()["current"]
-					history = current["_id"]
 					reset = False
-					yield sum([player["betAmount"] for player in current["players"]])
+					del timeleft
+					if sum([player["betAmount"] for player in current["players"]]) >= 20:
+						history = current["_id"]
+						
+						yield sum([player["betAmount"] for player in current["players"]])
 			time.sleep(0.01)
 
 	def playsounds(self, file):
@@ -404,15 +386,14 @@ class main:
 											  "value": pot,
 											  "hwid": self.hwid,
 											  "chance": chance
-										}, headers=headers
+										}
 									)
 
-				print(request.text)
 				if request.status_code == 403:
 					uiprint("Invalid key! To buy a valid key create a ticket on the discord. https://discord.gg/blox", "error")
 					input("Press enter to exit >> ")
 
-					exit()
+					os._exit(0)
 				elif request.status_code == 500:
 					uiprint("Internal server error. Trying again 1.5 seconds...", "error")
 					time.sleep(1.5)
@@ -457,7 +438,7 @@ class main:
 					   threaded=True
 					   )
 				input("Press enter to exit >> ")
-				exit()
+				os._exit(0)
 
 			if betamount > maxbet:
 				uiprint("Pot is too expensive to bet. Skipping this round", "error")

