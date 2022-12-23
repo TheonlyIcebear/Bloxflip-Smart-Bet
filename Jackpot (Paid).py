@@ -76,12 +76,12 @@ class main:
 				"content": content,
 				"username": "Smart Bet",
 				"embeds": [
-									{
-										"description" : message,
-										"title" : title,
-										"color" : color
-									}
-								]
+					{
+						"description" : message,
+						"title" : title,
+						"color" : color
+					}
+				]
 			}
 			r = requests.post(url, json=data)
 
@@ -144,26 +144,26 @@ class main:
 
 	def Connect(self):
 		return create_connection("wss://ws.bloxflip.com/socket.io/?EIO=3&transport=websocket",
-								suppress_origin=True, 
-								header={
-										"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:103.0) Gecko/20100101 Firefox/103.0",
-										"Accept": "*/*",
-										"Accept-Language": "en-US,en;q=0.5",
-										"Accept-Encoding": "gzip, deflate, br",
-										"Sec-WebSocket-Version": "13",
-										"Origin": "https://www.piesocket.com",
-										"Sec-WebSocket-Extensions": "permessage-deflate",
-										"Sec-WebSocket-Key": str(base64.b64encode(randbytes(16)).decode('utf-8')),
-										"Connection": "keep-alive, Upgrade",
-										"Sec-Fetch-Dest": "websocket",
-										"Sec-Fetch-Mode": "websocket",
-										"Sec-Fetch-Site": "cross-site",
-										"Pragma": "no-cache",
-										"Cache-Control": "no-cache",
-										"Upgrade": "websocket",
-										"x-auth-token": self.auth
-				}
-			)
+			suppress_origin=True, 
+			header={
+				"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:103.0) Gecko/20100101 Firefox/103.0",
+				"Accept": "*/*",
+				"Accept-Language": "en-US,en;q=0.5",
+				"Accept-Encoding": "gzip, deflate, br",
+				"Sec-WebSocket-Version": "13",
+				"Origin": "https://www.piesocket.com",
+				"Sec-WebSocket-Extensions": "permessage-deflate",
+				"Sec-WebSocket-Key": str(base64.b64encode(randbytes(16)).decode('utf-8')),
+				"Connection": "keep-alive, Upgrade",
+				"Sec-Fetch-Dest": "websocket",
+				"Sec-Fetch-Mode": "websocket",
+				"Sec-Fetch-Site": "cross-site",
+				"Pragma": "no-cache",
+				"Cache-Control": "no-cache",
+				"Upgrade": "websocket",
+				"x-auth-token": self.auth
+			}
+		)
 
 	def installDriver(self, version=None):
 		uiprint = self.print
