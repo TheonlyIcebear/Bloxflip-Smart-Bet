@@ -1,35 +1,35 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning 
 
-import cloudscraper, subprocess, selenium, threading, websocket, requests, random, logging, base64, json, time, ssl, os
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
+import cloudscraper, subprocess, selenium, threading, websocket, requests, random, logging, base64, json, time, uuid, ssl, re, os
+from bloxflip import Authorization, Crash, Currency
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from websocket import create_connection
 from win10toast import ToastNotifier
 from playsound import playsound
 from selenium import webdriver
-from random import randbytes
 from termcolor import cprint
 from bloxflip import *
 from zipfile import *
 from sys import exit
 
 
-class main:
-	def __init__(self):
+class Main(Crash):
+	def __init__(self) -> None:
 		logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
 		subprocess.call('start "" "assets\config.mrc"', shell=True)
 		self.crashPoints = None
 		self.multiplier = 0
 		self.version = "1.3.3"
 		os.system("")
+
 		try:
-			self.getConfig()
-			self.sendBets()
+			self.setup()
+			self.start()
 		except KeyboardInterrupt:
 			self.print("Exiting program.")
-			
 			os._exit(0)
+
 		except Exception as e:
 			open("errors.txt", "w+").close()
 			now = time.localtime()
@@ -38,83 +38,42 @@ class main:
 			time.sleep(2)
 			raise e
 
-	def print(self, message="", option=None): # print the ui's text with
+	def print(self, message: str = "", option="default"): # print the ui's text with
 		print("[ ", end="")
-		if not option:
-			cprint("AUTOBET", "magenta", end="")
-			print(" ] ", end="")
-			if message:
-				cprint(message, "magenta")
-		elif option == "error":
-			cprint("ERROR", "red", end="")
-			print(" ] ", end="")
-			if message:
-				cprint(message, "red")
-		elif option == "warning":
-			cprint("WARNING", "yellow", end="")
-			print(" ] ", end="")
-			if message:
-				cprint(message, "yellow")
-		elif option == "yellow":
-			cprint("AUTOBET", "yellow", end="")
-			print(" ] ", end="")
-			if message:
-				cprint(message, "yellow")
-		elif option == "good":
-			cprint("AUTOBET", "green", end="")
-			print(" ] ", end="")
-			if message:
-				cprint(message, "green")
-		elif option == "bad":
-			cprint("AUTOBET", "red", end="")
-			print(" ] ", end="")
-			if message:
-				cprint(message, "red")
 
-	def sendwbmsg(self,url,message,title,color,content):
+		key = {
+			"default": ["AUTOBET", "magenta"],
+			"error": ["ERROR", "red"],
+			"warning": ["WARNING", "yellow"],
+			"yellow": ["AUTOBET", "yellow"],
+			"good": ["AUTOBET", "green"],
+			"bad": ["AUTBET", "bad"]
+		}
+
+		title = key[option][0]
+		color = key[option][1]
+
+		cprint(title, color, end="")
+		print(" ] ", end="")
+		cprint(message, color)
+
+	def sendwbmsg(self, url: str, message: str, title: str, color: str, content: str):
 		if "https://" in url:
 			data = {
 				"content": content,
 				"username": "Smart Bet",
 				"embeds": [
-									{
-										"description" : message,
-										"title" : title,
-										"color" : color
-									}
-								]
+					{
+						"description" : message,
+						"title" : title,
+						"color" : color
+					}
+				]
 			}
 			r = requests.post(url, json=data)
 
 	def clear(self): # Clear the console
 		os.system('cls' if os.name == 'nt' else 'clear')
-
-	def getBalance(self):
-		uiprint = self.print
-		balance = None
-
-		if not self.selenium_based:
-			scraper = cloudscraper.create_scraper()
-			try: 
-				balance = scraper.get("https://rest-bf.blox.land/user", headers={
-							"x-auth-token": self.auth
-					}).json()["user"]["wallet"]
-			except Exception as e:
-				uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
-				time.sleep(1.7)
-				os._exit(0)
-			return round(balance, 2)
-
-		else:
-			notLoggedIn = self.browser.find_elements(By.XPATH, '//*[@id="__next"]/div[1]/header/div/div/button')[0].text
-			if notLoggedIn:
-				self.print("Please put a valid authorization token in the config.json file. Exiting program.", "error")
-				self.browser.close()
-
-			element = self.browser.find_elements(By.XPATH, '//*[@id="__next"]/div[1]/header/div/div[1]/div/div/span/span')[0]
-			val = float(element.text.replace(",", ''))
-			return val
-
 
 	def updateBetAmount(self, amount):
 		browser = self.browser
@@ -152,36 +111,7 @@ class main:
 			element.send_keys(f"{Keys.BACKSPACE}")
 		element.send_keys(f"{multiplier}")
 
-
-	def Connect(self):
-		ssl_context = ssl.SSLContext()
-		ssl_context.check_hostname = False
-		ssl_context.verify_mode = ssl.CERT_NONE
-		return create_connection("wss://ws.bloxflip.com/socket.io/?EIO=3&transport=websocket",
-								header={
-										"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:103.0) Gecko/20100101 Firefox/103.0",
-										"Accept": "*/*",
-										"Accept-Language": "en-US,en;q=0.5",
-										"Accept-Encoding": "gzip, deflate, br",
-										"Sec-WebSocket-Version": "13",
-										"Host": "ws.bloxflip.com",
-										"Origin": "https://bloxflip.com",
-										# "Sec-WebSocket-Extensions": "permessage-deflate",
-										"Sec-WebSocket-Key": str(base64.b64encode(randbytes(16)).decode('utf-8')),
-										"Connection": "keep-alive, Upgrade",
-										"Sec-Fetch-Dest": "websocket",
-										"Sec-Fetch-Mode": "websocket",
-										"Sec-Fetch-Site": "cross-site",
-										"Pragma": "no-cache",
-										"Cache-Control": "no-cache",
-										"Upgrade": "websocket",
-										"x-auth-token": self.auth
-				}, 
-				sslopt={"cert_reqs": ssl_context}, 
-				suppress_origin=True
-			)
-
-	def installDriver(self, version=None):
+	def install_driver(self, version: str = None) -> None:
 		uiprint = self.print
 		if not version:
 			uiprint("Installing newest chrome driver...", "warning")
@@ -193,7 +123,7 @@ class main:
 
 
 
-		subprocess.call('taskkill /im "chromedriver.exe" /f', shell=True)
+		subprocess.call('taskkill /im "chromedriver.exe" /f')
 		try:
 			os.chmod('chromedriver.exe', 0o777)
 			os.remove("chromedriver.exe")
@@ -230,7 +160,7 @@ class main:
 				os._exit(0)
 
 
-	def getConfig(self): # Get configuration from config.json file
+	def setup(self) -> None: # Get configuration from config.json file
 		uiprint = self.print
 		print("[", end="")
 		cprint(base64.b64decode(b'IENSRURJVFMg').decode('utf-8'), "cyan", end="")
@@ -244,237 +174,127 @@ class main:
 		except:
 			uiprint("config.json file is missing. Make sure you downloaded all the files and they're all in the same folder", "error")
 
-		with open("config.json", "r+") as data:
-			try:
+		try:
+			with open("config.json", "r+") as data:
 				config = json.load(data)
-				self.multiplier = float(config["multiplier"])
-				if self.multiplier < 2:
-					uiprint("Multiplier must be above 2 to make profit.", "error")
-					time.sleep(1.6)
-					os._exit(0)
-			except ValueError as e:
-				uiprint("Invalid multiplier inside JSON file. Must be valid number", "error")
-				time.sleep(1.6)
+		except json.decoder.JSONDecodeError:
+			uiprint("Invalid JSON formatting, redownload file from the github")
+
+		try:
+			self.multiplier = float(config["multiplier"])
+			self.average = int(config["games_averaged"])
+			self.auth = config["authorization"]
+			self.key = config["key"]
+			self.disablePredictor = not config["predict_crash"]
+			self.martingale = config["martingale"]
+			self.sound = config["play_sounds"]
+			self.webhook = config["webhook"]
+			self.betamount = float(config["bet_amount"])
+			self.maxbet =  float(config["max_betamount"])
+			self.skip =  config["skip_losing_streaks"]
+			self.bet = float(config["auto_bet"])
+			self.stop =  float(config["auto_stop"])
+			self.stoploss =  float(config["stop_loss"])
+			self.restart = config["auto_restart"]
+
+			if self.multiplier < 2:
+				uiprint("Multiplier must be above 2 to make profit.", "error")
+				time.sleep(2)
 				os._exit(0)
 
+			if self.average > 35:
+				uiprint("Too many games_averaged. Must be 35 or less games", "error")
+				time.sleep(2)
+				os._exit(0)
+
+			if not "https://" in self.webhook:
+				uiprint("Invalid webhook inside JSON file file. Make sure you put the https:// with it.", "warning")
+				self.webhook = None
+
+		except KeyError as e:
+			uiprint(f"{k} Key is missing from JSON redownload from github", "error")
+			time.sleep(2)
+			os._exit(0)
+
+		except ValueError as e:
+			key = e.split("'")[1]
+			uiprint(f"Invalid {key} inside json")
+			time.sleep(2)
+			os._exit(0)
+
+		if not Authorization.validate(self.auth):
+			uiprint("Invalid Authorization!", "error")
+			time.sleep(2)
+			os._exit(0)
+
+		self.user = Authorization.get_info(self.auth)
+		self.headers = {
+			"x-auth-token": self.auth
+		}
+
+		if not type(self.restart) == bool:
+			uiprint("Invalid auto_restart boolean inside JSON file. Must be true or false", "error")
+			time.sleep(2)
+			os._exit(0)
+		self.hwid = current_machine_id = str(subprocess.check_output('wmic csproduct get uuid'), 'utf-8').split('\n')[1].strip()
+
+		version = self.version
+
+		latest_release = requests.get("https://bfpredictor.repl.co/latest_release").text
+		if latest_release == version:
+			uiprint("Your version is up to date.", "good")
+		else:
+			uiprint(f"You are currently on v{version}. Please update to the newest version {latest_release}", "error")
+			time.sleep(10)
+			os._exit(0)
+
+
+		self.selenium_based = False
+
+		super().__init__(self.auth)
+		self.crash = super()
+
+		max_retry = 5
+		while True:
+			max_retry -= 1
 			try:
-				self.average = int(config["games_averaged"])
-				if self.average > 35:
-					uiprint("Too many games_averaged. Must be 35 or less games", "error")
-					time.sleep(1.6)
-					os._exit(0)
-			except:
-				uiprint("Invalid amount of games to be averaged inside JSON file. Must be valid number", "error")
-				time.sleep(1.6)
-				os._exit(0)
+				websocket = crash.Websocket()
+				websocket.connect()
 
+				self.websocket = websocket
+				break
+			except Exception as e:
+				uiprint(f"Failed to connect to webserver. Retrying in 1.5 seconds, {max_retry} tries left.", "error")
 
-			try:
-				self.auth = config["authorization"]
-			except:
-				uiprint("Invalid authorization inside JSON file. Enter your new authorization from BloxFlip", "error")
-				time.sleep(1.6)
-				os._exit(0)
+				if max_retry <= 0:
+						uiprint("Too many attempts, switching to selenium")
+						self.selenium_based = True
+						break
+				time.sleep(1.5)
 
-
-			try:
-				self.key = config["key"]
-			except:
-				uiprint("Invalid key inside JSON file. Make sure it's a valid string", "error")
-				time.sleep(1.6)
-				os._exit(0)
-
-
-			try:
-				self.disablePredictor = not config["predict_crash"]
-			except:
-				uiprint("Invalid play_sounds boolean inside JSON file. Must be true or false", "error")
-				time.sleep(1.6)
-				os._exit(0)
-
-
-			try:
-				self.martingale = config["martingale"]
-			except:
-				uiprint("Invalid play_sounds boolean inside JSON file. Must be true or false", "error")
-				time.sleep(1.6)
-				os._exit(0)
-
-
-			try:
-				self.sound = config["play_sounds"]
-			except:
-				uiprint("Invalid play_sounds boolean inside JSON file. Must be true or false", "error")
-				time.sleep(1.6)
-				os._exit(0)
-
-
-			try:
-				self.webhook = config["webhook"]
-				if not "https://" in self.webhook:
-					uiprint("Invalid webhook inside JSON file file. Make sure you put the https:// with it.", "warning")
-					self.webhook = None
-			except:
-				uiprint("Invalid webhook string inside JSON file. Make sure it's a valid string", "error")
-				time.sleep(1.6)
-				os._exit(0)
-
-			try:
-				self.betamount = float(config["bet_amount"])
-			except:
-				uiprint("Invalid bet_amount inside JSON file. Must be valid number", "error")
-				time.sleep(1.6)
-				os._exit(0)
-
-
-			try:
-				self.maxbet =  float(config["max_betamount"])
-			except:
-				uiprint("Invalid max_betamount amount inside JSON file. Must be a valid number", "error")
-				time.sleep(1.6)
-				os._exit(0)
-
-
-			try:
-				self.skip =  config["skip_losing_streaks"]
-			except:
-				uiprint("Invalid skip_losing_streaks boolean inside JSON file. Must be true or false", "error")
-				time.sleep(1.6)
-				os._exit(0)
-
-
-			try:
-				self.bet = float(config["auto_bet"])
-			except:
-				uiprint("Invalid bet inside JSON file. Must be true or false", "error")
-				time.sleep(1.6)
-				os._exit(0)
-
-
-			try:
-				self.stop =  float(config["auto_stop"])
-			except:
-				uiprint("Invalid auto_stop amount inside JSON file. Must be a valid number", "error")
-				time.sleep(1.6)
-				os._exit(0)
-
-
-			try:
-				self.stoploss =  float(config["stop_loss"])
-			except:
-				uiprint("Invalid auto stop_loss inside JSON file. Must be a valid number", "error")
-				time.sleep(1.6)
-				os._exit(0)
-
-
-			try:
-				self.restart = config["auto_restart"]
-			except:
-				uiprint("Invalid auto_restart boolean inside JSON file. Must be true or false", "error")
-				time.sleep(1.6)
-				os._exit(0)
-
-
-			if not type(self.restart) == bool:
-				uiprint("Invalid auto_restart boolean inside JSON file. Must be true or false", "error")
-				time.sleep(1.6)
-				os._exit(0)
-			self.hwid = current_machine_id = str(subprocess.check_output('wmic csproduct get uuid'), 'utf-8').split('\n')[1].strip()
-
-			version = self.version
-			latest_release = requests.get("https://bfpredictor.repl.co/latest_release").text
-			if latest_release == version:
-				uiprint("Your version is up to date.", "good")
-			else:
-				uiprint(f"You are currently on v{version}. Please update to the newest version {latest_release}", "error")
-				time.sleep(10)
-				os._exit(0)
-
-			self.headers = {
-							"x-auth-token": self.auth
-						}
-
-			self.selenium_based = False
-			max_retry = 5
+		if self.selenium_based:
+			self.install_driver()
+			browser = self.browser
+			browser.get("https://bloxflip.com/a/BFSB") # Open browser
 			while True:
-				max_retry -= 1
 				try:
-					self.ws = self.Connect()
+					browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
+					browser.execute_script(f'''window.location = "https://bloxflip.com/a/BFSB"''')
+					browser.execute_script(f'''window.location = "https://bloxflip.com/crash"''')
 					break
 				except Exception as e:
-					uiprint(f"Failed to connect to webserver. Retrying in 1.5 seconds, {max_retry} tries left.", "error")
-					if max_retry <= 0:
-							uiprint("Too many attempts, switching to selenium")
-							self.selenium_based = True
-							break
-					time.sleep(1.5)
+					Exception(e)
+			time.sleep(3.2)
 
+			self.updateBetAmount(self.betamount)
+			self.updateMultiplier(self.multiplier)
 
-			if not self.selenium_based:
-				ws = self.ws
-
-				ws.send("40/crash,")
-				ws.send(f'42/crash,["auth","{self.auth}"]')
-			else:
-				self.installDriver()
-				browser = self.browser
-				browser.get("https://bloxflip.com/a/BFSB") # Open browser
-				while True:
-					try:
-						browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
-						browser.execute_script(f'''window.location = "https://bloxflip.com/a/BFSB"''')
-						browser.execute_script(f'''window.location = "https://bloxflip.com/crash"''')
-						break
-					except Exception as e:
-						Exception(e)
-				time.sleep(3.2)
-
-
-				notLoggedIn = self.browser.find_elements(By.XPATH, '//*[@id="__next"]/div[1]/header/div/div/button')[0].text
-				if notLoggedIn:
-					self.print("Please put a valid authorization token in the config.json file. Exiting program.", "error")
-					browser.quit()
-					os._exit(0)
-
-
-				self.updateBetAmount(self.betamount)
-				self.updateMultiplier(self.multiplier)
-
-
-	def ChrashPoints(self):
-		average = self.average
-		history = None
-		uiprint = self.print
-		sent = False
-		if self.selenium_based:
-			browser = self.browser
-
-
-		scraper = cloudscraper.create_scraper()
-
-		while True:
-			try:
-				games = scraper.get("https://rest-bf.blox.land/games/crash", headers={
-						"x-auth-token": self.auth
-					}).json()
-			except Exception as e:
-				print(e)
-				if self.selenium_based:
-					games = browser.execute_script("""return fetch('https://rest-bf.blox.land/games/crash').then(res => res.json());""")
-				else:
-					continue
-
-			if not history == games["history"]:
-				history = games["history"]
-				yield [games["history"][0]["crashPoint"], [float(crashpoint["crashPoint"]) for crashpoint in history]]
-			time.sleep(0.01)
-
-	def playsounds(self, file):
+	def playsounds(self, file: str) -> None:
 		if self.sound:
 			playsound(file)
 
 
-	def sendBets(self): # Actually compare the user's chances of winning and place the bets
+	def start(self): # Actually compare the user's chances of winning and place the bets
 		uiprint = self.print
 		uiprint("Betting started. Press Ctrl + C to exit")
 
@@ -488,11 +308,13 @@ class main:
 		stoploss = self.stoploss
 		average = self.average
 		restart = self.restart
-		webhook = self.webhook
 		headers = self.headers
+		webhook = self.webhook
 		maxbet = self.maxbet
+		crash = self.crash
 		stop = self.stop
 		skip = self.skip
+		auth = self.auth
 		lastgame = None
 		bet = self.bet
 		key = self.key
@@ -506,16 +328,17 @@ class main:
 		if selenium_based:
 			browser = self.browser
 		else:
-			ws = self.ws
+			websocket = self.websocket
 
-		for game in self.ChrashPoints():
+		for games in crash.crashpoints():
 			uiprint("Game Starting...")
-			balance = self.getBalance()
+			balance = Currency.balance(auth)
 
-			games = game[1][::-1][-average:]
-			accuracy = None
-			lastgame = game[0]
+			games = [game.crashpoint for game in games]
 			avg = sum(games[-3:])/len(games[-3:])
+			lastgame = games[0]
+			accuracy = None
+			
 			streak = [1, 0]
 			uiprint(f"Average Crashpoint: {avg}")
 
@@ -570,13 +393,7 @@ class main:
 					uiprint(f"Failed to place bet last game retrying with {betamount}", "warning")
 					failed = False
 				
-			except ValueError:
-				uiprint(f"No data for accuracy calculations", "error")
-			except TypeError:
-				uiprint(f"No data for accuracy calculations", "error")
-			except UnboundLocalError:
-				uiprint(f"No data for accuracy calculations", "error")
-			except NameError:
+			except (ValueError, TypeError, UnboundLocalError, NameError):
 				uiprint(f"No data for accuracy calculations", "error")
 
 
@@ -594,48 +411,6 @@ class main:
 			except:
 				continue
 			
-			if not disablePredictor:
-				chance = 1
-				for game in games[-2:]:
-					chance *= (1 - (1/33 + (32/33)*(.01 + .99*(1 - 1/game))))
-
-				while True:
-					request = requests.get("https://bfpredictor.repl.co/crash", 
-											data={"key": key, 
-												  "average": avg,
-												  "multiplier": self.multiplier, 
-												  "hwid": self.hwid,
-												  "chance": chance
-											}, headers=headers
-										)
-
-					if request.status_code == 403:
-						uiprint("Invalid key! To buy a valid key create a ticket on the discord. https://discord.gg/blox", "error")
-						input("Press enter to exit >> ")
-	
-						os._exit(0)
-					elif request.status_code == 500:
-						uiprint("Internal server error. Trying again 1.5 seconds...", "error")
-						time.sleep(1.5)
-					elif request.status_code == 200:
-						prediction = round(float(request.text), 2)
-						break
-					else:
-						uiprint("Internal server error. Trying again 1.5 seconds...", "error")
-						time.sleep(1.5)
-
-				if prediction < 2:
-					uiprint(f"Game will likely crash around {prediction}. Ignoring and betting on 2 to ensure profit.")
-					prediction = 2
-
-
-				uiprint(f"Setting multiplier to {prediction}", "yellow")
-				if selenium_based:
-					self.updateMultiplier(prediction)
-
-
-			
-			uiprint(f"Your balance is {balance}")
 			if balance < betamount:
 				uiprint("You don't have enough robux to continue betting.", "error")
 				threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
@@ -668,6 +443,7 @@ class main:
 					   icon_path ="assets\\Bloxflip.ico",
 					   threaded=True
 					   )
+
 				uiprint("If the program is reaching the goal instantly that likely means your balance is already above the auto_stop amount.", "warning")
 				uiprint("To fix this simply increase the number to a number higher than your current balance.", "warning")
 				input("Press enter to resume betting >> ")
@@ -676,7 +452,7 @@ class main:
 						stop = float(input("Enter new goal: "))
 						break
 					except:
-						uiprint("Ivalid number.", "error")
+						uiprint("Invalid number.", "error")
 			elif balance < stoploss:
 				uiprint(f"Balance is below stop loss. All betting has stopped.", "bad")
 				threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
@@ -685,6 +461,7 @@ class main:
 					   icon_path ="assets\\Bloxflip.ico",
 					   threaded=True
 					   )
+
 				input("Press enter to exit >> ")
 				os._exit(0)
 
@@ -696,6 +473,7 @@ class main:
 					   icon_path ="assets\\Bloxflip.ico",
 					   threaded=True
 					   )
+
 				betamount = self.betamount
 
 			if betamount > maxbet:
@@ -706,11 +484,13 @@ class main:
 					   icon_path ="assets\\Bloxflip.ico",
 					   threaded=True
 					   )
+					   
 				betamount = self.betamount
 				continue
 			
 			if round(prediction, 2) <= 1:
 				uiprint("Cancelling bet this game. As the game will likely crash around 1x.")
+				failed = True
 				continue
 
 			if bet:
@@ -722,15 +502,13 @@ class main:
 
 				time.sleep(3)
 
-				if not selenium_based:
+				if not self._based:
 					try:
-						json = str({"autoCashoutPoint":int(prediction*100),"betAmount":betamount}).replace("'", '"').replace(" ", "")
-						ws.send(f'42/crash,["join-game",{str(json)}]')
+						websocket.join(betamount=betamount, multiplier=prediction)
 					except Exception as e:
 						uiprint("Failed to join crash game! Reconnecting to server...", "error")
-						ws = self.Connect()
-						ws.send("40/crash,")
-						ws.send(f'42/crash,["auth","{self.auth}"]')
+						websocket = crash.Websocket()
+						websocket.connect()
 						failed = True
 				else:
 					try:
@@ -741,4 +519,4 @@ class main:
 						print(e)
 
 if __name__ == "__main__":
-	main()
+	Main()

@@ -1,6 +1,7 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning 
 
 import cloudscraper, subprocess, selenium, threading, websocket, requests, random, logging, base64, json, time, ssl, os
+from bloxflip import Authorization, Currency
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -14,7 +15,7 @@ from zipfile import *
 from sys import exit
 
 
-class main:
+class Main:
 	def __init__(self):
 		logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
 		subprocess.call('start "" "assets\config.mrc"', shell=True)
@@ -23,8 +24,8 @@ class main:
 		self.version = "1.3.3"
 		os.system("")
 		try:
-			self.getConfig()
-			self.sendBets()
+			self.setup()
+			self.start()
 		except KeyboardInterrupt:
 			self.print("Exiting program.")
 			
@@ -37,40 +38,26 @@ class main:
 			time.sleep(2)
 			raise e
 
-	def print(self, message="", option=None): # print the ui's text with
+	def print(self, message: str = "", option: str = "default") -> None: # print the ui's text with
 		print("[ ", end="")
-		if not option:
-			cprint("AUTOBET", "magenta", end="")
-			print(" ] ", end="")
-			if message:
-				cprint(message, "magenta")
-		elif option == "error":
-			cprint("ERROR", "red", end="")
-			print(" ] ", end="")
-			if message:
-				cprint(message, "red")
-		elif option == "warning":
-			cprint("WARNING", "yellow", end="")
-			print(" ] ", end="")
-			if message:
-				cprint(message, "yellow")
-		elif option == "yellow":
-			cprint("AUTOBET", "yellow", end="")
-			print(" ] ", end="")
-			if message:
-				cprint(message, "yellow")
-		elif option == "good":
-			cprint("AUTOBET", "green", end="")
-			print(" ] ", end="")
-			if message:
-				cprint(message, "green")
-		elif option == "bad":
-			cprint("AUTOBET", "red", end="")
-			print(" ] ", end="")
-			if message:
-				cprint(message, "red")
 
-	def sendwbmsg(self,url,message,title,color,content):
+		key = {
+			"default": ["AUTOBET", "magenta"],
+			"error": ["ERROR", "red"],
+			"warning": ["WARNING", "yellow"],
+			"yellow": ["AUTOBET", "yellow"],
+			"good": ["AUTOBET", "green"],
+			"bad": ["AUTBET", "bad"]
+		}
+
+		title = key[option][0]
+		color = key[option][1]
+
+		cprint(title, color, end="")
+		print(" ] ", end="")
+		cprint(message, color)
+
+	def sendwbmsg(self, url: str, message: str, title: str, color: str, content: str) -> None:
 		if "https://" in url:
 			data = {
 				"content": content,
@@ -144,77 +131,29 @@ class main:
 
 	def Connect(self):
 		return create_connection("wss://ws.bloxflip.com/socket.io/?EIO=3&transport=websocket",
-			suppress_origin=True, 
-			header={
-				"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:103.0) Gecko/20100101 Firefox/103.0",
-				"Accept": "*/*",
-				"Accept-Language": "en-US,en;q=0.5",
-				"Accept-Encoding": "gzip, deflate, br",
-				"Sec-WebSocket-Version": "13",
-				"Origin": "https://www.piesocket.com",
-				"Sec-WebSocket-Extensions": "permessage-deflate",
-				"Sec-WebSocket-Key": str(base64.b64encode(randbytes(16)).decode('utf-8')),
-				"Connection": "keep-alive, Upgrade",
-				"Sec-Fetch-Dest": "websocket",
-				"Sec-Fetch-Mode": "websocket",
-				"Sec-Fetch-Site": "cross-site",
-				"Pragma": "no-cache",
-				"Cache-Control": "no-cache",
-				"Upgrade": "websocket",
-				"x-auth-token": self.auth
-			}
-		)
-
-	def installDriver(self, version=None):
-		uiprint = self.print
-		if not version:
-			uiprint("Installing newest chrome driver...", "warning")
-			latest_version = requests.get("https://chromedriver.storage.googleapis.com/LATEST_RELEASE").text
-		else:
-			uiprint(f"Installing version {version} chrome driver...", "warning")
-			latest_version = requests.get(f"https://chromedriver.storage.googleapis.com/LATEST_RELEASE_{version}").text
-		download = requests.get(f"https://chromedriver.storage.googleapis.com/{latest_version}/chromedriver_win32.zip")
+								suppress_origin=True, 
+								header={
+										"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:103.0) Gecko/20100101 Firefox/103.0",
+										"Accept": "*/*",
+										"Accept-Language": "en-US,en;q=0.5",
+										"Accept-Encoding": "gzip, deflate, br",
+										"Sec-WebSocket-Version": "13",
+										"Origin": "https://www.piesocket.com",
+										"Sec-WebSocket-Extensions": "permessage-deflate",
+										"Sec-WebSocket-Key": str(base64.b64encode(randbytes(16)).decode('utf-8')),
+										"Connection": "keep-alive, Upgrade",
+										"Sec-Fetch-Dest": "websocket",
+										"Sec-Fetch-Mode": "websocket",
+										"Sec-Fetch-Site": "cross-site",
+										"Pragma": "no-cache",
+										"Cache-Control": "no-cache",
+										"Upgrade": "websocket",
+										"x-auth-token": self.auth
+				}
+			)
 
 
-
-		subprocess.call('taskkill /im "chromedriver.exe" /f')
-		try:
-			os.chmod('chromedriver.exe', 0o777)
-			os.remove("chromedriver.exe")
-		except:
-			pass
-		with open("chromedriver.zip", "wb") as zip:
-			zip.write(download.content)
-		with ZipFile("chromedriver.zip", "r") as zip:
-			zip.extract("chromedriver.exe")
-
-
-		os.remove("chromedriver.zip")
-		uiprint("Chrome driver installed.", "good")
-
-		options = webdriver.ChromeOptions()
-		options.add_argument(f'user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36')
-		options.add_argument('--disable-extensions')
-		options.add_argument('--profile-directory=Default')
-		options.add_argument("--incognito")
-		options.add_argument("--disable-plugins-discovery")
-		options.add_experimental_option("excludeSwitches", ["enable-automation", 'enable-logging'])
-		options.add_experimental_option('useAutomationExtension', False)		
-		try:
-			self.browser = webdriver.Chrome("chromedriver.exe", options=options)
-		except selenium.common.exceptions.SessionNotCreatedException as e:
-			try:
-				print(e)
-				self.installDriver(103)
-				self.browser = webdriver.Chrome("chromedriver.exe", options=options)
-			except:
-				uiprint("Chromedriver version not compatible with current chrome version installed. Update your chrome to continue.", "error")
-				uiprint("If your not sure how to update just uninstall then reinstall chrome", "yellow")
-				time.sleep(5)
-				os._exit(0)
-
-
-	def getConfig(self): # Get configuration from config.json file
+	def setup(self): # Get configuration from config.json file
 		uiprint = self.print
 		print("[", end="")
 		cprint(base64.b64decode(b'IENSRURJVFMg').decode('utf-8'), "cyan", end="")
@@ -274,8 +213,13 @@ class main:
 				os._exit(0)
 
 			self.headers = {
-							"x-auth-token": self.auth
-						}
+				"x-auth-token": self.auth
+			}
+
+			if not Authorization.validate(self.auth):
+				uiprint("Invalid Authorization!", "error")
+				time.sleep(2)
+				os._exit(0)
 
 			max_retry = 5
 			while True:
@@ -306,52 +250,38 @@ class main:
 		scraper = cloudscraper.create_scraper()
 
 		while True:
-			if not reset:
-				try:
-					current = scraper.get("https://api.bloxflip.com/games/jackpot", headers={
-							"x-auth-token": self.auth
-						})
-					elapsed = current.elapsed.total_seconds()
-					current = current.json()["current"]
-				except Exception as e:
-					print(e)
-
-				if len(current["players"]) == 2:
-					uiprint("Preparing to snipe...", "yellow")
-					time.sleep(1)
-					reset = True
-					start = time.time()
-					timeleft = round((31.5-(time.time()-start))+elapsed, 2)
-
-			else:
-				timeleft = round((31.5-(time.time()-start))+elapsed, 2)
-
-
 			try:
-				timeleft
-			except:
-				continue
+				current = scraper.get("https://api.bloxflip.com/games/jackpot", headers={
+						"x-auth-token": self.auth
+					})
+				elapsed = current.elapsed.total_seconds()
+				current = current.json()["current"]
+			except Exception as e:
+				print(e)
 
+			if len(current["players"]) == 2:
+				uiprint("Game starting!...", "yellow")
+				reset = True
+				start = time.time()
+				timeleft = 30 - (time.time()-start) - elapsed
+				time.sleep(timeleft-snipe)
 
-			if not history == current["_id"]:
-				if timeleft <= snipe:
-					current = scraper.get("https://api.bloxflip.com/games/jackpot", headers={
-							"x-auth-token": self.auth
-						}).json()["current"]
-					reset = False
-					del timeleft
-					if sum([player["betAmount"] for player in current["players"]]) >= 20:
-						history = current["_id"]
-						
-						yield sum([player["betAmount"] for player in current["players"]])
-			time.sleep(0.01)
+				current = scraper.get("https://api.bloxflip.com/games/jackpot", headers={
+						"x-auth-token": self.auth
+					}).json()["current"]
+					
+				if sum([player["betAmount"] for player in current["players"]]) >= 20:
+					history = current["_id"]
+					
+					yield sum([player["betAmount"] for player in current["players"]])
+				time.sleep(0.01)
 
-	def playsounds(self, file):
+	def playsounds(self, file: str) -> None:
 		if self.sound:
 			playsound(file)
 
 
-	def sendBets(self): # Actually compare the user's chances of winning and place the bets
+	def start(self) -> None: # Actually compare the user's chances of winning and place the bets
 		uiprint = self.print
 		uiprint("Betting started. Press Ctrl + C to exit")
 
@@ -428,7 +358,7 @@ class main:
 						stop = float(input("Enter new goal: "))
 						break
 					except:
-						uiprint("Ivalid number.", "error")
+						uiprint("Invalid number.", "error")
 			elif balance < stoploss:
 				uiprint(f"Balance is below stop loss. All betting has stopped.", "bad")
 				threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
@@ -458,5 +388,6 @@ class main:
 					ws = self.Connect()
 					ws.send("40/jackpot,")
 					ws.send(f'42/jackpot,["auth","{self.auth}"]')
+
 if __name__ == "__main__":
-	main()
+	Main()

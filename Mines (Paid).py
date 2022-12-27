@@ -1,6 +1,7 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning 
 
 import cloudscraper, subprocess, threading, selenium, requests, logging, base64, json, time, os
+from bloxflip import Authorization, Mines, Currency
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from win10toast import ToastNotifier
@@ -11,7 +12,7 @@ from zipfile import *
 from sys import exit
 
 
-class main:
+class Main(Mines):
 	def __init__(self):
 		logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
 		subprocess.call('start "" "assets\config.mrc"', shell=True)
@@ -37,38 +38,24 @@ class main:
 			time.sleep(2)
 			raise e
 
-	def print(self, message="", option=None): # print the ui's text with
+	def print(self, message = "", option=None): # print the ui's text with
 		print("[ ", end="")
-		if not option:
-			cprint("AUTOBET", "magenta", end="")
-			print(" ] ", end="")
-			if message:
-				cprint(message, "magenta")
-		elif option == "error":
-			cprint("ERROR", "red", end="")
-			print(" ] ", end="")
-			if message:
-				cprint(message, "red")
-		elif option == "warning":
-			cprint("WARNING", "yellow", end="")
-			print(" ] ", end="")
-			if message:
-				cprint(message, "yellow")
-		elif option == "yellow":
-			cprint("AUTOBET", "yellow", end="")
-			print(" ] ", end="")
-			if message:
-				cprint(message, "yellow")
-		elif option == "good":
-			cprint("AUTOBET", "green", end="")
-			print(" ] ", end="")
-			if message:
-				cprint(message, "green")
-		elif option == "bad":
-			cprint("AUTOBET", "red", end="")
-			print(" ] ", end="")
-			if message:
-				cprint(message, "red")
+
+		key = {
+			None: ["AUTOBET", "magenta"],
+			"error": ["ERROR", "red"],
+			"warning": ["WARNING", "yellow"],
+			"yellow": ["AUTOBET", "yellow"],
+			"good": ["AUTOBET", "green"],
+			"bad": ["AUTBET", "bad"]
+		}
+
+		title = key[option][0]
+		color = key[option][1]
+
+		cprint(title, color, end="")
+		print(" ] ", end="")
+		cprint(message, color)
 
 	def sendwbmsg(self,url,message,title,color,content):
 		if "https://" in url:
@@ -88,52 +75,6 @@ class main:
 	def clear(self): # Clear the console
 		os.system('cls' if os.name == 'nt' else 'clear')
 
-
-	def installDriver(self, version=None):
-		uiprint = self.print
-		if not version:
-			uiprint("Installing newest chrome driver...", "warning")
-			latest_version = requests.get("https://chromedriver.storage.googleapis.com/LATEST_RELEASE").text
-		else:
-			uiprint(f"Installing version {version} chrome driver...", "warning")
-			latest_version = requests.get(f"https://chromedriver.storage.googleapis.com/LATEST_RELEASE_{version}").text
-		download = requests.get(f"https://chromedriver.storage.googleapis.com/{latest_version}/chromedriver_win32.zip")
-
-
-		
-		subprocess.call('taskkill /im "chromedriver.exe" /f')
-		try:
-			os.chmod('chromedriver.exe', 0o777)
-			os.remove("chromedriver.exe")
-		except:
-			pass
-
-
-		with open("chromedriver.zip", "wb") as zip:
-			zip.write(download.content)
-
-
-		with ZipFile("chromedriver.zip", "r") as zip:
-			zip.extract("chromedriver.exe")
-		os.remove("chromedriver.zip")
-		uiprint("Chrome driver installed.", "good")
-
-	def getBalance(self):
-		uiprint = self.print
-		balance = None
-
-		scraper = cloudscraper.create_scraper()
-		try: 
-			balance = scraper.get("https://rest-bf.blox.land/user", headers={
-						"x-auth-token": self.auth
-				}).json()["user"]["wallet"]
-		except Exception as e:
-			print(e)
-			uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
-			time.sleep(1.7)
-			os._exit(0)
-		return round(balance, 2)
-
 	def getConfig(self): # Get configuration from config.json file
 		uiprint = self.print
 		print("[", end="")
@@ -148,165 +89,103 @@ class main:
 		except:
 			uiprint("config.json file is missing. Make sure you downloaded all the files and they're all in the same folder", "error")
 
-		with open("config.json", "r+") as data:
-			config = json.load(data)
-			try:
-				self.levels = int(config["game_levels"])
-				if self.levels < 2:
-					uiprint("Levels must be above 2 to make profit.", "error")
-					time.sleep(3)
-					os._exit(0)
-			except:
-				uiprint("Invalid levels inside JSON file. Must be valid number", "error")
-				time.sleep(1.6)
+		try:
+			with open("config.json", "r+") as data:
+				config = json.load(data)
+		except json.decoder.JSONDecodeError:
+			uiprint("Invalid JSON formatting, redownload file from the github")
+
+		try:
+			self.levels = int(config["game_levels"])
+			self.minesamount = float(config["mines"])
+			self.average = int(config["games_averaged"])
+			self.auth = config["authorization"]
+			self.key = config["key"]
+			self.sound = config["play_sounds"]
+			self.webhook = config["webhook"]
+			self.betamount = float(config["bet_amount"])
+			self.maxbet =  float(config["max_betamount"])
+			self.bet = float(config["auto_bet"])
+			self.stop =  float(config["auto_stop"])
+			self.stoploss =  float(config["stop_loss"])
+			self.restart = config["auto_restart"]
+
+			if not self.betamount >= 5:
+				uiprint("Invalid bet_amount inside JSON file. Must be above 5")
+				time.sleep(3)
 				os._exit(0)
 
+			if not "https://" in self.webhook:
+				uiprint("Invalid webhook inside JSON file file. Make sure you put the https:// with it.", "warning")
+				self.webhook = None
 
-			try:
-				self.mines = float(config["mines"])
-			except Exception as e:
-				print(e)
-				uiprint(f"Invalid bet_amount inside JSON file. Must be valid number", "error")
-				time.sleep(1.6)
+			if self.levels < 2:
+				uiprint("Levels must be above 2 to make profit.", "error")
+				time.sleep(3)
 				os._exit(0)
 
-			try:
-				self.average = int(config["games_averaged"])
-				if self.average > 35:
-					uiprint("Too many games_averaged. Must be 35 or less games", "error")
-					time.sleep(3)
-					os._exit(0)
-			except:
-				uiprint("Invalid amount of games to be averaged inside JSON file. Must be valid number", "error")
-				time.sleep(1.6)
+			if self.average > 35:
+				uiprint("Too many games_averaged. Must be 35 or less games", "error")
+				time.sleep(3)
 				os._exit(0)
+		except KeyError as e:
+			uiprint(f"{k} Key is missing from JSON redownload from github", "error")
+			time.sleep(2)
+			os._exit(0)
 
+		except ValueError as e:
+			key = e.split("'")[1]
+			uiprint(f"Invalid {key} inside json")
+			time.sleep(2)
+			os._exit(0)
 
-			try:
-				self.auth = config["authorization"]
-			except:
-				uiprint("Invalid authorization inside JSON file. Enter your new authorization from BloxFlip", "error")
-				time.sleep(1.6)
-				os._exit(0)
+			
+		self.headers = {
+			"x-auth-token": self.auth
+		}
 
+		if not Authorization.validate(self.auth):
+			uiprint("Invalid Authorization!", "error")
+			time.sleep(2)
+			os._exit(0)
 
-			try:
-				self.key = config["key"]
-			except:
-				uiprint("Invalid key inside JSON file. Make sure it's a valid string", "error")
-				time.sleep(1.6)
-				os._exit(0)
+		super().__init__(self.auth)
+		self.mines = super()
 
+		if not type(self.restart) == bool:
+			uiprint("Invalid auto_restart boolean inside JSON file. Must be true or false", "error")
+			time.sleep(1.6)
+			os._exit(0)
+		self.hwid = current_machine_id = str(subprocess.check_output('wmic csproduct get uuid'), 'utf-8').split('\n')[1].strip()
 
-			try:
-				self.sound = config["play_sounds"]
-			except:
-				uiprint("Invalid play_sounds boolean inside JSON file. Must be true or false", "error")
-				time.sleep(1.6)
-				os._exit(0)
+		version = self.version
+		data = {"type": "paid"}
+		latest_release = requests.get("https://bfpredictor.repl.co/latest_release").text
+		if latest_release == version:
+			uiprint("Your version is up to date.", "good")
+		else:
+			uiprint(f"You are currently on v{version}. Please update to the newest version {latest_release}", "error")
+			time.sleep(10)
+			os._exit(0)
 
+		request = requests.get("https://bfpredictor.repl.co/mines", 
+									data={
+										"key": self.key,
+										"hwid": self.hwid
+									}
+								)
 
-			try:
-				self.webhook = config["webhook"]
-				if not "https://" in self.webhook:
-					uiprint("Invalid webhook inside JSON file file. Make sure you put the https:// with it.", "warning")
-					self.webhook = None
-			except:
-				uiprint("Invalid webhook boolean inside JSON file. Make sure it's a valid string", "error")
-				time.sleep(1.6)
-				os._exit(0)
-
-			try:
-				self.betamount = float(config["bet_amount"])
-				if not self.betamount >= 5:
-					uiprint("Invalid bet_amount inside JSON file. Must be above 5")
-					time.sleep(3)
-					os._exit(0)
-			except Exception as e:
-				print(e)
-				uiprint(f"Invalid bet_amount inside JSON file. Must be valid number", "error")
-				time.sleep(1.6)
-				os._exit(0)
-
-
-			try:
-				self.maxbet =  float(config["max_betamount"])
-			except:
-				uiprint("Invalid max_betamount amount inside JSON file. Must be a valid number", "error")
-				time.sleep(1.6)
-				os._exit(0)
-
-
-			try:
-				self.bet = float(config["auto_bet"])
-			except:
-				uiprint("Invalid bet inside JSON file. Must be true or false", "error")
-				time.sleep(1.6)
-				os._exit(0)
-
-
-			try:
-				self.stop =  float(config["auto_stop"])
-			except:
-				uiprint("Invalid auto_stop amount inside JSON file. Must be a valid number", "error")
-				time.sleep(1.6)
-				os._exit(0)
-
-
-			try:
-				self.stoploss =  float(config["stop_loss"])
-			except:
-				uiprint("Invalid auto stop_loss inside JSON file. Must be a valid number", "error")
-				time.sleep(1.6)
-				os._exit(0)
-
-
-			try:
-				self.restart = config["auto_restart"]
-			except:
-				uiprint("Invalid auto_restart boolean inside JSON file. Must be true or false", "error")
-				time.sleep(1.6)
-				os._exit(0)
-
-			headers = {
-							"x-auth-token": self.auth
-						}
-
-
-			if not type(self.restart) == bool:
-				uiprint("Invalid auto_restart boolean inside JSON file. Must be true or false", "error")
-				time.sleep(1.6)
-				os._exit(0)
-			self.hwid = current_machine_id = str(subprocess.check_output('wmic csproduct get uuid'), 'utf-8').split('\n')[1].strip()
-
-			version = self.version
-			data = {"type": "paid"}
-			latest_release = requests.get("https://bfpredictor.repl.co/latest_release").text
-			if latest_release == version:
-				uiprint("Your version is up to date.", "good")
-			else:
-				uiprint(f"You are currently on v{version}. Please update to the newest version {latest_release}", "error")
-				time.sleep(10)
-				os._exit(0)
-
-			request = requests.get("https://bfpredictor.repl.co/mines", 
-										data={
-											"key": self.key,
-											"hwid": self.hwid
-										}
-									)
-
-			if request.status_code == 403:
-				uiprint("Invalid key! To buy a valid key create a ticket on the discord. https://discord.gg/HhwNFRaC", "error")
-				input("Press enter to exit >> ")
-				os._exit(0)
+		if request.status_code == 403:
+			uiprint("Invalid key! To buy a valid key create a ticket on the discord. https://discord.gg/HhwNFRaC", "error")
+			input("Press enter to exit >> ")
+			os._exit(0)
 
 
 	def playsounds(self, file):
 		if self.sound:
 			playsound(file)
 
-	def TowerGames(self):
+	def tower_games(self):
 		average = self.average
 		history = None
 		uiprint = self.print
@@ -337,12 +216,13 @@ class main:
 		uiprint("Betting started. Press Ctrl + C to exit")
 
 		sendwebhookmsg = self.sendwbmsg
+		minesamount = self.minesamount
 		playsounds = self.playsounds
-		getBalance = self.getBalance
 		betamount = self.betamount
 		stoploss = self.stoploss
 		average = self.average
 		restart = self.restart
+		headers = self.headers
 		webhook = self.webhook
 		levels = self.levels
 		maxbet = self.maxbet
@@ -357,18 +237,14 @@ class main:
 
 
 		scraper = cloudscraper.create_scraper()
-		oldbalance = getBalance()
-		balance = getBalance()
-
-		headers = {
-					"x-auth-token": auth,
-				}
-		
+		oldbalance = Currency.balance(auth)
+		balance = oldbalance
+	
 
 
 		while True:
 			uiprint("Game Starting...")
-			balance = self.getBalance()
+			balance = Currency.balance(auth)
 
 			accuracy = None
 			
@@ -400,13 +276,7 @@ class main:
 					except:
 						pass
 				
-			except ValueError:
-				uiprint(f"No data for accuracy calculations", "error")
-			except TypeError:
-				uiprint(f"No data for accuracy calculations", "error")
-			except UnboundLocalError:
-				uiprint(f"No data for accuracy calculations", "error")
-			except NameError:
+			except (ValueError, TypeError, UnboundLocalError, NameError):
 				uiprint(f"No data for accuracy calculations", "error")
 
 
@@ -450,7 +320,7 @@ class main:
 						stop = float(input("Enter new goal: "))
 						break
 					except:
-						uiprint("Ivalid number.", "error")
+						uiprint("Invalid number.", "error")
 			elif balance < stoploss:
 				uiprint(f"Balance is below stop loss. All betting has stopped.", "bad")
 				threading.Thread(target=playsounds, args=('Assets\Loss.mp3',)).start()
@@ -483,28 +353,12 @@ class main:
 				betamount = self.betamount
  
 
-			balance = getBalance()
-			response = scraper.post("https://rest-bf.blox.land/games/mines/create", 
-								headers=headers, 
-								json={
-									"betAmount": betamount,
-									"mines": mines
-								}
-						)
+			balance = Currency.balance(auth)
+			try:
+				mines.create(betamount, minesamount)
+			except Exception as e:
+				uiprint(e, "error")
 
-
-			if not response.status_code == 200:
-				uiprint("Failed to place bet.", "error")
-				try:
-					response.json()
-				except:
-					uiprint("Network error.", "error")
-					continue
-				if response.json()["msg"] == "You already have an active mines game!":
-					uiprint("You already have a active mines game! end it then try again")
-					time.sleep(5)
-					os._exit(0)
-				continue
 			uiprint(f"Placing bet with {betamount} Robux")
 			
 
@@ -516,9 +370,7 @@ class main:
 											data={
 												"key": key,
 												"hwid": self.hwid
-											}, headers={
-												"auth": self.auth
-											}
+											}, headers=headers
 										)
 
 					if request.status_code == 403:
@@ -535,67 +387,33 @@ class main:
 						uiprint("Internal server error. Trying again 1.5 seconds...", "error")
 						time.sleep(1.5)
 				uiprint(f"Choosing button number {choice+1}")
-				response = scraper.post("https://rest-bf.blox.land/games/mines/action", 
-								headers=headers,
-								json={
-									"cashout": False,
-									"mine": choice
-								}
-						)
-				
-
-				if not response.status_code == 200:
-					try:
-						response.json()
-					except:
-						print(response.text)
-						
-					if response.json()["msg"] == "You do not have an active mines game!":
-						exploded = True
-						break
-				
-				time.sleep(0.3)
-
 				try:
-					response.json()["exploded"]
-				except:
-					exploded = True
+					exploded = not mines.choose(choice)
+				except Exception as e:
+					uiprint(e, "error")
 					break
 
-				if response.json()["exploded"] == True:
-					exploded = True
+				if exploded:
 					break
 
 				uiprint(f"Successfully passed level {level+1}", "good")
 
 			if exploded:
-					uiprint("Mine exploded!", "bad")
-					continue					
+				uiprint("Mine exploded!", "bad")
+				continue					
 			
 
 
 			if webhook:
 				sendwebhookmsg(self.webhook, f"Betting {betamount} Robux\n{round(balance-betamount,2)} Robux Left", f"Betting {betamount} Robux ", 0x903cde, f"")
-			response = scraper.post("https://rest-bf.blox.land/games/mines/action", 
-								headers=headers,
-								json={
-									"cashout": True,
-
-								}
-						)
-			while not response.status_code == 200:
-					uiprint("Failed to cashout trying again in 1.5 seconds...")
-					time.sleep(1.5)
-
-					response = scraper.post("https://rest-bf.blox.land/games/mines/action", 
-								headers=headers,
-								json={
-									"cashout": True,
-
-								}
-						)
+			while True:
+				try:
+					mines.cashout()
+					break
+				except Exception as e:
+					uiprint(e, "red")
 
 			time.sleep(1.5)
 
 if __name__ == "__main__":
-	main()
+	Main()
