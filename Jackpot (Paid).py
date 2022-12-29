@@ -1,7 +1,7 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning 
 
 import cloudscraper, subprocess, selenium, threading, websocket, requests, random, logging, base64, json, time, ssl, os
-from bloxflip import Authorization, Currency
+from bloxflip import Authorization, Jackpot, Currency
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -15,7 +15,7 @@ from zipfile import *
 from sys import exit
 
 
-class Main:
+class Main(Jackpot):
 	def __init__(self):
 		logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
 		subprocess.call('start "" "assets\config.mrc"', shell=True)
@@ -76,59 +76,6 @@ class Main:
 		os.system('cls' if os.name == 'nt' else 'clear')
 
 
-	def getBalance(self):
-		uiprint = self.print
-		balance = None
-
-		scraper = cloudscraper.create_scraper()
-		try: 
-			balance = scraper.get("https://rest-bf.blox.land/user", headers={
-						"x-auth-token": self.auth
-				}).json()["user"]["wallet"]
-		except Exception as e:
-			uiprint("Invalid authorization. Make sure you copied it correctly, and for more info check the github", "bad")
-			time.sleep(1.7)
-			os._exit(0)
-		return round(balance, 2)
-
-
-	def updateBetAmount(self, amount):
-		browser = self.browser
-		uiprint = self.print
-		try:
-			element = browser.find_elements(By.CSS_SELECTOR, 'input.input_input__uGeT_.input_inputWithCurrency__sAiOQ')[0]
-		except IndexError:
-			uiprint("Blocked by ddos protection sove the captcha to continue")
-			while True:
-				try:
-					element = browser.find_elements(By.CSS_SELECTOR, 'input.input_input__uGeT_.input_inputWithCurrency__sAiOQ')[0]
-					break
-				except IndexError:
-					pass
-
-		for _ in range(10):
-			element.send_keys(f"{Keys.BACKSPACE}")
-		element.send_keys(f"{amount}")
-
-	def updateMultiplier(self, multiplier):
-		browser = self.browser
-		uiprint = self.print
-		try:
-			element = browser.find_elements(By.CSS_SELECTOR, '.input_input__uGeT_')[1]
-		except IndexError:
-			uiprint("Blocked by ddos protection sove the captcha to continue")
-			while True:
-				try:
-					element = browser.find_elements(By.CSS_SELECTOR, '.input_input__uGeT_')[1]
-					break
-				except IndexError:
-					pass
-		time.sleep(0.2)
-		for _ in range(10):
-			element.send_keys(f"{Keys.BACKSPACE}")
-		element.send_keys(f"{multiplier}")
-
-
 	def Connect(self):
 		return create_connection("wss://ws.bloxflip.com/socket.io/?EIO=3&transport=websocket",
 								suppress_origin=True, 
@@ -147,8 +94,7 @@ class Main:
 										"Sec-Fetch-Site": "cross-site",
 										"Pragma": "no-cache",
 										"Cache-Control": "no-cache",
-										"Upgrade": "websocket",
-										"x-auth-token": self.auth
+										"Upgrade": "websocket"
 				}
 			)
 
@@ -216,18 +162,24 @@ class Main:
 				"x-auth-token": self.auth
 			}
 
+			super().__init__(self.auth)
+			self.jackpot = super()
+
 			if not Authorization.validate(self.auth):
 				uiprint("Invalid Authorization!", "error")
 				time.sleep(2)
 				os._exit(0)
 
 			max_retry = 5
+			jackpot = self.jackpot
 			while True:
 				max_retry -= 1
 				try:
-					self.ws = self.Connect()
+					websocket = jackpot.Websocket()
+					websocket.connect()
 					break
 				except Exception as e:
+					print(e)
 					uiprint(f"Failed to connect to webserver. Retrying in 1.5 seconds, {max_retry} tries left.", "error")
 					if max_retry <= 0:
 							uiprint("Too many attempts, try again later.", "errors")
@@ -235,46 +187,7 @@ class Main:
 							os._exit(0)
 					time.sleep(1.5)
 
-			ws = self.ws
-			ws.send("40/jackpot,")
-			ws.send(f'42/jackpot,["auth","{self.auth}"]')
-
-
-	def Jackpots(self):
-		history = None
-		reset = False
-		uiprint = self.print
-		snipe = self.snipe
-		sent = False
-
-		scraper = cloudscraper.create_scraper()
-
-		while True:
-			try:
-				current = scraper.get("https://api.bloxflip.com/games/jackpot", headers={
-						"x-auth-token": self.auth
-					})
-				elapsed = current.elapsed.total_seconds()
-				current = current.json()["current"]
-			except Exception as e:
-				print(e)
-
-			if len(current["players"]) == 2:
-				uiprint("Game starting!...", "yellow")
-				reset = True
-				start = time.time()
-				timeleft = 30 - (time.time()-start) - elapsed
-				time.sleep(timeleft-snipe)
-
-				current = scraper.get("https://api.bloxflip.com/games/jackpot", headers={
-						"x-auth-token": self.auth
-					}).json()["current"]
-					
-				if sum([player["betAmount"] for player in current["players"]]) >= 20:
-					history = current["_id"]
-					
-					yield sum([player["betAmount"] for player in current["players"]])
-				time.sleep(0.01)
+			self.websocket = websocket
 
 	def playsounds(self, file: str) -> None:
 		if self.sound:
@@ -288,32 +201,36 @@ class Main:
 		disablePredictor = self.disablePredictor
 		sendwebhookmsg = self.sendwbmsg
 		playsounds = self.playsounds
+		websocket = self.websocket
 		stoploss = self.stoploss
 		restart = self.restart
 		webhook = self.webhook
 		headers = self.headers
+		jackpot = self.jackpot
 		chance = self.chance
 		maxbet = self.maxbet
+		snipe = self.snipe
 		stop = self.stop
 		lastgame = None
+		auth = self.auth
 		bet = self.bet
 		key = self.key
-		ws = self.ws
 		winning = 0
 		losing = 0
 		pause = True
 
 		scraper = cloudscraper.create_scraper()	
 
-		for pot in self.Jackpots():
+		for pot in jackpot.sniper(snipe_at=snipe):
 			uiprint("Game Starting...")
-			uiprint(f"Pot value: {pot}")
-			balance = self.getBalance()
+
+			uiprint(f"Pot value: {pot.value}")
+			balance = Currency.balance(auth)
 
 			while True:
 				request = scraper.get("https://bfpredictor.repl.co/jackpot", 
 										data={"key": key,
-											  "value": pot,
+											  "value": pot.value,
 											  "hwid": self.hwid,
 											  "chance": chance
 										}
@@ -381,13 +298,11 @@ class Main:
 					sendwebhookmsg(self.webhook, f"Betting {betamount} Robux with a {chance}% chance of winning\n{round(balance-betamount,2)} Robux Left", f"Betting {betamount} Robux ", 0x903cde, f"")
 
 				try:
-					json = str({"betAmount":betamount}).replace("'", '"').replace(" ", "")
-					ws.send(f'42/jackpot,["join-game",{str(json)}]')
+					websocket.join()
 				except Exception as e:
 					uiprint("Failed to join jackpot game! Reconnecting to server...", "error")
-					ws = self.Connect()
-					ws.send("40/jackpot,")
-					ws.send(f'42/jackpot,["auth","{self.auth}"]')
+					websocket = jackpot.Websocket()
+					websocket.connect()
 
 if __name__ == "__main__":
 	Main()
