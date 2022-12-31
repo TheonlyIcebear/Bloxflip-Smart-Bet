@@ -75,6 +75,55 @@ class Main(Crash):
 	def clear(self) -> None: # Clear the console
 		os.system('cls' if os.name == 'nt' else 'clear')
 
+	def install_driver(self, version: str = None) -> None:
+		uiprint = self.print
+		if not version:
+			uiprint("Installing newest chrome driver...", "warning")
+			latest_version = requests.get("https://chromedriver.storage.googleapis.com/LATEST_RELEASE").text
+		else:
+			uiprint(f"Installing version {version} chrome driver...", "warning")
+			latest_version = requests.get(f"https://chromedriver.storage.googleapis.com/LATEST_RELEASE_{version}").text
+		download = requests.get(f"https://chromedriver.storage.googleapis.com/{latest_version}/chromedriver_win32.zip")
+
+
+
+		subprocess.call('taskkill /im "chromedriver.exe" /f')
+		try:
+			os.chmod('chromedriver.exe', 0o777)
+			os.remove("chromedriver.exe")
+		except:
+			pass
+		with open("chromedriver.zip", "wb") as zip:
+			zip.write(download.content)
+		with ZipFile("chromedriver.zip", "r") as zip:
+			zip.extract("chromedriver.exe")
+
+
+		os.remove("chromedriver.zip")
+		uiprint("Chrome driver installed.", "good")
+
+		options = webdriver.ChromeOptions()
+		options.add_argument(f'user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36')
+		options.add_argument('--disable-extensions')
+		options.add_argument('--profile-directory=Default')
+		options.add_argument("--incognito")
+		options.add_argument("--disable-plugins-discovery")
+		options.add_experimental_option("excludeSwitches", ["enable-automation", 'enable-logging'])
+		options.add_experimental_option('useAutomationExtension', False)		
+		try:
+			self.browser = webdriver.Chrome("chromedriver.exe", options=options)
+		except selenium.common.exceptions.SessionNotCreatedException as e:
+			try:
+				print(e)
+				self.installDriver(103)
+				self.browser = webdriver.Chrome("chromedriver.exe", options=options)
+			except:
+				uiprint("Chromedriver version not compatible with current chrome version installed. Update your chrome to continue.", "error")
+				uiprint("If your not sure how to update just uninstall then reinstall chrome", "yellow")
+				time.sleep(5)
+				os._exit(0)
+
+
 	def setup(self) -> None: # Get configuration from config.json file
 		uiprint = self.print
 		print("[", end="")
@@ -170,6 +219,7 @@ class Main(Crash):
 		self.crash = super()
 
 		max_retry = 5
+		crash = self.crash
 		while True:
 			max_retry -= 1
 			try:
