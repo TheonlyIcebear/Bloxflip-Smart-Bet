@@ -47,7 +47,7 @@ class Main(Jackpot):
 			"warning": ["WARNING", "yellow"],
 			"yellow": ["AUTOBET", "yellow"],
 			"good": ["AUTOBET", "green"],
-			"bad": ["AUTBET", "bad"]
+			"bad": ["AUTBET", "red"]
 		}
 
 		title = key[option][0]

@@ -47,7 +47,7 @@ class Main(Crash):
 			"warning": ["WARNING", "yellow"],
 			"yellow": ["AUTOBET", "yellow"],
 			"good": ["AUTOBET", "green"],
-			"bad": ["AUTBET", "bad"]
+			"bad": ["AUTBET", "red"]
 		}
 
 		title = key[option][0]
@@ -255,6 +255,7 @@ class Main(Crash):
 		self.crash = super()
 
 		max_retry = 5
+		crash = self.crash
 		while True:
 			max_retry -= 1
 			try:
@@ -502,7 +503,7 @@ class Main(Crash):
 
 				time.sleep(3)
 
-				if not self._based:
+				if not self.selenium_based:
 					try:
 						websocket.join(betamount=betamount, multiplier=prediction)
 					except Exception as e:

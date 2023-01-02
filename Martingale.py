@@ -47,7 +47,7 @@ class Main(Crash):
 			"warning": ["WARNING", "yellow"],
 			"yellow": ["AUTOBET", "yellow"],
 			"good": ["AUTOBET", "green"],
-			"bad": ["AUTBET", "bad"]
+			"bad": ["AUTBET", "red"]
 		}
 
 		title = key[option][0]
@@ -294,6 +294,10 @@ class Main(Crash):
 			browser = self.browser
 		else:
 			websocket = self.websocket
+
+		games = scraper.get("https://api.bloxflip.com/games/crash").json()
+
+		print(games, crash.history)
 
 		for games in crash.crashpoints():
 			uiprint("Game Starting...")
