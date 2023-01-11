@@ -18,7 +18,6 @@ from sys import exit
 class Main(Jackpot):
 	def __init__(self):
 		logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
-		subprocess.call('start "" "assets\config.mrc"', shell=True)
 		self.crashPoints = None
 		self.multiplier = 0
 		self.version = "1.3.3"
