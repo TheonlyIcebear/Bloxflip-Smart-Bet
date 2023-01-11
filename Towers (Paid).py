@@ -16,7 +16,6 @@ from sys import exit
 class Main(Towers):
 	def __init__(self) -> None:
 		logging.basicConfig(filename="errors.txt", level=logging.DEBUG)
-		subprocess.call('start "" "assets\config.mrc"', shell=True)
 		self.crashPoints = None
 		self.multiplier = 0
 		self.version = "1.3.3"
