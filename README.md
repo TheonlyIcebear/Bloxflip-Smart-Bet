@@ -1,5 +1,5 @@
 # Bloxflip Smart Bet 🧠
-**Join the discord and create a ticket if you wan't help with a bug**: https://discord.gg/hnDGeAZUfe <br>
+**Join the discord and create a ticket if you wan't help with a bug**: https://discord.gg/AkfwmyBk <br>
 **You can message me at**: Ice Bear#3333
 
 A program that uses strategies and probability maths to choose the best times to bet on BloxFlip's crash gamemode https://bloxflip.com/a/IceBear. <br>
