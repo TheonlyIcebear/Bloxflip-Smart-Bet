@@ -343,6 +343,7 @@ class Main(Crash):
 			uiprint(f"Average Crashpoint: {avg}")
 
 
+			print(games)
 			for game in games:
 				if game > 2:
 					streak[0] += 1
@@ -410,6 +411,45 @@ class Main(Crash):
 				games[0]
 			except:
 				continue
+
+			if not disablePredictor:
+				chance = 1
+				for game in games[2:]:
+					chance *= (1 - (1/33 + (32/33)*(.01 + .99*(1 - 1/game))))
+
+				while True:
+					request = requests.get("https://bfpredictor.repl.co/multiplier", 
+											data={"key": key, 
+												  "average": avg,
+												  "multiplier": self.multiplier, 
+												  "hwid": self.hwid,
+												  "chance": chance
+											}, headers=headers
+										)
+
+					if request.status_code == 403:
+						uiprint("Invalid key! To buy a valid key create a ticket on the discord. https://discord.gg/blox", "error")
+						input("Press enter to exit >> ")
+	
+						exit()
+					elif request.status_code == 500:
+						uiprint("Internal server error. Trying again 1.5 seconds...", "error")
+						time.sleep(1.5)
+					elif request.status_code == 200:
+						prediction = round(float(request.text), 2)
+						break
+					else:
+						uiprint("Internal server error. Trying again 1.5 seconds...", "error")
+						time.sleep(1.5)
+
+				if prediction < 2:
+					uiprint(f"Game will likely crash around {prediction}. Ignoring and betting on 2 to ensure profit.")
+					prediction = 2
+
+
+				uiprint(f"Setting multiplier to {prediction}", "yellow")
+				if selenium_based:
+					self.updateMultiplier(prediction)
 			
 			if balance < betamount:
 				uiprint("You don't have enough robux to continue betting.", "error")
