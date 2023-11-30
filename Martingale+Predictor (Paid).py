@@ -1,6 +1,6 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning 
 
-import cloudscraper, subprocess, selenium, threading, websocket, requests, random, logging, base64, json, time, uuid, ssl, re, os
+import cloudscraper, numpy as np, subprocess, selenium, threading, websocket, requests, random, logging, base64, json, time, uuid, ssl, re, os
 from bloxflip import Authorization, Crash, Currency
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -334,8 +334,9 @@ class Main(Crash):
 			uiprint("Game Starting...")
 			balance = Currency.balance(auth)
 
-			games = [game.crashpoint for game in games]
-			avg = sum(games[-3:])/len(games[-3:])
+			games = np.array([game.crashpoint for game in games])
+
+			avg = len(games[-4:]) / np.sum(1/games)
 			lastgame = games[0]
 			accuracy = None
 			
@@ -343,12 +344,9 @@ class Main(Crash):
 			uiprint(f"Average Crashpoint: {avg}")
 
 
-			print(games)
-			for game in games:
-				if game > 2:
-					streak[0] += 1
-				else:
-					streak[1] += 1
+			games_sum = np.sum((games > 2) * 1) - np.sum((games < 1) * 1)
+
+			streak = games_sum + 1 >= 0
 
 			try:
 				if not failed:
@@ -371,7 +369,6 @@ class Main(Crash):
 						except:
 							pass
 					else:
-						print(martingale, pause)
 						if martingale and not pause:
 							betamount *= 2
 							uiprint(f"Lost previous game. Increasing bet amount to {betamount}", "bad")
