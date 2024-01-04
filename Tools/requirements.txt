@@ -1,0 +1,9 @@
+termcolor >= 1.1.0
+PyAutoGUI >= 0.9.53
+requests >= 2.27.1
+playsound == 1.2.2
+win10toast >= 0.9
+discord-webhook >= 0.16.3
+cloudscraper >= 1.2.60
+Pillow >= 9.2.0
+opencv-python >= 4.6.0.66

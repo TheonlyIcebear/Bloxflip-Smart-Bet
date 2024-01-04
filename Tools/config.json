@@ -1,0 +1,8 @@
+{
+	"minimum_amount": 500,
+	"auto_join": true,
+	"webhook_enabled": true,
+	"webhook": "https://discord.com/api/webhooks/xxxxxxxxxxx/xxxxxxxxxxxxxxxxxxxxx",
+	"webhook_ping": "<@1234567890>",
+	"notifications_enabled": true
+}
