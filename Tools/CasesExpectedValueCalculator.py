@@ -64,7 +64,7 @@ while True:
 			e += (value-price) * chance
 
 	uiprint(f"If it says you'll lose negative robux that means you'll make profit", "warning")
-	uiprint(f"In {games} games expect to lose R$ {round(e, 2)*-1}")
+	uiprint(f"In {games} games it's most likely that you'll to lose R$ {round(e, 2)*-1}")
 	print("Press enter to retry")
 	input(">> ")
 	os.system("cls")

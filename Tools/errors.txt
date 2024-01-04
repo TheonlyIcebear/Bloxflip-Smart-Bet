@@ -1,0 +1,21 @@
+ERROR:root:A error has occured at 22:26:49 10
+Traceback (most recent call last):
+  File "C:\Users\ekila\Downloads\Smart Auto Bet\Personal\BF SmartBet - Patch 3\Tools\AutoRain.py", line 20, in __init__
+    self.JoinRains()
+  File "C:\Users\ekila\Downloads\Smart Auto Bet\Personal\BF SmartBet - Patch 3\Tools\AutoRain.py", line 247, in JoinRains
+    start = pyautogui.locateCenterOnScreen('assets/Join.png', confidence = 0.7)
+  File "C:\Users\ekila\AppData\Local\Programs\Python\Python310\lib\site-packages\pyautogui\__init__.py", line 175, in wrapper
+    return wrappedFunction(*args, **kwargs)
+  File "C:\Users\ekila\AppData\Local\Programs\Python\Python310\lib\site-packages\pyautogui\__init__.py", line 207, in locateCenterOnScreen
+    return pyscreeze.locateCenterOnScreen(*args, **kwargs)
+  File "C:\Users\ekila\AppData\Local\Programs\Python\Python310\lib\site-packages\pyscreeze\__init__.py", line 413, in locateCenterOnScreen
+    coords = locateOnScreen(image, **kwargs)
+  File "C:\Users\ekila\AppData\Local\Programs\Python\Python310\lib\site-packages\pyscreeze\__init__.py", line 373, in locateOnScreen
+    retVal = locate(image, screenshotIm, **kwargs)
+  File "C:\Users\ekila\AppData\Local\Programs\Python\Python310\lib\site-packages\pyscreeze\__init__.py", line 353, in locate
+    points = tuple(locateAll(needleImage, haystackImage, **kwargs))
+  File "C:\Users\ekila\AppData\Local\Programs\Python\Python310\lib\site-packages\pyscreeze\__init__.py", line 253, in _locateAll_python
+    raise NotImplementedError('The confidence keyword argument is only available if OpenCV is installed.')
+NotImplementedError: The confidence keyword argument is only available if OpenCV is installed.
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): rest-bf.blox.land:443
+DEBUG:urllib3.connectionpool:https://rest-bf.blox.land:443 "GET /chat/history HTTP/1.1" 200 None

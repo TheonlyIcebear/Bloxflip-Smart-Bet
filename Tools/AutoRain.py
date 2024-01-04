@@ -158,14 +158,6 @@ class main:
 				time.sleep(1.6)
 				exit()
 
-			try:
-				self.autojoin = config["auto_join"]
-			except:
-				uiprint("Invalid minimum_amount boolean inside JSON file. Must a valid number", "error")
-				time.sleep(1.6)
-				exit()
-
-
 		print("[", end="")
 		cprint(base64.b64decode(b'IENSRURJVFMg').decode('utf-8'), "cyan", end="")
 		print("] ", end="")
@@ -196,9 +188,9 @@ class main:
 					convert = (getduration/(1000*60))%60
 					duration = (int(convert))
 					waiting = (convert*60+10)
-					grabprize = float(check['prize'])
-					prize = (format(int(round(grabprize)),","))
-					if float(grabprize) >= minimum_amount:
+					grabprize = str(check['prize'])[:-2]
+					prize = (format(int(grabprize),","))
+					if float(prize.replace(',', "")) >= minimum_amount:
 						yield check
 					time.sleep(waiting)
 			except Exception as e:
@@ -211,7 +203,6 @@ class main:
 	def JoinRains(self):
 		webhook_enabled = self.webhook_enabled
 		notifications = self.notifications
-		autojoin = self.autojoin
 		webhook = self.webhook
 		uiprint = self.print
 
@@ -235,7 +226,7 @@ class main:
 			uiprint(f"Host: {host}", "yellow")
 			uiprint(f"Timestamp: {sent}", "yellow")
 			if notifications: 
-				ToastNotifier().show_toast("Bloxflip Rain!", f"Rain amount: {prize} R$\nExpiration: {duration} minutes\nHost: {host}\n\n", icon_path="assets/Bloxflip.ico", duration=10)
+				ToastNotifier().show_toast("Bloxflip Rain!", f"Rain amount: {prize} R$\nExpiration: {duration} minutes\nHost: {host}\n\n", icon_path="logo.ico", duration=10)
 
 			userid = requests.get(f"https://api.roblox.com/users/get-by-username?username={host}").json()['Id']
 			thumburl = (f"https://www.roblox.com/headshot-thumbnail/image?userId={userid}&height=50&width=50&format=png")
@@ -252,22 +243,20 @@ class main:
 					webhook.remove_embed(0)
 				except:
 					pass
-
-			if autojoin:
-				uiprint("Joining rain...")
+			uiprint("Joining rain...")
+			start = pyautogui.locateCenterOnScreen('assets/Join.png', confidence = 0.7)
+			if not start:
+				uiprint("Join rain button not found. Opening bloxflip now...", "warning")
+				subprocess.call("start https://bloxflip.com",shell=True)
+				time.sleep(5)
 				start = pyautogui.locateCenterOnScreen('assets/Join.png', confidence = 0.7)
-				if not start:
-					uiprint("Join rain button not found. Opening bloxflip now...", "warning")
-					subprocess.call("start https://bloxflip.com",shell=True)
-					time.sleep(3)
-					start = pyautogui.locateCenterOnScreen('assets/Join.png', confidence = 0.7)
-				if start:
-					pyautogui.moveTo(*start,0.5)
-					pyautogui.click()
-					pyautogui.moveTo(700,700, 5)
-					uiprint("Joined rain successfully!", "good")
-				else:
-					uiprint("Failed to locate button even after site opened.", "error")
+			if start:
+				pyautogui.moveTo(*start,0.5)
+				pyautogui.click()
+				pyautogui.moveTo(700,700, 5)
+				uiprint("Joined rain successfully!", "good")
+			else:
+				uiprint("Failed to locate button even after site opened.", "error")
 
 
 if __name__ == "__main__":
