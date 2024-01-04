@@ -1,1 +1,21 @@
-
+{
+	"multiplier": 2.5,
+	"game_levels": 5,
+	"mines": 10,
+	"games_averaged": 5,
+	"bet_amount":5,
+	"chanceof_winning": 55,
+	"snipe_at": 0.07,
+	"auto_bet": true,
+	"martingale": true,
+	"skip_losing_streaks": true,
+	"play_sounds": false,
+	"predict_crash": true,
+	"webhook": "https://discord.com/api/webhooks/",
+	"max_betamount": 512,
+	"auto_stop": 2000,
+	"stop_loss": 0,
+	"auto_restart": true,
+	"key": "",
+	"authorization": ""
+}
