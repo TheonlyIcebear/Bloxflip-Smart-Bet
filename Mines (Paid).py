@@ -159,7 +159,7 @@ class Main(Mines):
 
 		version = self.version
 		data = {"type": "paid"}
-		latest_release = requests.get("https://bfpredictor.repl.co/latest_release").text
+		latest_release = requests.get("https://bfpredictor.pythonanywhere.com/latest_release").text
 		if latest_release == version:
 			uiprint("Your version is up to date.", "good")
 		else:
@@ -167,7 +167,7 @@ class Main(Mines):
 			time.sleep(10)
 			os._exit(0)
 
-		request = requests.get("https://bfpredictor.repl.co/mines", 
+		request = requests.get("https://bfpredictor.pythonanywhere.com/mines", 
 									data={
 										"key": self.key,
 										"hwid": self.hwid
@@ -365,7 +365,7 @@ class Main(Mines):
 			exploded = False
 			for level in range(levels):
 				while True:
-					request = requests.get("https://bfpredictor.repl.co/mines", 
+					request = requests.get("https://bfpredictor.pythonanywhere.com/mines", 
 											data={
 												"key": key,
 												"hwid": self.hwid

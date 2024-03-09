@@ -149,7 +149,7 @@ class Main(Jackpot):
 			self.hwid = current_machine_id = str(subprocess.check_output('wmic csproduct get uuid'), 'utf-8').split('\n')[1].strip()
 
 			version = self.version
-			latest_release = requests.get("https://bfpredictor.repl.co/latest_release").text
+			latest_release = requests.get("https://bfpredictor.pythonanywhere.com/latest_release").text
 			if latest_release == version:
 				uiprint("Your version is up to date.", "good")
 			else:
@@ -227,7 +227,7 @@ class Main(Jackpot):
 			balance = Currency.balance(auth)
 
 			while True:
-				request = scraper.get("https://bfpredictor.repl.co/jackpot", 
+				request = scraper.get("https://bfpredictor.pythonanywhere.com/jackpot", 
 										data={"key": key,
 											  "value": pot.value,
 											  "hwid": self.hwid,

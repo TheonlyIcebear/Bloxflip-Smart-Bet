@@ -1,10 +1,11 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning 
 
-import cloudscraper, numpy as np, subprocess, selenium, threading, websocket, requests, random, logging, base64, json, time, uuid, ssl, re, os
+import cloudscraper, numpy as np, subprocess, selenium, threading, websocket, requests, shutil, random, logging, base64, json, time, uuid, ssl, re, os
 from bloxflip import Authorization, Crash, Currency
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from websocket import create_connection
+import undetected_chromedriver as uc
 from win10toast import ToastNotifier
 from playsound import playsound
 from selenium import webdriver
@@ -110,19 +111,20 @@ class Main(Crash):
 			element.send_keys(f"{Keys.BACKSPACE}")
 		element.send_keys(f"{multiplier}")
 
-	def install_driver(self, version: str = None) -> None:
+	def install_driver(self, version: str = None, reinstall: bool = False) -> None:
 		uiprint = self.print
 		if not version:
 			uiprint("Installing newest chrome driver...", "warning")
-			latest_version = requests.get("https://chromedriver.storage.googleapis.com/LATEST_RELEASE").text
+			latest_version = requests.get("https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_STABLE").text
 		else:
 			uiprint(f"Installing version {version} chrome driver...", "warning")
-			latest_version = requests.get(f"https://chromedriver.storage.googleapis.com/LATEST_RELEASE_{version}").text
-		download = requests.get(f"https://chromedriver.storage.googleapis.com/{latest_version}/chromedriver_win32.zip")
+			latest_version = requests.get(f"https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_{version}").text
+		download = requests.get(f"https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/{latest_version}/win64/chromedriver-win64.zip")
 
 
+		if not reinstall:
+			subprocess.call('taskkill /im "chromedriver.exe" /f')
 
-		subprocess.call('taskkill /im "chromedriver.exe" /f')
 		try:
 			os.chmod('chromedriver.exe', 0o777)
 			os.remove("chromedriver.exe")
@@ -131,27 +133,37 @@ class Main(Crash):
 		with open("chromedriver.zip", "wb") as zip:
 			zip.write(download.content)
 		with ZipFile("chromedriver.zip", "r") as zip:
-			zip.extract("chromedriver.exe")
+			zip.extract('chromedriver-win64/chromedriver.exe')
 
+		shutil.move('chromedriver-win64\\chromedriver.exe', 'chromedriver.exe')
 
 		os.remove("chromedriver.zip")
 		uiprint("Chrome driver installed.", "good")
 
-		options = webdriver.ChromeOptions()
-		options.add_argument(f'user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36')
-		options.add_argument('--disable-extensions')
-		options.add_argument('--profile-directory=Default')
-		options.add_argument("--incognito")
-		options.add_argument("--disable-plugins-discovery")
-		options.add_experimental_option("excludeSwitches", ["enable-automation", 'enable-logging'])
-		options.add_experimental_option('useAutomationExtension', False)		
+		if reinstall:
+			return
+
+		options = uc.ChromeOptions()
+		uc.install(
+			executable_path='chromedriver.exe',
+		)
+
+		# options.add_argument(f'user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36')
+		# options.add_argument('--disable-extensions')
+		# options.add_argument('--profile-directory=Default')
+		# options.add_argument("--incognito")
+		# options.add_argument('--headless')
+		# options.add_argument('--disable-gpu')
+		# options.add_argument("--disable-plugins-discovery")
+		# options.add_experimental_option("excludeSwitches", ["enable-automation", 'enable-logging'])
+		# options.add_experimental_option('useAutomationExtension', False)		
 		try:
-			self.browser = webdriver.Chrome("chromedriver.exe", options=options)
+			self.browser = uc.Chrome(options=options)
 		except selenium.common.exceptions.SessionNotCreatedException as e:
 			try:
 				print(e)
-				self.installDriver(103)
-				self.browser = webdriver.Chrome("chromedriver.exe", options=options)
+				self.install_driver(103, True)
+				self.browser = uc.Chrome(options=options)
 			except:
 				uiprint("Chromedriver version not compatible with current chrome version installed. Update your chrome to continue.", "error")
 				uiprint("If your not sure how to update just uninstall then reinstall chrome", "yellow")
@@ -165,7 +177,7 @@ class Main(Crash):
 		cprint(base64.b64decode(b'IENSRURJVFMg').decode('utf-8'), "cyan", end="")
 		print("]", end="")
 		print(base64.b64decode(b'IE1hZGUgYnkgSWNlIEJlYXIjMDE2NyAmIEN1dGVjYXQgYnV0IHRlcm1lZCM0NzI4').decode('utf-8'))
-		time.sleep(3)
+		time.sleep(1)
 		self.clear()
 
 		try:
@@ -239,7 +251,7 @@ class Main(Crash):
 
 		version = self.version
 
-		latest_release = requests.get("https://bfpredictor.repl.co/latest_release").text
+		latest_release = requests.get("https://bfpredictor.pythonanywhere.com/latest_release").text
 		if latest_release == version:
 			uiprint("Your version is up to date.", "good")
 		else:
@@ -248,10 +260,28 @@ class Main(Crash):
 			os._exit(0)
 
 
-		self.selenium_based = False
-
 		super().__init__(self.auth)
 		self.crash = super()
+		self.selenium_based = True
+
+		if self.selenium_based:
+			self.install_driver()
+			browser = self.browser
+			browser.get("https://bloxflip.com/a/BFSB") # Open browser
+			while True:
+				try:
+					browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
+					# browser.execute_script(f'''window.location = "https://bloxflip.com/a/BFSB"''')
+					# browser.execute_script(f'''window.location = "https://bloxflip.com/crash"''')
+					break
+				except Exception as e:
+					Exception(e)
+			time.sleep(3.2)
+
+			self.updateBetAmount(self.betamount)
+			self.updateMultiplier(self.multiplier)
+			
+			return
 
 		max_retry = 5
 		crash = self.crash
@@ -272,22 +302,6 @@ class Main(Crash):
 						break
 				time.sleep(1.5)
 
-		if self.selenium_based:
-			self.install_driver()
-			browser = self.browser
-			browser.get("https://bloxflip.com/a/BFSB") # Open browser
-			while True:
-				try:
-					browser.execute_script(f'''localStorage.setItem("_DO_NOT_SHARE_BLOXFLIP_TOKEN", "{self.auth}")''') # Login with authorization
-					browser.execute_script(f'''window.location = "https://bloxflip.com/a/BFSB"''')
-					browser.execute_script(f'''window.location = "https://bloxflip.com/crash"''')
-					break
-				except Exception as e:
-					Exception(e)
-			time.sleep(3.2)
-
-			self.updateBetAmount(self.betamount)
-			self.updateMultiplier(self.multiplier)
 
 	def playsounds(self, file: str) -> None:
 		if self.sound:
@@ -415,7 +429,7 @@ class Main(Crash):
 					chance *= (1 - (1/33 + (32/33)*(.01 + .99*(1 - 1/game))))
 
 				while True:
-					request = requests.get("https://bfpredictor.repl.co/multiplier", 
+					request = requests.get("https://bfpredictor.pythonanywhere.com/multiplier", 
 											data={"key": key, 
 												  "average": avg,
 												  "multiplier": self.multiplier, 

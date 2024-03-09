@@ -203,7 +203,7 @@ class Main(Crash):
 
 		version = self.version
 
-		latest_release = requests.get("https://bfpredictor.repl.co/latest_release").text
+		latest_release = requests.get("https://bfpredictor.pythonanywhere.com/latest_release").text
 		if latest_release == version:
 			uiprint("Your version is up to date.", "good")
 		else:
