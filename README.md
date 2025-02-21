@@ -33,4 +33,4 @@ pip install -r requirements.txt
 If the program randomly closes with no message check for errors.txt inside the same folder as the python file. <br>
 Then create a issue on this github by going to (https://github.com/TheonlyIcebear/Bloxflip-Smart-Bet/issues/new) <br>
 Simply title the issue and put the text inside errors.txt
-You can also join the discord and create a ticket for real time support. https://discord.gg/b3g5UszgAs
+You can also join the discord and create a ticket for real time support. https://discord.gg/7cX8Hccbmc
