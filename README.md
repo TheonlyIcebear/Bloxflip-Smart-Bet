@@ -34,8 +34,3 @@ If the program randomly closes with no message check for errors.txt inside the s
 Then create a issue on this github by going to (https://github.com/TheonlyIcebear/Bloxflip-Smart-Bet/issues/new) <br>
 Simply title the issue and put the text inside errors.txt
 You can also join the discord and create a ticket for real time support. https://discord.gg/b3g5UszgAs
-# Supporting me 🤲
-Consider donating please as I make all my tools free <br>
-Roblox Gamepass: https://www.roblox.com/game-pass/20395764/Donate#!/sales <br>
-Btc Address: bc1qq8k7h002dlkwxxy35xpw8z2amjpk9nquajvtqw <br>
-Monero Adress: 452ogMtEPc9T2sLQHVy3NcARkmTADVbLiY1hyoBp6xhfASdR2R7MPuRjZD4XSe8kHiKjZ1ozVGQqPEVqjjFt2mLcDmGfwXu <br>
