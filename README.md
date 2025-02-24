@@ -19,8 +19,6 @@ localStorage.getItem('_DO_NOT_SHARE_BLOXFLIP_TOKEN')
 ```
  This will print your auth token to the console. Copy it without the quotes then put it into the config.json file
 
-Setup tutorial by SteelyXs#1316: <br>
-[![Video](http://img.youtube.com/vi/9o7_NDLlyfE/0.jpg)](http://www.youtube.com/watch?v=9o7_NDLlyfE "| TUTORIAL | How to install Martingale (Bloxflip Smart Bet)")
 
 # Usage ⚠
 To run the program make sure you have python installed and also pip. If you don't install python here https://www.python.org/downloads/. <br>
@@ -33,4 +31,4 @@ pip install -r requirements.txt
 If the program randomly closes with no message check for errors.txt inside the same folder as the python file. <br>
 Then create a issue on this github by going to (https://github.com/TheonlyIcebear/Bloxflip-Smart-Bet/issues/new) <br>
 Simply title the issue and put the text inside errors.txt
-You can also join the discord and create a ticket for real time support. https://discord.gg/7cX8Hccbmc
+You can also join the discord and create a ticket for real time support. https://discord.gg/3xh6ku7HxX
