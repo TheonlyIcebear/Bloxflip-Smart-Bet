@@ -2,7 +2,7 @@
 **Join the discord and create a ticket if you wan't help with a bug**: https://discord.gg/3xh6ku7HxX <br>
 **You can message me at**: Ice Bear#3333
 
-A program that uses strategies and probability maths to choose the best times to bet on BloxFlip's crash gamemode https://discord.gg/3xh6ku7HxX. <br>
+A program that uses strategies and probability maths to choose the best times to bet on BloxFlip's crash gamemode <br>
 **THIS IS NOT A PREDICTOR**: <br>
 It's only a betting strategy, remember casinos **always have the house edge**<br>
 
